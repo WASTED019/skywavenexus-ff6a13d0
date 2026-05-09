@@ -50,7 +50,7 @@ function DivisionPage() {
       <section className="mx-auto max-w-7xl px-4 py-12">
         <h2 className="mb-6 text-2xl font-bold">Services</h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {division.services.map((s) => (
+          {division.services.map((s: Service) => (
             <article key={s.id} className="flex flex-col rounded-2xl border bg-card p-6 shadow-soft transition hover:shadow-elegant">
               <h3 className="text-lg font-bold text-brand-navy">{s.name}</h3>
               <p className="mt-2 text-sm">{s.explanation}</p>
