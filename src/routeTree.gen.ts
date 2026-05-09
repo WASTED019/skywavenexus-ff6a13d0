@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SkywaveNexusRouteImport } from './routes/skywave-nexus'
 import { Route as RequestRouteImport } from './routes/request'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
@@ -24,6 +25,11 @@ const SkywaveNexusRoute = SkywaveNexusRouteImport.update({
 const RequestRoute = RequestRouteImport.update({
   id: '/request',
   path: '/request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -50,6 +56,7 @@ const DivisionsDivisionIdRoute = DivisionsDivisionIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
   '/request': typeof RequestRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
   '/request': typeof RequestRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
   '/request': typeof RequestRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/blog'
+    | '/contact'
     | '/request'
     | '/skywave-nexus'
     | '/divisions/$divisionId'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/blog'
+    | '/contact'
     | '/request'
     | '/skywave-nexus'
     | '/divisions/$divisionId'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/blog'
+    | '/contact'
     | '/request'
     | '/skywave-nexus'
     | '/divisions/$divisionId'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRoute: typeof BlogRoute
+  ContactRoute: typeof ContactRoute
   RequestRoute: typeof RequestRoute
   SkywaveNexusRoute: typeof SkywaveNexusRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/request'
       fullPath: '/request'
       preLoaderRoute: typeof RequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BlogRoute: BlogRoute,
+  ContactRoute: ContactRoute,
   RequestRoute: RequestRoute,
   SkywaveNexusRoute: SkywaveNexusRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
