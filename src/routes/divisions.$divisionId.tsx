@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { findDivision } from "@/data/divisions";
+import { findDivision, type Service } from "@/data/divisions";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/divisions/$divisionId")({
