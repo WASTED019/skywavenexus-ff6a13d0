@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SkywaveNexusRouteImport } from './routes/skywave-nexus'
 import { Route as RequestRouteImport } from './routes/request'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
 import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
 
+const SkywaveNexusRoute = SkywaveNexusRouteImport.update({
+  id: '/skywave-nexus',
+  path: '/skywave-nexus',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RequestRoute = RequestRouteImport.update({
   id: '/request',
   path: '/request',
@@ -38,12 +44,14 @@ const DivisionsDivisionIdRoute = DivisionsDivisionIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/request': typeof RequestRoute
+  '/skywave-nexus': typeof SkywaveNexusRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/request': typeof RequestRoute
+  '/skywave-nexus': typeof SkywaveNexusRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions': typeof DivisionsIndexRoute
 }
@@ -51,26 +59,51 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/request': typeof RequestRoute
+  '/skywave-nexus': typeof SkywaveNexusRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/request' | '/divisions/$divisionId' | '/divisions/'
+  fullPaths:
+    | '/'
+    | '/request'
+    | '/skywave-nexus'
+    | '/divisions/$divisionId'
+    | '/divisions/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/request' | '/divisions/$divisionId' | '/divisions'
-  id: '__root__' | '/' | '/request' | '/divisions/$divisionId' | '/divisions/'
+  to:
+    | '/'
+    | '/request'
+    | '/skywave-nexus'
+    | '/divisions/$divisionId'
+    | '/divisions'
+  id:
+    | '__root__'
+    | '/'
+    | '/request'
+    | '/skywave-nexus'
+    | '/divisions/$divisionId'
+    | '/divisions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RequestRoute: typeof RequestRoute
+  SkywaveNexusRoute: typeof SkywaveNexusRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/skywave-nexus': {
+      id: '/skywave-nexus'
+      path: '/skywave-nexus'
+      fullPath: '/skywave-nexus'
+      preLoaderRoute: typeof SkywaveNexusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/request': {
       id: '/request'
       path: '/request'
@@ -105,6 +138,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RequestRoute: RequestRoute,
+  SkywaveNexusRoute: SkywaveNexusRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
 }
