@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
+import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const DivisionsIndexRoute = DivisionsIndexRouteImport.update({
   path: '/divisions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DivisionsDivisionIdRoute = DivisionsDivisionIdRouteImport.update({
+  id: '/divisions/$divisionId',
+  path: '/divisions/$divisionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions': typeof DivisionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/divisions/'
+  fullPaths: '/' | '/divisions/$divisionId' | '/divisions/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/divisions'
-  id: '__root__' | '/' | '/divisions/'
+  to: '/' | '/divisions/$divisionId' | '/divisions'
+  id: '__root__' | '/' | '/divisions/$divisionId' | '/divisions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DivisionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/divisions/$divisionId': {
+      id: '/divisions/$divisionId'
+      path: '/divisions/$divisionId'
+      fullPath: '/divisions/$divisionId'
+      preLoaderRoute: typeof DivisionsDivisionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
 }
 export const routeTree = rootRouteImport
