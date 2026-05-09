@@ -9,38 +9,188 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SkywaveNexusRouteImport } from './routes/skywave-nexus'
+import { Route as RequestRouteImport } from './routes/request'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AdminLoginRouteImport } from './routes/admin-login'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
+import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
 
+const SkywaveNexusRoute = SkywaveNexusRouteImport.update({
+  id: '/skywave-nexus',
+  path: '/skywave-nexus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestRoute = RequestRouteImport.update({
+  id: '/request',
+  path: '/request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin-login',
+  path: '/admin-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DivisionsIndexRoute = DivisionsIndexRouteImport.update({
+  id: '/divisions/',
+  path: '/divisions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DivisionsDivisionIdRoute = DivisionsDivisionIdRouteImport.update({
+  id: '/divisions/$divisionId',
+  path: '/divisions/$divisionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/admin-login': typeof AdminLoginRoute
+  '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
+  '/request': typeof RequestRoute
+  '/skywave-nexus': typeof SkywaveNexusRoute
+  '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
+  '/divisions/': typeof DivisionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/admin-login': typeof AdminLoginRoute
+  '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
+  '/request': typeof RequestRoute
+  '/skywave-nexus': typeof SkywaveNexusRoute
+  '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
+  '/divisions': typeof DivisionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/admin-login': typeof AdminLoginRoute
+  '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
+  '/request': typeof RequestRoute
+  '/skywave-nexus': typeof SkywaveNexusRoute
+  '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
+  '/divisions/': typeof DivisionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin-login'
+    | '/blog'
+    | '/contact'
+    | '/request'
+    | '/skywave-nexus'
+    | '/divisions/$divisionId'
+    | '/divisions/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/admin-login'
+    | '/blog'
+    | '/contact'
+    | '/request'
+    | '/skywave-nexus'
+    | '/divisions/$divisionId'
+    | '/divisions'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/admin-login'
+    | '/blog'
+    | '/contact'
+    | '/request'
+    | '/skywave-nexus'
+    | '/divisions/$divisionId'
+    | '/divisions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  BlogRoute: typeof BlogRoute
+  ContactRoute: typeof ContactRoute
+  RequestRoute: typeof RequestRoute
+  SkywaveNexusRoute: typeof SkywaveNexusRoute
+  DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
+  DivisionsIndexRoute: typeof DivisionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/skywave-nexus': {
+      id: '/skywave-nexus'
+      path: '/skywave-nexus'
+      fullPath: '/skywave-nexus'
+      preLoaderRoute: typeof SkywaveNexusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/request': {
+      id: '/request'
+      path: '/request'
+      fullPath: '/request'
+      preLoaderRoute: typeof RequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-login': {
+      id: '/admin-login'
+      path: '/admin-login'
+      fullPath: '/admin-login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +198,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/divisions/': {
+      id: '/divisions/'
+      path: '/divisions'
+      fullPath: '/divisions/'
+      preLoaderRoute: typeof DivisionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/divisions/$divisionId': {
+      id: '/divisions/$divisionId'
+      path: '/divisions/$divisionId'
+      fullPath: '/divisions/$divisionId'
+      preLoaderRoute: typeof DivisionsDivisionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  BlogRoute: BlogRoute,
+  ContactRoute: ContactRoute,
+  RequestRoute: RequestRoute,
+  SkywaveNexusRoute: SkywaveNexusRoute,
+  DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
+  DivisionsIndexRoute: DivisionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
