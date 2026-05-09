@@ -75,11 +75,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "SKYWAVE NEXUS Integrated Solutions — Service Request Portal" },
       { name: "description", content: "Integrated Solutions for Food Safety, Value Addition and Digital Connectivity. Request services from SKYWAVE NEXUS." },
       { name: "author", content: "SKYWAVE NEXUS Integrated Solutions" },
-      { property: "og:title", content: "SKYWAVE NEXUS Integrated Solutions" },
-      { property: "og:description", content: "Integrated Solutions for Food Safety, Value Addition and Digital Connectivity." },
+      { property: "og:title", content: "SKYWAVE NEXUS Integrated Solutions — Service Request Portal" },
+      { property: "og:description", content: "Integrated Solutions for Food Safety, Value Addition and Digital Connectivity. Request services from SKYWAVE NEXUS." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "SKYWAVE NEXUS Integrated Solutions — Service Request Portal" },
+      { name: "twitter:description", content: "Integrated Solutions for Food Safety, Value Addition and Digital Connectivity. Request services from SKYWAVE NEXUS." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/w2FiImNlB9h76xgOR9jm7eJgSKt2/social-images/social-1778328214312-ChatGPT_Image_May_9,_2026,_02_57_21_PM.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/w2FiImNlB9h76xgOR9jm7eJgSKt2/social-images/social-1778328214312-ChatGPT_Image_May_9,_2026,_02_57_21_PM.webp" },
     ],
     links: [
       {
