@@ -1,8 +1,13 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
+import { useAuth, signOut } from "@/lib/auth";
 
 export function Footer() {
+  const { session, role } = useAuth();
+  const navigate = useNavigate();
+  const dashboardTo = role === "admin" ? "/admin" : "/dashboard";
+
   return (
     <footer className="mt-20 border-t bg-brand-navy text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-4">
@@ -38,17 +43,25 @@ export function Footer() {
             <li><Link to="/skywave-nexus" className="hover:underline">SKYWAVE NEXUS</Link></li>
             <li><Link to="/blog" className="hover:underline">Blog / Updates</Link></li>
             <li><Link to="/contact" className="hover:underline">Contact</Link></li>
-            <li><Link to="/admin-login" className="hover:underline">Admin Login</Link></li>
+            <li><Link to="/track" className="hover:underline">Track Request</Link></li>
+            {session ? (
+              <>
+                <li><Link to={dashboardTo} className="hover:underline">Dashboard</Link></li>
+                <li><button onClick={async () => { await signOut(); navigate({ to: "/" }); }} className="hover:underline">Logout</button></li>
+              </>
+            ) : (
+              <>
+                <li><Link to="/sign-in" className="hover:underline">Sign In</Link></li>
+                <li><Link to="/sign-up" className="hover:underline">Sign Up</Link></li>
+              </>
+            )}
           </ul>
         </div>
 
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wider opacity-90">Get a Quotation</h4>
           <p className="mt-3 text-sm opacity-90">Tell us what you need and our team will follow up.</p>
-          <Link
-            to="/request"
-            className="mt-4 inline-flex rounded-md bg-brand-bright px-4 py-2 text-sm font-semibold text-white hover:opacity-95"
-          >
+          <Link to="/request" className="mt-4 inline-flex rounded-md bg-brand-bright px-4 py-2 text-sm font-semibold text-white hover:opacity-95">
             Request a Service
           </Link>
         </div>
