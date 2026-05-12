@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useEffect, useMemo, useState } from "react";
-import { isAuthed, logout } from "@/lib/admin-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { getRequests, updateRequest, type RequestStatus, type ServiceRequest } from "@/lib/requests";
 import { divisions } from "@/data/divisions";
 
