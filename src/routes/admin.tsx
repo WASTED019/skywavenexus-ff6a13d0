@@ -89,7 +89,7 @@ function AdminPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
           <button
-            onClick={() => { logout(); navigate({ to: "/admin-login" }); }}
+            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/admin-login" }); }}
             className="rounded-md border px-3 py-2 text-sm"
           >
             Sign out
