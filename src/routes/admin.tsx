@@ -24,10 +24,30 @@ function AdminPage() {
   const [fStatus, setFStatus] = useState("");
 
   useEffect(() => {
-    const a = isAuthed();
-    setAuthed(a);
-    if (!a) navigate({ to: "/admin-login" });
-    else setList(getRequests());
+    let cancelled = false;
+    const verify = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        if (!cancelled) navigate({ to: "/admin-login" });
+        return;
+      }
+      // Server-validated role check via RLS-protected table
+      const { data: roles, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id);
+      const isAdmin = !error && (roles ?? []).some((r) => r.role === "admin");
+      if (cancelled) return;
+      if (!isAdmin) {
+        await supabase.auth.signOut();
+        navigate({ to: "/admin-login" });
+        return;
+      }
+      setAuthed(true);
+      setList(getRequests());
+    };
+    verify();
+    return () => { cancelled = true; };
   }, [navigate]);
 
   const refresh = () => setList(getRequests());
