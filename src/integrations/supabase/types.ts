@@ -14,6 +14,180 @@ export type Database = {
   }
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          county: string | null
+          created_at: string
+          delete_requested: boolean
+          email: string | null
+          full_name: string | null
+          id: string
+          is_active: boolean
+          phone: string | null
+          reset_approved: boolean
+          town: string | null
+          updated_at: string
+          username: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          county?: string | null
+          created_at?: string
+          delete_requested?: boolean
+          email?: string | null
+          full_name?: string | null
+          id: string
+          is_active?: boolean
+          phone?: string | null
+          reset_approved?: boolean
+          town?: string | null
+          updated_at?: string
+          username?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          county?: string | null
+          created_at?: string
+          delete_requested?: boolean
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          reset_approved?: boolean
+          town?: string | null
+          updated_at?: string
+          username?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      request_files: {
+        Row: {
+          created_at: string
+          id: string
+          mime_type: string | null
+          original_name: string | null
+          request_id: string
+          size_bytes: number | null
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mime_type?: string | null
+          original_name?: string | null
+          request_id: string
+          size_bytes?: number | null
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mime_type?: string | null
+          original_name?: string | null
+          request_id?: string
+          size_bytes?: number | null
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "request_files_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "my_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "request_files_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_requests: {
+        Row: {
+          admin_feedback: string | null
+          client_type: string | null
+          county: string
+          created_at: string
+          description: string
+          division_details: Json
+          division_id: string
+          division_name: string
+          email: string
+          follow_up_date: string | null
+          follow_up_method: string | null
+          full_name: string
+          id: string
+          internal_notes: string | null
+          phone: string
+          ref: string
+          service_id: string
+          service_name: string
+          status: string
+          town: string
+          updated_at: string
+          urgency: string
+          user_id: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          admin_feedback?: string | null
+          client_type?: string | null
+          county: string
+          created_at?: string
+          description: string
+          division_details?: Json
+          division_id: string
+          division_name: string
+          email: string
+          follow_up_date?: string | null
+          follow_up_method?: string | null
+          full_name: string
+          id?: string
+          internal_notes?: string | null
+          phone: string
+          ref: string
+          service_id: string
+          service_name: string
+          status?: string
+          town: string
+          updated_at?: string
+          urgency?: string
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          admin_feedback?: string | null
+          client_type?: string | null
+          county?: string
+          created_at?: string
+          description?: string
+          division_details?: Json
+          division_id?: string
+          division_name?: string
+          email?: string
+          follow_up_date?: string | null
+          follow_up_method?: string | null
+          full_name?: string
+          id?: string
+          internal_notes?: string | null
+          phone?: string
+          ref?: string
+          service_id?: string
+          service_name?: string
+          status?: string
+          town?: string
+          updated_at?: string
+          urgency?: string
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -37,10 +211,88 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      my_requests: {
+        Row: {
+          admin_feedback: string | null
+          client_type: string | null
+          county: string | null
+          created_at: string | null
+          description: string | null
+          division_details: Json | null
+          division_id: string | null
+          division_name: string | null
+          email: string | null
+          follow_up_date: string | null
+          follow_up_method: string | null
+          full_name: string | null
+          id: string | null
+          phone: string | null
+          ref: string | null
+          service_id: string | null
+          service_name: string | null
+          status: string | null
+          town: string | null
+          updated_at: string | null
+          urgency: string | null
+          user_id: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          admin_feedback?: string | null
+          client_type?: string | null
+          county?: string | null
+          created_at?: string | null
+          description?: string | null
+          division_details?: Json | null
+          division_id?: string | null
+          division_name?: string | null
+          email?: string | null
+          follow_up_date?: string | null
+          follow_up_method?: string | null
+          full_name?: string | null
+          id?: string | null
+          phone?: string | null
+          ref?: string | null
+          service_id?: string | null
+          service_name?: string | null
+          status?: string | null
+          town?: string | null
+          updated_at?: string | null
+          urgency?: string | null
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          admin_feedback?: string | null
+          client_type?: string | null
+          county?: string | null
+          created_at?: string | null
+          description?: string | null
+          division_details?: Json | null
+          division_id?: string | null
+          division_name?: string | null
+          email?: string | null
+          follow_up_date?: string | null
+          follow_up_method?: string | null
+          full_name?: string | null
+          id?: string | null
+          phone?: string | null
+          ref?: string | null
+          service_id?: string | null
+          service_name?: string | null
+          status?: string | null
+          town?: string | null
+          updated_at?: string | null
+          urgency?: string | null
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      claim_admin_if_none: { Args: never; Returns: boolean }
+      clear_reset_flag: { Args: never; Returns: undefined }
+      customer_can_reset: { Args: { _identifier: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -48,9 +300,21 @@ export type Database = {
         }
         Returns: boolean
       }
+      resolve_login_email: { Args: { identifier: string }; Returns: string }
+      track_request: {
+        Args: { _contact: string; _ref: string }
+        Returns: {
+          admin_feedback: string
+          created_at: string
+          division_name: string
+          ref: string
+          service_name: string
+          status: string
+        }[]
+      }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "customer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -178,7 +442,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "customer"],
     },
   },
 } as const
