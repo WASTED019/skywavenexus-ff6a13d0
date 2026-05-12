@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { divisions, findDivision, findService } from "@/data/divisions";
-import { addRequest, type ServiceRequest } from "@/lib/requests";
+import { submitServiceRequest } from "@/lib/requests";
 import { whatsappLink } from "@/lib/whatsapp";
 import { useMemo, useState } from "react";
 import { z } from "zod";
@@ -30,7 +30,9 @@ const counties = ["Nyeri","Nairobi","Kiambu","Murang'a","Kirinyaga","Embu","Meru
 function RequestPage() {
   const search = Route.useSearch();
   const navigate = useNavigate();
-  const [submitted, setSubmitted] = useState<ServiceRequest | null>(null);
+  const [submitted, setSubmitted] = useState<{ ref: string } | null>(null);
+  const [submitError, setSubmitError] = useState("");
+  const [busy, setBusy] = useState(false);
 
   const [divisionId, setDivisionId] = useState<string>(search.division || "");
   const [serviceId, setServiceId] = useState<string>(search.service || "");
@@ -40,8 +42,9 @@ function RequestPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitError("");
     const fd = new FormData(e.currentTarget);
     const data = Object.fromEntries(fd.entries()) as Record<string, string>;
 
@@ -71,7 +74,6 @@ function RequestPage() {
     }
     setErrors({});
 
-    // Collect division-specific fields
     const divisionDetails: Record<string, string> = {};
     for (const [k, v] of fd.entries()) {
       if (k.startsWith("dd_") && typeof v === "string" && v.trim()) {
@@ -80,35 +82,39 @@ function RequestPage() {
     }
 
     const upload = fd.get("upload");
-    const uploadName = upload && upload instanceof File && upload.name ? upload.name : undefined;
-    // NOTE: real file storage requires a backend (Lovable Cloud / Supabase Storage / Firebase / Netlify Forms / server upload).
+    const file = upload instanceof File && upload.size > 0 ? upload : null;
 
     const div = findDivision(divisionId);
     const svc = findService(divisionId, serviceId);
 
-    const saved = addRequest({
-      fullName: parsed.data.fullName,
-      phone: parsed.data.phone,
-      whatsapp: parsed.data.whatsapp,
-      email: parsed.data.email,
-      county: parsed.data.county,
-      town: parsed.data.town,
-      clientType: parsed.data.clientType,
-      divisionId,
-      divisionName: div?.title || "",
-      serviceId,
-      serviceName: svc?.name || "",
-      description: parsed.data.description,
-      urgency: parsed.data.urgency,
-      followUpMethod: parsed.data.followUpMethod,
-      followUpDate: parsed.data.followUpDate,
-      uploadName,
-      consent: true,
-      divisionDetails,
-    });
-
-    setSubmitted(saved);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setBusy(true);
+    try {
+      const created = await submitServiceRequest({
+        fullName: parsed.data.fullName,
+        phone: parsed.data.phone,
+        whatsapp: parsed.data.whatsapp,
+        email: parsed.data.email,
+        county: parsed.data.county,
+        town: parsed.data.town,
+        clientType: parsed.data.clientType,
+        divisionId,
+        divisionName: div?.title || "",
+        serviceId,
+        serviceName: svc?.name || "",
+        description: parsed.data.description,
+        urgency: parsed.data.urgency,
+        followUpMethod: parsed.data.followUpMethod,
+        followUpDate: parsed.data.followUpDate,
+        divisionDetails,
+        file,
+      });
+      setSubmitted({ ref: created.ref });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Failed to submit. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   if (submitted) {
@@ -124,11 +130,13 @@ function RequestPage() {
           <div className="mt-6 rounded-xl border bg-secondary p-4 text-sm">
             <div className="text-xs uppercase tracking-wider text-muted-foreground">Reference Number</div>
             <div className="text-lg font-bold text-brand-navy">{submitted.ref}</div>
+            <div className="mt-2 text-xs text-muted-foreground">Keep this reference to check status on the Track page.</div>
           </div>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <a href={whatsappLink(`Hello SKYWAVE NEXUS, my request reference is ${submitted.ref}.`)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-brand-green px-5 py-3 text-sm font-semibold text-brand-navy">
               <MessageCircle className="size-4" /> WhatsApp Us
             </a>
+            <Link to="/track" className="rounded-md border px-5 py-3 text-sm font-semibold">Track Request</Link>
             <Link to="/" className="rounded-md border px-5 py-3 text-sm font-semibold">Return to Homepage</Link>
           </div>
         </section>
@@ -148,10 +156,9 @@ function RequestPage() {
       </section>
 
       <form onSubmit={onSubmit} className="mx-auto w-full max-w-5xl space-y-8 px-4 py-12">
-        {/* Division & Service */}
         <fieldset className="rounded-2xl border bg-card p-6 shadow-soft">
           <legend className="px-2 text-sm font-semibold text-brand-blue">What you need</legend>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             <Field label="Division" error={errors.divisionId}>
               <select
                 value={divisionId}
@@ -181,10 +188,9 @@ function RequestPage() {
           )}
         </fieldset>
 
-        {/* Personal */}
         <fieldset className="rounded-2xl border bg-card p-6 shadow-soft">
           <legend className="px-2 text-sm font-semibold text-brand-blue">Your details</legend>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             <Field label="Full name" error={errors.fullName}><input name="fullName" className="input" maxLength={100} required /></Field>
             <Field label="Phone number" error={errors.phone}><input name="phone" type="tel" className="input" maxLength={20} required /></Field>
             <Field label="WhatsApp number" error={errors.whatsapp}><input name="whatsapp" type="tel" className="input" maxLength={20} required /></Field>
@@ -205,13 +211,12 @@ function RequestPage() {
           </div>
         </fieldset>
 
-        {/* Request */}
         <fieldset className="rounded-2xl border bg-card p-6 shadow-soft">
           <legend className="px-2 text-sm font-semibold text-brand-blue">Request details</legend>
           <Field label="Describe what you need" error={errors.description}>
             <textarea name="description" rows={4} className="input" maxLength={2000} required />
           </Field>
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
+          <div className="mt-5 grid gap-5 md:grid-cols-3">
             <Field label="Urgency level" error={errors.urgency}>
               <select name="urgency" className="input" required defaultValue="Medium">
                 <option>Low</option><option>Medium</option><option>High</option>
@@ -228,7 +233,6 @@ function RequestPage() {
           </div>
         </fieldset>
 
-        {/* Division-specific fields */}
         {divisionId === "food-safety" && (
           <DynamicSection title="Food Safety details">
             <Field label="Type of food business"><input name="dd_foodBusinessType" className="input" /></Field>
@@ -274,19 +278,12 @@ function RequestPage() {
           </DynamicSection>
         )}
 
-        {/* Upload */}
         <fieldset className="rounded-2xl border bg-card p-6 shadow-soft">
           <legend className="px-2 text-sm font-semibold text-brand-blue">Optional upload</legend>
-          {/*
-            Real file storage requires a backend such as Lovable Cloud (Supabase Storage),
-            Firebase Storage, Netlify Forms, or a server upload handler.
-            For now we capture the file name only.
-          */}
           <input name="upload" type="file" className="block w-full text-sm" />
           <p className="mt-2 text-xs text-muted-foreground">Product label, photo, receipt, business document, router screenshot, etc.</p>
         </fieldset>
 
-        {/* Consent */}
         <div className="rounded-2xl border bg-card p-6 shadow-soft">
           <label className="flex items-start gap-3 text-sm">
             <input name="consent" type="checkbox" className="mt-1 size-4" />
@@ -295,9 +292,11 @@ function RequestPage() {
           {errors.consent && <p className="mt-2 text-xs text-destructive">{errors.consent}</p>}
         </div>
 
+        {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className="rounded-md bg-brand-blue px-6 py-3 text-sm font-semibold text-white hover:opacity-95">
-            Submit Request
+          <button type="submit" disabled={busy} className="rounded-md bg-brand-blue px-6 py-3 text-sm font-semibold text-white hover:opacity-95 disabled:opacity-60">
+            {busy ? "Submitting…" : "Submit Request"}
           </button>
           <a href={whatsappLink()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md border px-6 py-3 text-sm font-semibold">
             <MessageCircle className="size-4" /> Or chat on WhatsApp
@@ -307,7 +306,6 @@ function RequestPage() {
 
       <Footer />
 
-      {/* shared input style */}
       <style>{`.input{ width:100%; border:1px solid var(--color-border); background:var(--color-background); border-radius:0.5rem; padding:0.6rem 0.75rem; font-size:0.9rem; outline:none; transition:border-color .15s, box-shadow .15s; } .input:focus{ border-color:var(--color-ring); box-shadow:0 0 0 3px color-mix(in oklab, var(--color-ring) 25%, transparent); }`}</style>
     </div>
   );
@@ -316,7 +314,7 @@ function RequestPage() {
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-semibold text-foreground/80">{label}</span>
+      <span className="mb-1.5 block text-xs font-semibold text-foreground/80">{label}</span>
       {children}
       {error && <span className="mt-1 block text-xs text-destructive">{error}</span>}
     </label>
@@ -327,7 +325,7 @@ function DynamicSection({ title, children }: { title: string; children: React.Re
   return (
     <fieldset className="rounded-2xl border bg-card p-6 shadow-soft">
       <legend className="px-2 text-sm font-semibold text-brand-blue">{title}</legend>
-      <div className="grid gap-4 md:grid-cols-2">{children}</div>
+      <div className="grid gap-5 md:grid-cols-2">{children}</div>
     </fieldset>
   );
 }

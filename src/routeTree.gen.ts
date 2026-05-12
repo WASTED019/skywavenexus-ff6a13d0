@@ -9,8 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrackRouteImport } from './routes/track'
 import { Route as SkywaveNexusRouteImport } from './routes/skywave-nexus'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as RequestRouteImport } from './routes/request'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
@@ -19,14 +23,34 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
 import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
 
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SkywaveNexusRoute = SkywaveNexusRouteImport.update({
   id: '/skywave-nexus',
   path: '/skywave-nexus',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RequestRoute = RequestRouteImport.update({
   id: '/request',
   path: '/request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -71,8 +95,12 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/request': typeof RequestRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
+  '/track': typeof TrackRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
 }
@@ -82,8 +110,12 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/request': typeof RequestRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
+  '/track': typeof TrackRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions': typeof DivisionsIndexRoute
 }
@@ -94,8 +126,12 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/request': typeof RequestRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
+  '/track': typeof TrackRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
 }
@@ -107,8 +143,12 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/blog'
     | '/contact'
+    | '/dashboard'
     | '/request'
+    | '/sign-in'
+    | '/sign-up'
     | '/skywave-nexus'
+    | '/track'
     | '/divisions/$divisionId'
     | '/divisions/'
   fileRoutesByTo: FileRoutesByTo
@@ -118,8 +158,12 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/blog'
     | '/contact'
+    | '/dashboard'
     | '/request'
+    | '/sign-in'
+    | '/sign-up'
     | '/skywave-nexus'
+    | '/track'
     | '/divisions/$divisionId'
     | '/divisions'
   id:
@@ -129,8 +173,12 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/blog'
     | '/contact'
+    | '/dashboard'
     | '/request'
+    | '/sign-in'
+    | '/sign-up'
     | '/skywave-nexus'
+    | '/track'
     | '/divisions/$divisionId'
     | '/divisions/'
   fileRoutesById: FileRoutesById
@@ -141,14 +189,25 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   BlogRoute: typeof BlogRoute
   ContactRoute: typeof ContactRoute
+  DashboardRoute: typeof DashboardRoute
   RequestRoute: typeof RequestRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
   SkywaveNexusRoute: typeof SkywaveNexusRoute
+  TrackRoute: typeof TrackRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/skywave-nexus': {
       id: '/skywave-nexus'
       path: '/skywave-nexus'
@@ -156,11 +215,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SkywaveNexusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/request': {
       id: '/request'
       path: '/request'
       fullPath: '/request'
       preLoaderRoute: typeof RequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -221,8 +301,12 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   BlogRoute: BlogRoute,
   ContactRoute: ContactRoute,
+  DashboardRoute: DashboardRoute,
   RequestRoute: RequestRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
   SkywaveNexusRoute: SkywaveNexusRoute,
+  TrackRoute: TrackRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
 }

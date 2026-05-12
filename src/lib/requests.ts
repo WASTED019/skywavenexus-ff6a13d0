@@ -1,22 +1,6 @@
-// Local-storage backed request store.
-// Production note: replace with Lovable Cloud (Supabase), Firebase, or a backend API.
-// Email notifications to skywavenexus@gmail.com can be wired via EmailJS, Formspree,
-// Supabase Edge Functions, or a server endpoint when backend is connected.
+import { supabase } from "@/integrations/supabase/client";
 
-export type RequestStatus =
-  | "New"
-  | "Reviewed"
-  | "Contacted"
-  | "Quotation Sent"
-  | "In Progress"
-  | "Completed"
-  | "Rejected / Not suitable";
-
-export type ServiceRequest = {
-  id: string;
-  ref: string;
-  createdAt: string;
-  status: RequestStatus;
+export type ServiceRequestInput = {
   fullName: string;
   phone: string;
   whatsapp: string;
@@ -32,46 +16,79 @@ export type ServiceRequest = {
   urgency: "Low" | "Medium" | "High";
   followUpMethod: "WhatsApp" | "Phone call" | "Email";
   followUpDate?: string;
-  uploadName?: string;
-  consent: boolean;
   divisionDetails: Record<string, string>;
-  notes?: string;
+  file?: File | null;
 };
 
-const KEY = "skywave_requests_v1";
+export type CreatedRequest = {
+  id: string;
+  ref: string;
+};
 
-const isBrowser = () => typeof window !== "undefined";
+function makeRef() {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 6; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return `SWN-${s}`;
+}
 
-export function getRequests(): ServiceRequest[] {
-  if (!isBrowser()) return [];
-  try {
-    return JSON.parse(localStorage.getItem(KEY) || "[]");
-  } catch {
-    return [];
+export async function submitServiceRequest(input: ServiceRequestInput): Promise<CreatedRequest> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id ?? null;
+
+  // Try a few times in the unlikely case of a ref collision
+  let ref = makeRef();
+  let row: { id: string; ref: string } | null = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { data, error } = await supabase.from("service_requests").insert({
+      ref,
+      user_id: userId,
+      full_name: input.fullName,
+      phone: input.phone,
+      whatsapp: input.whatsapp,
+      email: input.email,
+      county: input.county,
+      town: input.town,
+      client_type: input.clientType,
+      division_id: input.divisionId,
+      division_name: input.divisionName,
+      service_id: input.serviceId,
+      service_name: input.serviceName,
+      description: input.description,
+      urgency: input.urgency,
+      follow_up_method: input.followUpMethod,
+      follow_up_date: input.followUpDate || null,
+      division_details: input.divisionDetails,
+    }).select("id, ref").single();
+
+    if (!error && data) { row = data; break; }
+    if (error?.code === "23505") { ref = makeRef(); continue; }
+    throw new Error(error?.message || "Failed to submit request");
   }
-}
+  if (!row) throw new Error("Failed to submit request");
 
-export function saveRequests(list: ServiceRequest[]) {
-  if (!isBrowser()) return;
-  localStorage.setItem(KEY, JSON.stringify(list));
-}
+  // Upload file (optional). Failure here should not block the request.
+  if (input.file && input.file.size > 0) {
+    try {
+      const safeName = input.file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `${row.id}/${Date.now()}_${safeName}`;
+      const { error: upErr } = await supabase.storage.from("request-uploads").upload(path, input.file, {
+        contentType: input.file.type || undefined,
+        upsert: false,
+      });
+      if (!upErr) {
+        await supabase.from("request_files").insert({
+          request_id: row.id,
+          storage_path: path,
+          original_name: input.file.name,
+          mime_type: input.file.type || null,
+          size_bytes: input.file.size,
+        });
+      }
+    } catch {
+      // swallow — request itself succeeded
+    }
+  }
 
-export function addRequest(r: Omit<ServiceRequest, "id" | "ref" | "createdAt" | "status">) {
-  const ref = "SWN-" + Date.now().toString(36).toUpperCase();
-  const full: ServiceRequest = {
-    ...r,
-    id: crypto.randomUUID(),
-    ref,
-    createdAt: new Date().toISOString(),
-    status: "New",
-  };
-  const list = getRequests();
-  list.unshift(full);
-  saveRequests(list);
-  return full;
-}
-
-export function updateRequest(id: string, patch: Partial<ServiceRequest>) {
-  const list = getRequests().map((r) => (r.id === id ? { ...r, ...patch } : r));
-  saveRequests(list);
+  return row;
 }
