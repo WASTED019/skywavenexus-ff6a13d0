@@ -1,0 +1,1 @@
+ALTER VIEW public.my_requests SET (security_invoker = on);
