@@ -6,8 +6,14 @@ import { showcase } from "@/data/showcase";
 export const Route = createFileRoute("/skywave-nexus")({
   head: () => ({
     meta: [
-      { title: "SKYWAVE NEXUS — Selected Work" },
-      { name: "description", content: "A showcase of selected work and outcomes by SKYWAVE NEXUS Integrated Solutions." },
+      { title: "Selected Work & Outcomes — SKYWAVE NEXUS" },
+      { name: "description", content: "A showcase of selected work and outcomes by SKYWAVE NEXUS Integrated Solutions across food safety, value addition and connectivity." },
+      { property: "og:title", content: "Selected Work & Outcomes — SKYWAVE NEXUS" },
+      { property: "og:description", content: "A showcase of selected work and outcomes by SKYWAVE NEXUS across food safety, value addition and connectivity." },
+      { property: "og:url", content: "https://skywavenexus.lovable.app/skywave-nexus" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://skywavenexus.lovable.app/skywave-nexus" },
     ],
   }),
   component: ShowcasePage,
@@ -19,7 +25,7 @@ function ShowcasePage() {
       <Header />
       <section className="bg-hero-gradient text-white">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <h1 className="text-3xl font-bold sm:text-4xl">SKYWAVE NEXUS</h1>
+          <h1 className="text-3xl font-bold sm:text-4xl">SKYWAVE NEXUS — Selected Work and Outcomes</h1>
           <p className="mt-3 max-w-2xl text-white/85">
             Selected work, examples and outcomes from across our divisions. Client identities are kept private.
           </p>

@@ -17,8 +17,14 @@ export const Route = createFileRoute("/request")({
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({
     meta: [
-      { title: "Request a Service — SKYWAVE NEXUS Integrated Solutions" },
-      { name: "description", content: "Tell us what you need. SKYWAVE NEXUS will follow up with a quotation." },
+      { title: "Request a Service — SKYWAVE NEXUS" },
+      { name: "description", content: "Tell us what you need. SKYWAVE NEXUS will follow up with a quotation by phone, WhatsApp or email." },
+      { property: "og:title", content: "Request a Service — SKYWAVE NEXUS" },
+      { property: "og:description", content: "Tell us what you need. SKYWAVE NEXUS will follow up with a quotation." },
+      { property: "og:url", content: "https://skywavenexus.lovable.app/request" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://skywavenexus.lovable.app/request" },
     ],
   }),
   component: RequestPage,

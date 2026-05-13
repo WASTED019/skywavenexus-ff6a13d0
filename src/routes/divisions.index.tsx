@@ -7,8 +7,14 @@ import { Shield, Sprout, Wifi, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/divisions/")({
   head: () => ({
     meta: [
-      { title: "Our Divisions — SKYWAVE NEXUS Integrated Solutions" },
-      { name: "description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity divisions of SKYWAVE NEXUS." },
+      { title: "Our Divisions — SKYWAVE NEXUS" },
+      { name: "description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity divisions of SKYWAVE NEXUS Integrated Solutions." },
+      { property: "og:title", content: "Our Divisions — SKYWAVE NEXUS" },
+      { property: "og:description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity divisions of SKYWAVE NEXUS." },
+      { property: "og:url", content: "https://skywavenexus.lovable.app/divisions" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://skywavenexus.lovable.app/divisions" },
     ],
   }),
   component: DivisionsIndex,

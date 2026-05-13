@@ -10,12 +10,32 @@ export const Route = createFileRoute("/divisions/$divisionId")({
     if (!division) throw notFound();
     return { division };
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: `${loaderData?.division.title ?? "Division"} — SKYWAVE NEXUS` },
-      { name: "description", content: loaderData?.division.description ?? "" },
-    ],
-  }),
+  head: ({ loaderData, params }) => {
+    const title = `${loaderData?.division.title ?? "Division"} — SKYWAVE NEXUS`;
+    const desc = loaderData?.division.description ?? "Service division at SKYWAVE NEXUS Integrated Solutions.";
+    const url = `https://skywavenexus.lovable.app/divisions/${params.divisionId}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [{
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: loaderData?.division.title,
+          description: desc,
+          provider: { "@type": "Organization", name: "SKYWAVE NEXUS Integrated Solutions" },
+          url,
+        }),
+      }],
+    };
+  },
   component: DivisionPage,
   notFoundComponent: () => (
     <div className="flex min-h-screen flex-col">

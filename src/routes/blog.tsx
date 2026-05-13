@@ -6,9 +6,24 @@ import { blogPosts } from "@/data/blog";
 export const Route = createFileRoute("/blog")({
   head: () => ({
     meta: [
-      { title: "Blog & Updates — SKYWAVE NEXUS Integrated Solutions" },
-      { name: "description", content: "Tips and updates on food safety, value addition, networking and business compliance." },
+      { title: "Blog & Updates — SKYWAVE NEXUS" },
+      { name: "description", content: "Tips and updates on food safety, value addition, networking and business compliance from SKYWAVE NEXUS." },
+      { property: "og:title", content: "Blog & Updates — SKYWAVE NEXUS" },
+      { property: "og:description", content: "Tips and updates on food safety, value addition, networking and business compliance from SKYWAVE NEXUS." },
+      { property: "og:url", content: "https://skywavenexus.lovable.app/blog" },
     ],
+    links: [
+      { rel: "canonical", href: "https://skywavenexus.lovable.app/blog" },
+    ],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        name: "SKYWAVE NEXUS — Blog & Updates",
+        url: "https://skywavenexus.lovable.app/blog",
+      }),
+    }],
   }),
   component: BlogPage,
 });

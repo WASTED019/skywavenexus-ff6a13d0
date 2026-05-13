@@ -7,9 +7,31 @@ import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — SKYWAVE NEXUS Integrated Solutions" },
-      { name: "description", content: "Reach SKYWAVE NEXUS Integrated Solutions by phone, WhatsApp, or email." },
+      { title: "Contact — SKYWAVE NEXUS" },
+      { name: "description", content: "Phone, WhatsApp and email for SKYWAVE NEXUS Integrated Solutions in Nyange, Nyeri, Kenya." },
+      { property: "og:title", content: "Contact — SKYWAVE NEXUS" },
+      { property: "og:description", content: "Phone, WhatsApp and email for SKYWAVE NEXUS Integrated Solutions in Nyange, Nyeri, Kenya." },
+      { property: "og:url", content: "https://skywavenexus.lovable.app/contact" },
     ],
+    links: [
+      { rel: "canonical", href: "https://skywavenexus.lovable.app/contact" },
+    ],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        name: "Contact SKYWAVE NEXUS",
+        url: "https://skywavenexus.lovable.app/contact",
+        mainEntity: {
+          "@type": "Organization",
+          name: "SKYWAVE NEXUS Integrated Solutions",
+          telephone: "+254753366995",
+          email: "skywavenexus@gmail.com",
+          address: { "@type": "PostalAddress", streetAddress: "Nyange", addressLocality: "Nyeri", addressCountry: "KE" },
+        },
+      }),
+    }],
   }),
   component: ContactPage,
 });
