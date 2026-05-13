@@ -69,6 +69,24 @@ export async function submitServiceRequest(input: ServiceRequestInput): Promise<
 
   // Upload file (optional). Failure here should not block the request.
   if (input.file && input.file.size > 0) {
+    const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+    const ALLOWED_MIME = new Set([
+      "image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ]);
+    const ALLOWED_EXT = /\.(png|jpe?g|webp|gif|pdf|docx?|xlsx?)$/i;
+    if (input.file.size > MAX_BYTES) {
+      throw new Error("Attachment is larger than the 10 MB limit.");
+    }
+    const mimeOk = !input.file.type || ALLOWED_MIME.has(input.file.type);
+    const extOk = ALLOWED_EXT.test(input.file.name);
+    if (!mimeOk || !extOk) {
+      throw new Error("Unsupported file type. Allowed: images, PDF, Word, Excel.");
+    }
     try {
       const safeName = input.file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       const path = `${row.id}/${Date.now()}_${safeName}`;
