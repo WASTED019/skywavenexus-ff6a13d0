@@ -280,8 +280,13 @@ function RequestPage() {
 
         <fieldset className="rounded-2xl border bg-card p-6 shadow-soft">
           <legend className="px-2 text-sm font-semibold text-brand-blue">Optional upload</legend>
-          <input name="upload" type="file" className="block w-full text-sm" />
-          <p className="mt-2 text-xs text-muted-foreground">Product label, photo, receipt, business document, router screenshot, etc.</p>
+          <input
+            name="upload"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.doc,.docx,.xls,.xlsx"
+            className="block w-full text-sm"
+          />
+          <p className="mt-2 text-xs text-muted-foreground">Images, PDF, or Office docs only. Max 10 MB.</p>
         </fieldset>
 
         <div className="rounded-2xl border bg-card p-6 shadow-soft">

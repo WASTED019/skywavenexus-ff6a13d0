@@ -2,28 +2,23 @@
 
 The site no longer auto-promotes the first registered user to admin. Public sign-up
 always creates a **customer** account. To seed the first admin (e.g. `davis`),
-run the SQL below in Lovable Cloud → Backend → SQL editor.
+follow the steps below.
 
-> ⚠️ Replace `davi!@#` below with a strong password if you wish, but the example
-> matches the value the company provided. The Auth API hashes it before storing.
+> ⚠️ **Never commit the admin password to this file or any other file in the
+> repo.** Use a strong, unique password and store it only in your password
+> manager. Rotate it from Authentication → Users at any time.
+
+## Steps
+
+1. In Lovable Cloud → Backend → Authentication → Users, click **Add user →
+   Create new user**:
+   - Email: `skywavenexus@gmail.com`
+   - Password: `<choose-a-strong-password>` (do NOT paste it back here)
+   - Auto Confirm: yes
+2. Copy the new user's UUID.
+3. In Backend → SQL editor, run the following with `<USER_ID>` replaced:
 
 ```sql
--- 1) Create the auth user (only run once)
--- Uses Supabase's helper to insert into auth.users with a hashed password.
--- If a user with this email already exists, skip this block.
-
-SELECT
-  extensions.uuid_generate_v4();  -- ensure uuid-ossp is loaded (no-op if already)
-
--- Use the dashboard "Add user" UI (Authentication → Users → Add user → "Create new user"):
---   Email:    skywavenexus@gmail.com
---   Password: davi!@#
---   Auto Confirm: yes
--- Then copy the new user id and paste it below.
-
--- 2) Set username + admin role for that user
--- Replace <USER_ID> with the UUID you got above.
-
 UPDATE public.profiles
 SET username = 'davis',
     full_name = 'Davis (Admin)',
@@ -36,13 +31,14 @@ VALUES ('<USER_ID>', 'admin')
 ON CONFLICT DO NOTHING;
 ```
 
-After this, sign in at `/sign-in` with username `davis` (or the email) and the
-password above. You'll be routed to `/admin`.
+After this, sign in at `/sign-in` with username `davis` (or the email) and
+the password you set. You'll be routed to `/admin`.
 
 ## Notes
 - The signup trigger creates a `profiles` row and a `customer` role
-  automatically for every new auth user. Step 2 simply upgrades that profile
-  and adds the admin role.
-- Never put the admin password in committed code or env files. Rotate it from
-  Authentication → Users.
-- To create additional admins later, do it from the admin Users tab (Phase 3).
+  automatically for every new auth user. The SQL above simply upgrades that
+  profile and adds the admin role.
+- If the previous initial password (`davi!@#`) was ever used, **rotate it
+  immediately** from Authentication → Users — it was exposed in the repo
+  history and must be considered compromised.
+- To create additional admins later, do it from the admin Users tab.
