@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin-login
+Disallow: /dashboard
+Disallow: /sign-in
+Disallow: /sign-up
+
+Sitemap: https://skywavenexus.lovable.app/sitemap.xml

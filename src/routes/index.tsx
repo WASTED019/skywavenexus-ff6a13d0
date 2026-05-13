@@ -11,8 +11,14 @@ import { Shield, Sprout, Wifi, ArrowRight, MessageCircle, CheckCircle2, Phone, M
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SKYWAVE NEXUS Integrated Solutions — Service Request Portal" },
+      { title: "SKYWAVE NEXUS — Food Safety & Digital Connectivity" },
       { name: "description", content: "Food safety, value addition and digital connectivity solutions for SMEs, farmers and rural enterprises in Kenya." },
+      { property: "og:title", content: "SKYWAVE NEXUS — Food Safety & Digital Connectivity" },
+      { property: "og:description", content: "Food safety, value addition and digital connectivity solutions for SMEs, farmers and rural enterprises in Kenya." },
+      { property: "og:url", content: "https://skywavenexus.lovable.app/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://skywavenexus.lovable.app/" },
     ],
   }),
   component: HomePage,
@@ -32,7 +38,7 @@ function HomePage() {
           <div>
             <img src={logo} alt="SKYWAVE NEXUS Integrated Solutions" className="mb-6 h-24 w-24 rounded-xl bg-white/95 p-2 shadow-elegant" />
             <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">
-              SKYWAVE NEXUS <span className="text-brand-bright bg-white/10 px-2 rounded">Integrated Solutions</span>
+              SKYWAVE NEXUS — Integrated Solutions for <span className="text-brand-bright bg-white/10 px-2 rounded">Food Safety & Digital Connectivity</span>
             </h1>
             <p className="mt-4 text-lg font-medium text-white/90">
               Integrated Solutions for Food Safety, Value Addition and Digital Connectivity.

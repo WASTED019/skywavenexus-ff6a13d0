@@ -1,0 +1,16 @@
+# SKYWAVE NEXUS Integrated Solutions
+
+> Integrated Solutions for Food Safety, Value Addition and Digital Connectivity in Kenya. We help SMEs, farmers, processors, schools, cyber cafés and rural enterprises with practical field-based services and quotations.
+
+## Pages
+
+- [Home](/): Overview of SKYWAVE NEXUS divisions and services.
+- [Divisions](/divisions): Food Safety & Compliance, Value Addition, and ISP & Connectivity.
+- [Food Safety](/divisions/food-safety): Food safety, hygiene and compliance services.
+- [Value Addition](/divisions/value-addition): Processing, packaging and product development.
+- [ISP & Connectivity](/divisions/isp): Internet, networking and IT support services.
+- [Request a Service](/request): Submit a quotation request with optional file upload.
+- [Track a Request](/track): Look up the status of a request by reference number.
+- [Selected Work](/skywave-nexus): Showcase of past work and outcomes.
+- [Blog & Updates](/blog): Tips and updates on food safety, value addition and connectivity.
+- [Contact](/contact): Phone, WhatsApp and email contact details.

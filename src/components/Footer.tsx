@@ -25,7 +25,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wider opacity-90">Contact</h4>
+          <h2 className="text-sm font-semibold uppercase tracking-wider opacity-90">Contact</h2>
           <ul className="mt-3 space-y-2 text-sm opacity-90">
             <li className="flex items-center gap-2"><Phone className="size-4" /> 0753366995</li>
             <li className="flex items-center gap-2"><MessageCircle className="size-4" /> WhatsApp: 0753366995</li>
@@ -35,7 +35,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wider opacity-90">Quick Links</h4>
+          <h2 className="text-sm font-semibold uppercase tracking-wider opacity-90">Quick Links</h2>
           <ul className="mt-3 space-y-2 text-sm opacity-90">
             <li><Link to="/" className="hover:underline">Home</Link></li>
             <li><Link to="/divisions" className="hover:underline">Divisions</Link></li>
@@ -59,7 +59,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wider opacity-90">Get a Quotation</h4>
+          <h2 className="text-sm font-semibold uppercase tracking-wider opacity-90">Get a Quotation</h2>
           <p className="mt-3 text-sm opacity-90">Tell us what you need and our team will follow up.</p>
           <Link to="/request" className="mt-4 inline-flex rounded-md bg-brand-bright px-4 py-2 text-sm font-semibold text-white hover:opacity-95">
             Request a Service

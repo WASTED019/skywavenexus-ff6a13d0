@@ -5,7 +5,18 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/track")({
-  head: () => ({ meta: [{ title: "Track Request — SKYWAVE NEXUS" }] }),
+  head: () => ({
+    meta: [
+      { title: "Track a Request — SKYWAVE NEXUS" },
+      { name: "description", content: "Look up the status of a SKYWAVE NEXUS service request using your reference number and contact." },
+      { property: "og:title", content: "Track a Request — SKYWAVE NEXUS" },
+      { property: "og:description", content: "Look up the status of a SKYWAVE NEXUS service request using your reference number and contact." },
+      { property: "og:url", content: "https://skywavenexus.lovable.app/track" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://skywavenexus.lovable.app/track" },
+    ],
+  }),
   component: TrackPage,
 });
 

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrackRouteImport } from './routes/track'
 import { Route as SkywaveNexusRouteImport } from './routes/skywave-nexus'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as RequestRouteImport } from './routes/request'
@@ -31,6 +32,11 @@ const TrackRoute = TrackRouteImport.update({
 const SkywaveNexusRoute = SkywaveNexusRouteImport.update({
   id: '/skywave-nexus',
   path: '/skywave-nexus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignUpRoute = SignUpRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/request': typeof RequestRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/request': typeof RequestRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/request': typeof RequestRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/request'
     | '/sign-in'
     | '/sign-up'
+    | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
     | '/divisions/$divisionId'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/request'
     | '/sign-in'
     | '/sign-up'
+    | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
     | '/divisions/$divisionId'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/request'
     | '/sign-in'
     | '/sign-up'
+    | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
     | '/divisions/$divisionId'
@@ -193,6 +205,7 @@ export interface RootRouteChildren {
   RequestRoute: typeof RequestRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SkywaveNexusRoute: typeof SkywaveNexusRoute
   TrackRoute: typeof TrackRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/skywave-nexus'
       fullPath: '/skywave-nexus'
       preLoaderRoute: typeof SkywaveNexusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-up': {
@@ -305,6 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   RequestRoute: RequestRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SkywaveNexusRoute: SkywaveNexusRoute,
   TrackRoute: TrackRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
