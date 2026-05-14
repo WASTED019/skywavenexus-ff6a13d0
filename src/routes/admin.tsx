@@ -121,7 +121,7 @@ function AdminPage() {
         </div>
 
         <div className="mt-6 rounded-2xl border bg-card p-4 shadow-soft">
-          <h2 className="text-sm font-semibold">Requests by division</h2>
+          <h2 className="text-sm font-semibold">Requests by service line</h2>
           <div className="mt-2 flex flex-wrap gap-2 text-xs">
             {Object.entries(byDivision).length === 0 && <span className="text-muted-foreground">No requests yet.</span>}
             {Object.entries(byDivision).map(([k, v]) => (
@@ -133,7 +133,7 @@ function AdminPage() {
         <div className="mt-6 grid gap-3 md:grid-cols-4">
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search ref, name, phone…" className="rounded-md border px-3 py-2 text-sm" />
           <select value={fDiv} onChange={(e) => setFDiv(e.target.value)} className="rounded-md border px-3 py-2 text-sm">
-            <option value="">All divisions</option>
+            <option value="">All service lines</option>
             {divisions.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
           </select>
           <select value={fUrg} onChange={(e) => setFUrg(e.target.value)} className="rounded-md border px-3 py-2 text-sm">
@@ -150,7 +150,7 @@ function AdminPage() {
           <table className="min-w-full text-sm">
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider">
               <tr>
-                {["Ref","Date","Client","Phone","Location","Division","Service","Urgency","Status","Action"].map((h) => (
+                {["Ref","Date","Client","Phone","Location","Service Line","Service","Urgency","Status","Action"].map((h) => (
                   <th key={h} className="px-3 py-2">{h}</th>
                 ))}
               </tr>
@@ -195,7 +195,7 @@ function AdminPage() {
               <Info k="Email" v={active.email} />
               <Info k="Location" v={`${active.town}, ${active.county}`} />
               <Info k="Client type" v={active.client_type || "—"} />
-              <Info k="Division" v={active.division_name} />
+              <Info k="Service Line" v={active.division_name} />
               <Info k="Service" v={active.service_name} />
               <Info k="Urgency" v={active.urgency} />
               <Info k="Follow-up" v={`${active.follow_up_method || "—"}${active.follow_up_date ? ` on ${active.follow_up_date}` : ""}`} />
@@ -206,7 +206,7 @@ function AdminPage() {
             </div>
             {active.division_details && Object.keys(active.division_details).length > 0 && (
               <div className="mt-4 rounded-xl bg-secondary p-3 text-sm">
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Division-specific</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Service-line specific</div>
                 <ul className="mt-1 space-y-1">
                   {Object.entries(active.division_details).map(([k, v]) => (<li key={k}><strong>{k}:</strong> {String(v)}</li>))}
                 </ul>
