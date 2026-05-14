@@ -12,7 +12,7 @@ export const Route = createFileRoute("/divisions/$divisionId")({
   },
   head: ({ loaderData, params }) => {
     const title = `${loaderData?.division.title ?? "Division"} — SKYWAVE NEXUS`;
-    const desc = loaderData?.division.description ?? "Service division at SKYWAVE NEXUS Integrated Solutions.";
+    const desc = loaderData?.division.description ?? "Service line at SKYWAVE NEXUS Integrated Solutions.";
     const url = `https://skywavenexus.lovable.app/divisions/${params.divisionId}`;
     return {
       meta: [
@@ -41,8 +41,8 @@ export const Route = createFileRoute("/divisions/$divisionId")({
     <div className="flex min-h-screen flex-col">
       <Header />
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <h1 className="text-3xl font-bold">Division not found</h1>
-        <Link to="/divisions" className="mt-4 inline-block text-brand-blue hover:underline">Back to Divisions</Link>
+        <h1 className="text-3xl font-bold">Service line not found</h1>
+        <Link to="/divisions" className="mt-4 inline-block text-brand-blue hover:underline">Back to Service Lines</Link>
       </div>
       <Footer />
     </div>
@@ -60,7 +60,7 @@ function DivisionPage() {
       <section className="bg-hero-gradient text-white">
         <div className="mx-auto max-w-7xl px-4 py-14">
           <Link to="/divisions" className="mb-4 inline-flex items-center gap-1 text-sm text-white/80 hover:text-white">
-            <ArrowLeft className="size-4" /> Back to Divisions
+            <ArrowLeft className="size-4" /> Back to Service Lines
           </Link>
           <h1 className="text-3xl font-bold sm:text-4xl">{division.title}</h1>
           <p className="mt-3 max-w-3xl text-white/85">{division.description}</p>

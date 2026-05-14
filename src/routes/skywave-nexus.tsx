@@ -27,7 +27,7 @@ function ShowcasePage() {
         <div className="mx-auto max-w-7xl px-4 py-14">
           <h1 className="text-3xl font-bold sm:text-4xl">SKYWAVE NEXUS — Selected Work and Outcomes</h1>
           <p className="mt-3 max-w-2xl text-white/85">
-            Selected work, examples and outcomes from across our divisions. Client identities are kept private.
+            Selected work, examples and outcomes from across our service lines. Client identities are kept private.
           </p>
         </div>
       </section>
