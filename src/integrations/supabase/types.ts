@@ -301,6 +301,13 @@ export type Database = {
         Returns: boolean
       }
       resolve_login_email: { Args: { identifier: string }; Returns: string }
+      set_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target: string
+        }
+        Returns: undefined
+      }
       track_request: {
         Args: { _contact: string; _ref: string }
         Returns: {
