@@ -52,7 +52,7 @@ function HomePage() {
                 Request a Service
               </Link>
               <Link to="/divisions" className="rounded-md border border-white/40 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/15">
-                View Divisions
+                View Service Lines
               </Link>
               <a href={whatsappLink()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-brand-green px-5 py-3 text-sm font-semibold text-brand-navy hover:opacity-95">
                 <MessageCircle className="size-4" /> Contact on WhatsApp
@@ -66,11 +66,11 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Divisions */}
+      {/* Service Lines */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="mb-10 max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wider text-brand-blue">Our Divisions</p>
-          <h2 className="mt-2 text-3xl font-bold">Three divisions, one trusted partner.</h2>
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand-blue">Our Service Lines</p>
+          <h2 className="mt-2 text-3xl font-bold">Three service lines, one trusted partner.</h2>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {divisions.map((d) => {
