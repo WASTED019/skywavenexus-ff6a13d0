@@ -39,6 +39,16 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
+type UserRow = {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  email: string | null;
+  is_active: boolean;
+  delete_requested: boolean;
+  roles: string[];
+};
+
 function AdminPage() {
   const navigate = useNavigate();
   const [authed, setAuthed] = useState<boolean | null>(null);
@@ -48,10 +58,28 @@ function AdminPage() {
   const [fDiv, setFDiv] = useState("");
   const [fUrg, setFUrg] = useState("");
   const [fStatus, setFStatus] = useState("");
+  const [users, setUsers] = useState<UserRow[]>([]);
+  const [userQ, setUserQ] = useState("");
+  const [userBusy, setUserBusy] = useState<string | null>(null);
+  const [userMsg, setUserMsg] = useState<string>("");
 
   const refresh = async () => {
     const { data } = await supabase.from("service_requests").select("*").order("created_at", { ascending: false });
     setList((data ?? []) as Req[]);
+  };
+
+  const refreshUsers = async () => {
+    const [{ data: profs }, { data: roleRows }] = await Promise.all([
+      supabase.from("profiles").select("id, username, full_name, email, is_active, delete_requested").order("created_at", { ascending: false }),
+      supabase.from("user_roles").select("user_id, role"),
+    ]);
+    const roleMap = new Map<string, string[]>();
+    for (const r of (roleRows ?? []) as { user_id: string; role: string }[]) {
+      const arr = roleMap.get(r.user_id) ?? [];
+      arr.push(r.role);
+      roleMap.set(r.user_id, arr);
+    }
+    setUsers(((profs ?? []) as Omit<UserRow, "roles">[]).map((p) => ({ ...p, roles: roleMap.get(p.id) ?? [] })));
   };
 
   useEffect(() => {
@@ -64,10 +92,30 @@ function AdminPage() {
       if (cancelled) return;
       if (!isAdmin) { await supabase.auth.signOut(); navigate({ to: "/sign-in" }); return; }
       setAuthed(true);
-      await refresh();
+      await Promise.all([refresh(), refreshUsers()]);
     })();
     return () => { cancelled = true; };
   }, [navigate]);
+
+  const setRole = async (target: UserRow, role: "admin" | "customer") => {
+    setUserMsg("");
+    setUserBusy(target.id);
+    const { error } = await supabase.rpc("set_user_role", { _target: target.id, _role: role });
+    setUserBusy(null);
+    if (error) {
+      setUserMsg(error.message);
+      return;
+    }
+    setUserMsg(`${target.username || target.email || "User"} is now ${role}.`);
+    await refreshUsers();
+  };
+
+  const filteredUsers = useMemo(() => {
+    if (!userQ.trim()) return users;
+    const t = userQ.toLowerCase();
+    return users.filter((u) => `${u.username ?? ""} ${u.full_name ?? ""} ${u.email ?? ""}`.toLowerCase().includes(t));
+  }, [users, userQ]);
+
 
   const filtered = useMemo(() => list.filter((r) => {
     if (fDiv && r.division_id !== fDiv) return false;
