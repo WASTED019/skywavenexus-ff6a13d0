@@ -38,7 +38,7 @@ export function Footer() {
           <h2 className="text-sm font-semibold uppercase tracking-wider opacity-90">Quick Links</h2>
           <ul className="mt-3 space-y-2 text-sm opacity-90">
             <li><Link to="/" className="hover:underline">Home</Link></li>
-            <li><Link to="/divisions" className="hover:underline">Divisions</Link></li>
+            <li><Link to="/divisions" className="hover:underline">Service Lines</Link></li>
             <li><Link to="/request" className="hover:underline">Request Service</Link></li>
             <li><Link to="/skywave-nexus" className="hover:underline">SKYWAVE NEXUS</Link></li>
             <li><Link to="/blog" className="hover:underline">Blog / Updates</Link></li>

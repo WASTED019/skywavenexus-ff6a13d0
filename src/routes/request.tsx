@@ -62,7 +62,7 @@ function RequestPage() {
       county: z.string().min(1, "County is required"),
       town: z.string().trim().min(1, "Town/location is required").max(100),
       clientType: z.string().min(1, "Select a client type"),
-      divisionId: z.string().min(1, "Select a division"),
+      divisionId: z.string().min(1, "Select a service line"),
       serviceId: z.string().min(1, "Select a service"),
       description: z.string().trim().min(10, "Describe what you need (min 10 chars)").max(2000),
       urgency: z.enum(["Low","Medium","High"]),
@@ -165,13 +165,13 @@ function RequestPage() {
         <fieldset className="rounded-2xl border bg-card p-6 shadow-soft">
           <legend className="px-2 text-sm font-semibold text-brand-blue">What you need</legend>
           <div className="grid gap-5 md:grid-cols-2">
-            <Field label="Division" error={errors.divisionId}>
+            <Field label="Service Line" error={errors.divisionId}>
               <select
                 value={divisionId}
                 onChange={(e) => { setDivisionId(e.target.value); setServiceId(""); navigate({ to: "/request", search: { division: e.target.value, service: undefined } }); }}
                 className="input"
               >
-                <option value="">Select a division</option>
+                <option value="">Select a service line</option>
                 {divisions.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
               </select>
             </Field>
@@ -182,7 +182,7 @@ function RequestPage() {
                 className="input"
                 disabled={!division}
               >
-                <option value="">{division ? "Select a service" : "Select division first"}</option>
+                <option value="">{division ? "Select a service" : "Select service line first"}</option>
                 {division?.services.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </Field>

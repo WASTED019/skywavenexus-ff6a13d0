@@ -39,6 +39,16 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
+type UserRow = {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  email: string | null;
+  is_active: boolean;
+  delete_requested: boolean;
+  roles: string[];
+};
+
 function AdminPage() {
   const navigate = useNavigate();
   const [authed, setAuthed] = useState<boolean | null>(null);
@@ -48,10 +58,28 @@ function AdminPage() {
   const [fDiv, setFDiv] = useState("");
   const [fUrg, setFUrg] = useState("");
   const [fStatus, setFStatus] = useState("");
+  const [users, setUsers] = useState<UserRow[]>([]);
+  const [userQ, setUserQ] = useState("");
+  const [userBusy, setUserBusy] = useState<string | null>(null);
+  const [userMsg, setUserMsg] = useState<string>("");
 
   const refresh = async () => {
     const { data } = await supabase.from("service_requests").select("*").order("created_at", { ascending: false });
     setList((data ?? []) as Req[]);
+  };
+
+  const refreshUsers = async () => {
+    const [{ data: profs }, { data: roleRows }] = await Promise.all([
+      supabase.from("profiles").select("id, username, full_name, email, is_active, delete_requested").order("created_at", { ascending: false }),
+      supabase.from("user_roles").select("user_id, role"),
+    ]);
+    const roleMap = new Map<string, string[]>();
+    for (const r of (roleRows ?? []) as { user_id: string; role: string }[]) {
+      const arr = roleMap.get(r.user_id) ?? [];
+      arr.push(r.role);
+      roleMap.set(r.user_id, arr);
+    }
+    setUsers(((profs ?? []) as Omit<UserRow, "roles">[]).map((p) => ({ ...p, roles: roleMap.get(p.id) ?? [] })));
   };
 
   useEffect(() => {
@@ -64,10 +92,30 @@ function AdminPage() {
       if (cancelled) return;
       if (!isAdmin) { await supabase.auth.signOut(); navigate({ to: "/sign-in" }); return; }
       setAuthed(true);
-      await refresh();
+      await Promise.all([refresh(), refreshUsers()]);
     })();
     return () => { cancelled = true; };
   }, [navigate]);
+
+  const setRole = async (target: UserRow, role: "admin" | "customer") => {
+    setUserMsg("");
+    setUserBusy(target.id);
+    const { error } = await supabase.rpc("set_user_role", { _target: target.id, _role: role });
+    setUserBusy(null);
+    if (error) {
+      setUserMsg(error.message);
+      return;
+    }
+    setUserMsg(`${target.username || target.email || "User"} is now ${role}.`);
+    await refreshUsers();
+  };
+
+  const filteredUsers = useMemo(() => {
+    if (!userQ.trim()) return users;
+    const t = userQ.toLowerCase();
+    return users.filter((u) => `${u.username ?? ""} ${u.full_name ?? ""} ${u.email ?? ""}`.toLowerCase().includes(t));
+  }, [users, userQ]);
+
 
   const filtered = useMemo(() => list.filter((r) => {
     if (fDiv && r.division_id !== fDiv) return false;
@@ -121,7 +169,7 @@ function AdminPage() {
         </div>
 
         <div className="mt-6 rounded-2xl border bg-card p-4 shadow-soft">
-          <h2 className="text-sm font-semibold">Requests by division</h2>
+          <h2 className="text-sm font-semibold">Requests by service line</h2>
           <div className="mt-2 flex flex-wrap gap-2 text-xs">
             {Object.entries(byDivision).length === 0 && <span className="text-muted-foreground">No requests yet.</span>}
             {Object.entries(byDivision).map(([k, v]) => (
@@ -133,7 +181,7 @@ function AdminPage() {
         <div className="mt-6 grid gap-3 md:grid-cols-4">
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search ref, name, phone…" className="rounded-md border px-3 py-2 text-sm" />
           <select value={fDiv} onChange={(e) => setFDiv(e.target.value)} className="rounded-md border px-3 py-2 text-sm">
-            <option value="">All divisions</option>
+            <option value="">All service lines</option>
             {divisions.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
           </select>
           <select value={fUrg} onChange={(e) => setFUrg(e.target.value)} className="rounded-md border px-3 py-2 text-sm">
@@ -150,7 +198,7 @@ function AdminPage() {
           <table className="min-w-full text-sm">
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider">
               <tr>
-                {["Ref","Date","Client","Phone","Location","Division","Service","Urgency","Status","Action"].map((h) => (
+                {["Ref","Date","Client","Phone","Location","Service Line","Service","Urgency","Status","Action"].map((h) => (
                   <th key={h} className="px-3 py-2">{h}</th>
                 ))}
               </tr>
@@ -178,6 +226,74 @@ function AdminPage() {
         </div>
       </section>
 
+      <section className="mx-auto w-full max-w-7xl px-4 pb-12">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-bold">Users</h2>
+          <input
+            value={userQ}
+            onChange={(e) => setUserQ(e.target.value)}
+            placeholder="Search username, name, email…"
+            className="rounded-md border px-3 py-2 text-sm"
+          />
+        </div>
+        {userMsg && <p className="mt-3 rounded-md bg-secondary px-3 py-2 text-xs">{userMsg}</p>}
+        <div className="mt-3 overflow-x-auto rounded-2xl border bg-card shadow-soft">
+          <table className="min-w-full text-sm">
+            <thead className="bg-secondary text-left text-xs uppercase tracking-wider">
+              <tr>
+                {["Username","Full name","Email","Role","Status","Action"].map((h) => (
+                  <th key={h} className="px-3 py-2">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.length === 0 && (
+                <tr><td colSpan={6} className="px-3 py-8 text-center text-muted-foreground">No users.</td></tr>
+              )}
+              {filteredUsers.map((u) => {
+                const isAdmin = u.roles.includes("admin");
+                return (
+                  <tr key={u.id} className="border-t">
+                    <td className="px-3 py-2">{u.username || <span className="text-muted-foreground">—</span>}</td>
+                    <td className="px-3 py-2">{u.full_name || <span className="text-muted-foreground">—</span>}</td>
+                    <td className="px-3 py-2 text-xs">{u.email || <span className="text-muted-foreground">—</span>}</td>
+                    <td className="px-3 py-2">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${isAdmin ? "bg-brand-blue/15 text-brand-blue" : "bg-secondary"}`}>
+                        {isAdmin ? "Admin" : (u.roles[0] || "—")}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-xs">
+                      {!u.is_active && <span className="mr-1 rounded bg-destructive/15 px-2 py-0.5 text-destructive">Inactive</span>}
+                      {u.delete_requested && <span className="rounded bg-destructive/15 px-2 py-0.5 text-destructive">Removal requested</span>}
+                      {u.is_active && !u.delete_requested && <span className="text-muted-foreground">Active</span>}
+                    </td>
+                    <td className="px-3 py-2">
+                      {isAdmin ? (
+                        <button
+                          onClick={() => setRole(u, "customer")}
+                          disabled={userBusy === u.id}
+                          className="rounded-md border px-3 py-1 text-xs font-semibold disabled:opacity-60"
+                        >
+                          {userBusy === u.id ? "…" : "Demote to Customer"}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setRole(u, "admin")}
+                          disabled={userBusy === u.id}
+                          className="rounded-md bg-brand-blue px-3 py-1 text-xs font-semibold text-white disabled:opacity-60"
+                        >
+                          {userBusy === u.id ? "…" : "Promote to Admin"}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       {active && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setActive(null)}>
           <div onClick={(e) => e.stopPropagation()} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-card p-6 shadow-elegant">
@@ -195,7 +311,7 @@ function AdminPage() {
               <Info k="Email" v={active.email} />
               <Info k="Location" v={`${active.town}, ${active.county}`} />
               <Info k="Client type" v={active.client_type || "—"} />
-              <Info k="Division" v={active.division_name} />
+              <Info k="Service Line" v={active.division_name} />
               <Info k="Service" v={active.service_name} />
               <Info k="Urgency" v={active.urgency} />
               <Info k="Follow-up" v={`${active.follow_up_method || "—"}${active.follow_up_date ? ` on ${active.follow_up_date}` : ""}`} />
@@ -206,7 +322,7 @@ function AdminPage() {
             </div>
             {active.division_details && Object.keys(active.division_details).length > 0 && (
               <div className="mt-4 rounded-xl bg-secondary p-3 text-sm">
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Division-specific</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Service-line specific</div>
                 <ul className="mt-1 space-y-1">
                   {Object.entries(active.division_details).map(([k, v]) => (<li key={k}><strong>{k}:</strong> {String(v)}</li>))}
                 </ul>

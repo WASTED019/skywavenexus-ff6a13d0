@@ -97,7 +97,7 @@ function CustomerDashboard() {
           <table className="min-w-full text-sm">
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider">
               <tr>
-                {["Ref","Date","Division","Service","Status","Admin Feedback"].map((h) => <th key={h} className="px-3 py-2">{h}</th>)}
+                {["Ref","Date","Service Line","Service","Status","Admin Feedback"].map((h) => <th key={h} className="px-3 py-2">{h}</th>)}
               </tr>
             </thead>
             <tbody>

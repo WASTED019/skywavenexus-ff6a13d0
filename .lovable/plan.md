@@ -1,71 +1,55 @@
-This work is large. I'll split it into phases so you can approve and we ship in working increments instead of one giant unstable change. I'll keep the current logo, colors, homepage, divisions, blog and showcase content.
+## Scope
 
-## Phase 1 — Auth, roles & navigation (foundation)
+Three tracks. UI text only for the rename — URLs and route filenames stay `/divisions/*`. Admin seeding handled in Lovable Cloud by you. New in-app tool to promote any user to admin.
 
-Database (single migration):
-- `profiles` table: `id` (PK = auth user id), `username` (unique), `full_name`, `phone`, `whatsapp`, `email`, `county`, `town`, `reset_approved` (bool, default false), `delete_requested` (bool, default false), `is_active` (bool, default true), timestamps.
-- Keep existing `user_roles` (`admin` | `customer`). Add `customer` enum value.
-- Trigger on `auth.users` insert → create `profiles` row + default `customer` role from signup metadata.
-- Drop `claim_admin_if_none()` (no auto-admin).
-- RLS: users read/update own profile; admins read/update all. `has_role()` stays.
-- Helper RPC `login_identifier_to_email(identifier text)` (SECURITY DEFINER) so login supports username OR email.
+## 1. Rename "Divisions" → "Service Lines" (UI text only)
 
-Navigation:
-- Public header/footer: Home, Divisions, Request Service, SKYWAVE NEXUS, Blog/Updates, Contact, Track Request, **Sign In**, **Sign Up**. Remove "Admin Login" everywhere.
-- Logged-in: replace Sign In/Sign Up with **Dashboard** + **Logout**. Dashboard routes to `/admin` if role=admin, else `/dashboard`.
+Search-and-replace user-visible copy in these files:
+- `src/components/Header.tsx` — nav label
+- `src/components/Footer.tsx` — column heading + links
+- `src/routes/index.tsx` — homepage section heading + CTA copy
+- `src/routes/divisions.index.tsx` — H1 "Our Divisions" → "Our Service Lines", meta title/description, intro copy
+- `src/routes/divisions.$divisionId.tsx` — "Back to Divisions" link, meta strings
+- `src/routes/request.tsx` — "Division" form label → "Service Line", page copy
+- `src/routes/dashboard.tsx`, `src/routes/track.tsx`, `src/routes/admin.tsx` — column headings ("Division" → "Service Line")
+- `src/routes/skywave-nexus.tsx` — showcase labels
+- `public/llms.txt` — `Divisions` entry → `Service Lines`
+- `src/lib/requests.ts` — any user-facing labels (not field keys)
 
-Auth pages:
-- `/sign-in` — label "Username or Email" + "Password". Forgot-password notice with phone/WhatsApp. After login, role-based redirect.
-- `/sign-up` — fields: username, full name, phone, whatsapp, email, county, town, password, confirm. Always creates **customer**. Redirects to `/dashboard`.
-- Delete the old `/admin-login` route and `claim_admin_if_none` UI message.
+Internal identifiers untouched: `divisionId`, `division_id`, `divisions` array, route filenames, DB columns, the `data-lovable` div ids, sitemap paths. URLs continue to be `/divisions` and `/divisions/:id`.
 
-Admin seeding:
-- I will NOT hardcode davis's password. Instead I'll provide a one-time SQL snippet you run in the Cloud SQL editor to create the auth user + profile + admin role for `skywavenexus@gmail.com` / username `davis`. Documented in a new `ADMIN_SETUP.md`.
+## 2. Admin credentials
 
-## Phase 2 — Request capture in Supabase
+Update `ADMIN_SETUP.md` with the simplified flow you confirmed:
+1. In Cloud → Authentication → Users → **Add user** for `skywavenexus@gmail.com` with a password you choose, Auto Confirm on.
+2. Run a one-line SQL snippet (provided in the doc) to upgrade that profile to admin.
 
-Tables:
-- `service_requests` — all current fields from the form + `user_id` (nullable, for guests), `ref` (unique), `status`, `admin_feedback`, `internal_notes`, `division_details` jsonb, timestamps.
-- `request_files` — `request_id` FK, storage path, name, size, mime.
-- Storage bucket `request-uploads` (private). RLS: guests can insert (no select); customers select own files via request join; admins all.
-- RLS on requests: insert public allowed; customers select own (`user_id = auth.uid()`); admins all; customers cannot see `internal_notes` (handled by view `customer_requests` or column-filtered select in client).
+No password is committed. No new migration needed for seeding — the existing `handle_new_user` trigger creates the profile/customer row, and the SQL snippet flips it to admin.
 
-Migrate `/request`:
-- Replace `localStorage` writes with Supabase insert.
-- Upload file to storage, insert `request_files` row.
-- Show real DB-stored ref number on success.
-- Fix Food Safety / Value Addition / ISP dynamic field grid spacing (each field on its own row with proper label, gap-4).
+## 3. In-app "Promote to Admin" tool
 
-## Phase 3 — Dashboards
+Add a Users management panel on `/admin` (admins only):
+- Lists all profiles (username, full name, email, current roles, active/delete-requested flags).
+- Per-row actions: **Promote to Admin** / **Demote to Customer**.
+- Disables demote on the last remaining admin (safety check both client-side and via a DB function).
 
-`/dashboard` (customer):
-- List of own requests with status, division, service, date, admin feedback.
-- "Request Account Removal" button → sets `delete_requested=true`, anonymizes username/email, signs out.
-- Link to /request.
+Backed by a new `SECURITY DEFINER` SQL function `set_user_role(_target uuid, _role app_role)` that:
+- Verifies caller is admin via `has_role(auth.uid(), 'admin')`.
+- For demotes, refuses if it would leave zero admins.
+- Inserts/deletes rows in `public.user_roles` accordingly.
+- `EXECUTE` granted to `authenticated` only; revoked from `anon` and `PUBLIC`.
 
-`/admin` (admin only via RLS + route guard):
-- Requests tab (existing, now Supabase-backed) with status, admin_feedback, internal_notes editors.
-- Users tab: list, search, create customer/admin, deactivate, approve reset (set `reset_approved=true`), view delete-requested users.
-- Blog Manager, Showcase Manager, Slideshow Manager, Website Images Manager (Phase 4).
+Existing RLS already lets admins read all profiles, so the listing query is just `supabase.from('profiles').select(...)` joined with a roles fetch.
 
-## Phase 4 — Content managers (blog, showcase, slideshow, site images)
+## Technical notes
 
-Tables: `blog_posts`, `showcase_items`, `slides`, `site_images` (key/url pairs: logo, hero, blog_placeholder, showcase_placeholder, contact). Storage bucket `site-assets` (public).
-Migrate the static `src/data/blog.ts` / `showcase.ts` content into seed inserts so existing content persists. Public pages read from Supabase with the static content as fallback.
+- Migration file adds the `set_user_role` function plus an index on `user_roles(role)` for the admin-count check.
+- Promotion UI uses `supabase.rpc('set_user_role', { _target, _role })` with toast feedback and a TanStack Query refetch.
+- No URL changes → no sitemap, robots, or canonical updates needed.
+- No changes to the security memory; the new RPC is admin-gated.
 
-## Phase 5 — Password reset & track request
+## Out of scope
 
-- `/track` page: ref + email/phone lookup; returns status, division, service, date, admin_feedback only.
-- Password reset: customer-initiated reset only succeeds if their profile's `reset_approved=true`; flag is cleared after success. Admin toggles it in Users tab.
-
----
-
-## Scope question before I start
-
-This is roughly 4–6 implementation rounds of work. I recommend we do it in this order and you approve phase-by-phase so each one lands working:
-
-1. **Phase 1 (auth/roles/nav) + Phase 2 (request capture)** — biggest user-visible fixes from your list (items 1–9, 11 partially, 15). Ship together.
-2. **Phase 3 (dashboards) + Phase 5 (track + reset + account removal)** — items 8, 10, 11, 12.
-3. **Phase 4 (content managers + storage-backed images)** — items 13, 14.
-
-Reply "approve phase 1+2" (or tell me to bundle differently) and I'll start with the migration + code changes. The davis admin will be seedable via a SQL snippet I'll include — I won't put the password in the repo.
+- Changing route paths or DB column names.
+- Bulk user import or invite-by-email flows.
+- Password reset UX changes (already covered by existing `customer_can_reset` flow).

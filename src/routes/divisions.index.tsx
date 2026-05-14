@@ -7,10 +7,10 @@ import { Shield, Sprout, Wifi, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/divisions/")({
   head: () => ({
     meta: [
-      { title: "Our Divisions — SKYWAVE NEXUS" },
-      { name: "description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity divisions of SKYWAVE NEXUS Integrated Solutions." },
-      { property: "og:title", content: "Our Divisions — SKYWAVE NEXUS" },
-      { property: "og:description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity divisions of SKYWAVE NEXUS." },
+      { title: "Our Service Lines — SKYWAVE NEXUS" },
+      { name: "description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity service lines of SKYWAVE NEXUS Integrated Solutions." },
+      { property: "og:title", content: "Our Service Lines — SKYWAVE NEXUS" },
+      { property: "og:description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity service lines of SKYWAVE NEXUS." },
       { property: "og:url", content: "https://skywavenexus.lovable.app/divisions" },
     ],
     links: [
@@ -29,9 +29,9 @@ function DivisionsIndex() {
       <Header />
       <section className="bg-hero-gradient text-white">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <h1 className="text-3xl font-bold sm:text-4xl">Our Divisions</h1>
+          <h1 className="text-3xl font-bold sm:text-4xl">Our Service Lines</h1>
           <p className="mt-3 max-w-2xl text-white/85">
-            Choose a division to explore the services we offer and request a quotation.
+            Choose a service line to explore the services we offer and request a quotation.
           </p>
         </div>
       </section>

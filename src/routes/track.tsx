@@ -79,7 +79,7 @@ function TrackPage() {
             <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
               <div><dt className="text-xs uppercase text-muted-foreground">Status</dt><dd className="font-semibold">{result.status}</dd></div>
               <div><dt className="text-xs uppercase text-muted-foreground">Date submitted</dt><dd>{new Date(result.created_at).toLocaleString()}</dd></div>
-              <div><dt className="text-xs uppercase text-muted-foreground">Division</dt><dd>{result.division_name}</dd></div>
+              <div><dt className="text-xs uppercase text-muted-foreground">Service Line</dt><dd>{result.division_name}</dd></div>
               <div><dt className="text-xs uppercase text-muted-foreground">Service</dt><dd>{result.service_name}</dd></div>
             </dl>
             <div className="mt-4">

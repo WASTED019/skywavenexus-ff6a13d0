@@ -6,7 +6,7 @@ import { useAuth, signOut } from "@/lib/auth";
 
 const publicNav = [
   { to: "/", label: "Home" },
-  { to: "/divisions", label: "Divisions" },
+  { to: "/divisions", label: "Service Lines" },
   { to: "/request", label: "Request Service" },
   { to: "/skywave-nexus", label: "SKYWAVE NEXUS" },
   { to: "/blog", label: "Blog / Updates" },

@@ -5,7 +5,7 @@
 ## Pages
 
 - [Home](/): Overview of SKYWAVE NEXUS divisions and services.
-- [Divisions](/divisions): Food Safety & Compliance, Value Addition, and ISP & Connectivity.
+- [Service Lines](/divisions): Food Safety & Compliance, Value Addition, and ISP & Connectivity.
 - [Food Safety](/divisions/food-safety): Food safety, hygiene and compliance services.
 - [Value Addition](/divisions/value-addition): Processing, packaging and product development.
 - [ISP & Connectivity](/divisions/isp): Internet, networking and IT support services.
