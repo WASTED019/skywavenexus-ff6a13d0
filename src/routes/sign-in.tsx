@@ -75,7 +75,8 @@ function SignIn() {
           </button>
 
           <p className="text-xs text-muted-foreground">
-            Forgot your password? Call the office on <strong>0753366995</strong> or WhatsApp <strong>0753366995</strong>. The office must approve a reset before you can change your password.
+            <Link to="/forgot-password" className="font-semibold text-brand-blue hover:underline">Forgot your password?</Link>{" "}
+            Reset requests must first be approved by the office — call or WhatsApp <strong>0753366995</strong>, then use the reset link.
           </p>
 
           <p className="text-center text-sm">
