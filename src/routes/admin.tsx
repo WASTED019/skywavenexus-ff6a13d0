@@ -226,6 +226,74 @@ function AdminPage() {
         </div>
       </section>
 
+      <section className="mx-auto w-full max-w-7xl px-4 pb-12">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-bold">Users</h2>
+          <input
+            value={userQ}
+            onChange={(e) => setUserQ(e.target.value)}
+            placeholder="Search username, name, email…"
+            className="rounded-md border px-3 py-2 text-sm"
+          />
+        </div>
+        {userMsg && <p className="mt-3 rounded-md bg-secondary px-3 py-2 text-xs">{userMsg}</p>}
+        <div className="mt-3 overflow-x-auto rounded-2xl border bg-card shadow-soft">
+          <table className="min-w-full text-sm">
+            <thead className="bg-secondary text-left text-xs uppercase tracking-wider">
+              <tr>
+                {["Username","Full name","Email","Role","Status","Action"].map((h) => (
+                  <th key={h} className="px-3 py-2">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.length === 0 && (
+                <tr><td colSpan={6} className="px-3 py-8 text-center text-muted-foreground">No users.</td></tr>
+              )}
+              {filteredUsers.map((u) => {
+                const isAdmin = u.roles.includes("admin");
+                return (
+                  <tr key={u.id} className="border-t">
+                    <td className="px-3 py-2">{u.username || <span className="text-muted-foreground">—</span>}</td>
+                    <td className="px-3 py-2">{u.full_name || <span className="text-muted-foreground">—</span>}</td>
+                    <td className="px-3 py-2 text-xs">{u.email || <span className="text-muted-foreground">—</span>}</td>
+                    <td className="px-3 py-2">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${isAdmin ? "bg-brand-blue/15 text-brand-blue" : "bg-secondary"}`}>
+                        {isAdmin ? "Admin" : (u.roles[0] || "—")}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-xs">
+                      {!u.is_active && <span className="mr-1 rounded bg-destructive/15 px-2 py-0.5 text-destructive">Inactive</span>}
+                      {u.delete_requested && <span className="rounded bg-destructive/15 px-2 py-0.5 text-destructive">Removal requested</span>}
+                      {u.is_active && !u.delete_requested && <span className="text-muted-foreground">Active</span>}
+                    </td>
+                    <td className="px-3 py-2">
+                      {isAdmin ? (
+                        <button
+                          onClick={() => setRole(u, "customer")}
+                          disabled={userBusy === u.id}
+                          className="rounded-md border px-3 py-1 text-xs font-semibold disabled:opacity-60"
+                        >
+                          {userBusy === u.id ? "…" : "Demote to Customer"}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setRole(u, "admin")}
+                          disabled={userBusy === u.id}
+                          className="rounded-md bg-brand-blue px-3 py-1 text-xs font-semibold text-white disabled:opacity-60"
+                        >
+                          {userBusy === u.id ? "…" : "Promote to Admin"}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       {active && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setActive(null)}>
           <div onClick={(e) => e.stopPropagation()} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-card p-6 shadow-elegant">
