@@ -64,11 +64,12 @@ export function useSiteSettings(): SiteSettings {
     supabase.from("site_settings").select("*").eq("id", "global").maybeSingle()
       .then(({ data }) => {
         if (!alive || !data) return;
+        const d = data as unknown as Partial<SiteSettings>;
         setS({
           ...DEFAULT_SETTINGS,
-          ...(data as Partial<SiteSettings>),
-          social_links: (data as { social_links?: Record<string, string> }).social_links ?? {},
-          footer_links: ((data as { footer_links?: SiteSettings["footer_links"] }).footer_links ?? []),
+          ...d,
+          social_links: (d.social_links as Record<string, string>) ?? {},
+          footer_links: (d.footer_links as SiteSettings["footer_links"]) ?? [],
         });
       });
     return () => { alive = false; };
