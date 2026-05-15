@@ -104,7 +104,7 @@ export function useServiceLines(): ServiceLine[] {
   useEffect(() => {
     let alive = true;
     supabase.from("service_lines").select("*").order("display_order")
-      .then(({ data }) => { if (alive) setList((data as ServiceLine[]) ?? []); });
+      .then(({ data }) => { if (alive) setList(((data ?? []) as unknown) as ServiceLine[]); });
     return () => { alive = false; };
   }, []);
   return list;
