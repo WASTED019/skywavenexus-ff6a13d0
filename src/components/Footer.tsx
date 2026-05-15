@@ -2,35 +2,39 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { useAuth, signOut } from "@/lib/auth";
+import { hasMin } from "@/lib/permissions";
+import { useSiteSettings } from "@/lib/cms";
 
 export function Footer() {
   const { session, role } = useAuth();
   const navigate = useNavigate();
-  const dashboardTo = role === "admin" ? "/admin" : "/dashboard";
+  const settings = useSiteSettings();
+  const dashboardTo = hasMin(role, "viewer") ? "/admin" : "/dashboard";
+  const logoSrc = settings.logo_url || logo;
 
   return (
     <footer className="mt-20 border-t bg-brand-navy text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
-            <img src={logo} alt="SKYWAVE NEXUS logo" className="h-12 w-12 rounded bg-white p-1 object-contain" />
+            <img src={logoSrc} alt="SKYWAVE NEXUS logo" className="h-12 w-12 rounded bg-white p-1 object-contain" />
             <div>
               <div className="text-base font-bold">SKYWAVE NEXUS</div>
               <div className="text-xs uppercase tracking-wider opacity-80">Integrated Solutions</div>
             </div>
           </div>
           <p className="mt-4 max-w-xs text-sm opacity-80">
-            Integrated Solutions for Food Safety, Value Addition and Digital Connectivity.
+            {settings.footer_text}
           </p>
         </div>
 
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider opacity-90">Contact</h2>
           <ul className="mt-3 space-y-2 text-sm opacity-90">
-            <li className="flex items-center gap-2"><Phone className="size-4" /> 0753366995</li>
-            <li className="flex items-center gap-2"><MessageCircle className="size-4" /> WhatsApp: 0753366995</li>
-            <li className="flex items-center gap-2"><Mail className="size-4" /> skywavenexus@gmail.com</li>
-            <li className="flex items-center gap-2"><MapPin className="size-4" /> Nyange, Nyeri, Kenya</li>
+            {settings.phone && <li className="flex items-center gap-2"><Phone className="size-4" /> {settings.phone}</li>}
+            {settings.whatsapp && <li className="flex items-center gap-2"><MessageCircle className="size-4" /> WhatsApp: {settings.whatsapp}</li>}
+            {settings.email && <li className="flex items-center gap-2"><Mail className="size-4" /> {settings.email}</li>}
+            {settings.location && <li className="flex items-center gap-2"><MapPin className="size-4" /> {settings.location}</li>}
           </ul>
         </div>
 

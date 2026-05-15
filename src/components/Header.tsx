@@ -3,6 +3,8 @@ import { useState } from "react";
 import logo from "@/assets/logo.png";
 import { Menu, X } from "lucide-react";
 import { useAuth, signOut } from "@/lib/auth";
+import { hasMin } from "@/lib/permissions";
+import { useSiteSettings } from "@/lib/cms";
 
 const publicNav = [
   { to: "/", label: "Home" },
@@ -17,8 +19,10 @@ const publicNav = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const { session, role } = useAuth();
+  const settings = useSiteSettings();
   const navigate = useNavigate();
-  const dashboardTo = role === "admin" ? "/admin" : "/dashboard";
+  const isAdminTier = hasMin(role, "viewer");
+  const dashboardTo = isAdminTier ? "/admin" : "/dashboard";
 
   const handleLogout = async () => {
     await signOut();
@@ -27,12 +31,13 @@ export function Header() {
 
   const linkClass = "rounded-md px-3 py-2 text-sm font-medium text-foreground/80 transition hover:bg-accent hover:text-foreground";
   const activeClass = { className: "rounded-md px-3 py-2 text-sm font-semibold text-brand-blue bg-accent" };
+  const logoSrc = settings.logo_url || logo;
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
         <Link to="/" className="flex items-center gap-3">
-          <img src={logo} alt="SKYWAVE NEXUS Integrated Solutions logo" className="h-11 w-11 object-contain" />
+          <img src={logoSrc} alt="SKYWAVE NEXUS Integrated Solutions logo" className="h-11 w-11 object-contain" />
           <div className="leading-tight">
             <div className="text-sm font-bold text-brand-navy sm:text-base">SKYWAVE NEXUS</div>
             <div className="text-[10px] font-medium uppercase tracking-wider text-brand-blue sm:text-xs">
