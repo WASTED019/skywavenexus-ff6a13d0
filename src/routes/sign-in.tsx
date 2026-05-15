@@ -44,7 +44,7 @@ function SignIn() {
 
       // Check role
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.session.user.id);
-      const isAdmin = (roles ?? []).some((r) => r.role === "admin");
+      const isAdmin = (roles ?? []).some((r) => ["admin","super_admin","staff","viewer"].includes(r.role));
       navigate({ to: isAdmin ? "/admin" : "/dashboard" });
     } finally {
       setBusy(false);
