@@ -41,7 +41,7 @@ function CustomerDashboard() {
 
       // If admin, send to admin dashboard
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id);
-      if ((roles ?? []).some((r) => r.role === "admin")) { navigate({ to: "/admin" }); return; }
+      if ((roles ?? []).some((r) => ["admin","super_admin","staff","viewer"].includes(r.role))) { navigate({ to: "/admin" }); return; }
 
       const [{ data: prof }, { data: reqs }] = await Promise.all([
         supabase.from("profiles").select("username, full_name, email, delete_requested").eq("id", session.user.id).maybeSingle(),
