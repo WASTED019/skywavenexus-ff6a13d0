@@ -181,7 +181,7 @@ function RequestsPanel({ role }: { role: Role }) {
   }), [list, q, fStatus, fDiv]);
 
   const update = async (id: string, payload: Record<string, unknown>) => {
-    const { error } = await supabase.rpc("update_request_meta", { _id: id, _payload: payload });
+    const { error } = await supabase.rpc("update_request_meta", { _id: id, _payload: payload as any });
     if (error) { alert(error.message); return; }
     await refresh();
     if (active && active.id === id) setActive((a) => a ? { ...a, ...payload } as Req : a);
@@ -310,13 +310,13 @@ function HomepagePanel({ role }: { role: Role }) {
 
   const saveContent = async () => {
     if (!hc) return;
-    const { error } = await supabase.rpc("update_homepage_content", { _payload: hc as unknown as Record<string, unknown> });
+    const { error } = await supabase.rpc("update_homepage_content", { _payload: hc as any });
     setMsg(error ? error.message : "Saved.");
     if (!error) await reload();
   };
 
   const upsertSlide = async (s: Partial<Slide>) => {
-    const { error } = await supabase.rpc("upsert_slide", { _payload: s as unknown as Record<string, unknown> });
+    const { error } = await supabase.rpc("upsert_slide", { _payload: s as any });
     setMsg(error ? error.message : "Slide saved.");
     if (!error) await reload();
   };
@@ -412,7 +412,7 @@ function ServiceLinesPanel() {
   };
   useEffect(() => { reload(); }, []);
   const save = async (sl: SL) => {
-    const { error } = await supabase.rpc("upsert_service_line", { _payload: sl as unknown as Record<string, unknown> });
+    const { error } = await supabase.rpc("upsert_service_line", { _payload: sl as any });
     setMsg(error ? error.message : "Saved.");
     if (!error) reload();
   };
@@ -470,7 +470,7 @@ function MediaPanel({ role }: { role: Role }) {
       const { error } = await supabase.rpc("register_media", { _payload: {
         storage_path: path, public_url: urlData.publicUrl, title: file.name, alt_text: file.name,
         mime_type: compressed.type, size_bytes: String(compressed.size),
-      } as unknown as Record<string, unknown> });
+      } as any });
       if (error) { setMsg(error.message); return; }
       setMsg("Uploaded."); reload();
     } finally {
@@ -534,7 +534,7 @@ function SettingsPanel() {
       const [k, ...rest] = line.split(":"); const v = rest.join(":").trim();
       if (k && v) social[k.trim()] = v;
     });
-    const { error } = await supabase.rpc("update_site_settings", { _payload: { ...s, social_links: social } as unknown as Record<string, unknown> });
+    const { error } = await supabase.rpc("update_site_settings", { _payload: { ...s, social_links: social } as any });
     setMsg(error ? error.message : "Saved.");
   };
 
@@ -582,7 +582,7 @@ function UsersPanel() {
 
   const setRoleFor = async (target: UserRow, role: string) => {
     setMsg(""); setBusy(target.id);
-    const { error } = await supabase.rpc("set_user_role", { _target: target.id, _role: role });
+    const { error } = await supabase.rpc("set_user_role", { _target: target.id, _role: role as any });
     setBusy(null);
     setMsg(error ? error.message : `${target.username || target.email} → ${role}`);
     if (!error) reload();
