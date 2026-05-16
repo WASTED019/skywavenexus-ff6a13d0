@@ -173,9 +173,9 @@ function HomePage() {
             <h2 className="text-3xl font-bold">Let's solve it together.</h2>
             <p className="mt-3 text-white/85">Reach us directly — we follow up on every request.</p>
             <div className="mt-6 space-y-2 text-sm">
-              <div className="flex items-center gap-2"><Phone className="size-4" /> 0753366995</div>
-              <div className="flex items-center gap-2"><Mail className="size-4" /> skywavenexus@gmail.com</div>
-              <div className="flex items-center gap-2"><MapPin className="size-4" /> Nyange, Nyeri, Kenya</div>
+              <div className="flex items-center gap-2"><Phone className="size-4" /> {settings.phone}</div>
+              <div className="flex items-center gap-2"><Mail className="size-4" /> {settings.email}</div>
+              <div className="flex items-center gap-2"><MapPin className="size-4" /> {settings.location}</div>
             </div>
           </div>
           <div className="flex flex-col items-start justify-center gap-3 md:items-end">
