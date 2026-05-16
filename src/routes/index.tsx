@@ -29,6 +29,20 @@ const iconFor = (id: string) =>
   id === "food-safety" ? Shield : id === "value-addition" ? Sprout : Wifi;
 
 function HomePage() {
+  const hc = useHomepageContent();
+  const sls = useServiceLines();
+  const settings = useSiteSettings();
+
+  const heroTitle = hc?.hero_title || "SKYWAVE NEXUS — Integrated Solutions for Food Safety & Digital Connectivity";
+  const heroSubtitle = hc?.hero_subtitle || "Integrated Solutions for Food Safety, Value Addition and Digital Connectivity.";
+  const heroBody = hc?.hero_body || "Practical support in food safety, value addition, and digital connectivity for small businesses, farmers, processors, institutions, cyber cafés, and rural enterprises.";
+  const primaryBtn = hc?.button_text || "Request a Service";
+  const primaryBtnLink = hc?.button_link || "/request";
+
+  const serviceCards = sls.length > 0
+    ? sls.map(s => ({ id: s.slug, title: s.title, short: s.short_desc || "", link: s.button_link || `/divisions/${s.slug}`, image: s.image_url }))
+    : divisions.map(d => ({ id: d.id, title: d.title, short: d.short, link: `/divisions/${d.id}`, image: null as string | null }));
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -37,21 +51,14 @@ function HomePage() {
       <section className="bg-hero-gradient relative overflow-hidden text-white">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-24">
           <div>
-            <img src={logo} alt="SKYWAVE NEXUS Integrated Solutions" className="mb-6 h-24 w-24 rounded-xl bg-white/95 p-2 shadow-elegant" />
-            <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">
-              SKYWAVE NEXUS — Integrated Solutions for <span className="text-brand-bright bg-white/10 px-2 rounded">Food Safety & Digital Connectivity</span>
-            </h1>
-            <p className="mt-4 text-lg font-medium text-white/90">
-              Integrated Solutions for Food Safety, Value Addition and Digital Connectivity.
-            </p>
-            <p className="mt-3 max-w-xl text-white/85">
-              Practical support in food safety, value addition, and digital connectivity for small businesses,
-              farmers, processors, institutions, cyber cafés, and rural enterprises.
-            </p>
+            <img src={settings.logo_url || logo} alt="SKYWAVE NEXUS Integrated Solutions" className="mb-6 h-24 w-24 rounded-xl bg-white/95 p-2 shadow-elegant" />
+            <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">{heroTitle}</h1>
+            <p className="mt-4 text-lg font-medium text-white/90">{heroSubtitle}</p>
+            <p className="mt-3 max-w-xl text-white/85">{heroBody}</p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link to="/request" className="rounded-md bg-white px-5 py-3 text-sm font-semibold text-brand-navy shadow-soft hover:bg-white/90">
-                Request a Service
-              </Link>
+              <a href={primaryBtnLink} className="rounded-md bg-white px-5 py-3 text-sm font-semibold text-brand-navy shadow-soft hover:bg-white/90">
+                {primaryBtn}
+              </a>
               <Link to="/divisions" className="rounded-md border border-white/40 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/15">
                 View Service Lines
               </Link>
@@ -62,7 +69,7 @@ function HomePage() {
           </div>
           <div className="relative hidden md:block">
             <div className="absolute -inset-10 rounded-full bg-white/10 blur-3xl" />
-            <img src={logo} alt="" className="relative mx-auto h-80 w-80 rounded-2xl bg-white p-6 shadow-elegant" />
+            <img src={settings.logo_url || logo} alt="" className="relative mx-auto h-80 w-80 rounded-2xl bg-white p-6 shadow-elegant" />
           </div>
         </div>
       </section>
@@ -74,24 +81,27 @@ function HomePage() {
           <h2 className="mt-2 text-3xl font-bold">Three service lines, one trusted partner.</h2>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
-          {divisions.map((d) => {
+          {serviceCards.map((d) => {
             const Icon = iconFor(d.id);
             return (
               <div key={d.id} className="bg-card-gradient group rounded-2xl border p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-elegant">
-                <div className="inline-flex rounded-xl bg-brand-blue/10 p-3 text-brand-blue">
-                  <Icon className="size-6" />
-                </div>
+                {d.image ? (
+                  <img src={d.image} alt="" className="mb-4 h-32 w-full rounded-xl object-cover" />
+                ) : (
+                  <div className="inline-flex rounded-xl bg-brand-blue/10 p-3 text-brand-blue">
+                    <Icon className="size-6" />
+                  </div>
+                )}
                 <h3 className="mt-4 text-xl font-bold text-brand-navy">{d.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{d.short}</p>
-                <Link to="/divisions/$divisionId" params={{ divisionId: d.id }} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-blue hover:underline">
+                <a href={d.link} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-blue hover:underline">
                   View Services <ArrowRight className="size-4" />
-                </Link>
+                </a>
               </div>
             );
           })}
         </div>
       </section>
-
       {/* Why Choose */}
       <section className="bg-secondary py-16">
         <div className="mx-auto max-w-7xl px-4">
