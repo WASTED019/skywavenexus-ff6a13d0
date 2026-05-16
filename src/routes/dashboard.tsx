@@ -121,7 +121,7 @@ function CustomerDashboard() {
         <div className="mt-10 rounded-2xl border border-destructive/30 bg-destructive/5 p-5">
           <h3 className="text-sm font-semibold text-destructive">Account removal</h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            This anonymizes your username and email. Service request records remain for office follow-up and audit. You will be logged out immediately.
+            You will be logged out immediately.
           </p>
           <button onClick={onRequestRemoval} disabled={busy} className="mt-3 rounded-md border border-destructive bg-card px-4 py-2 text-sm font-semibold text-destructive disabled:opacity-60">
             {busy ? "Processing…" : "Request Account Removal"}
