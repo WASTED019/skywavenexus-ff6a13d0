@@ -295,6 +295,7 @@ type HC = { id: string; hero_title: string|null; hero_subtitle: string|null; her
 function HomepagePanel({ role }: { role: Role }) {
   const [hc, setHc] = useState<HC | null>(null);
   const [slides, setSlides] = useState<Slide[]>([]);
+  const [newSlideKey, setNewSlideKey] = useState(0);
   const [versions, setVersions] = useState<Array<{ id: string; created_at: string; payload: HC }>>([]);
   const [msg, setMsg] = useState("");
 
