@@ -508,7 +508,7 @@ function MediaPanel({ role }: { role: Role }) {
             <div className="mt-2 truncate text-xs font-semibold">{m.title || m.storage_path}</div>
             <div className="text-[10px] text-muted-foreground">{m.size_bytes ? Math.round(m.size_bytes/1024) + "KB" : ""}</div>
             <div className="mt-2 flex gap-1">
-              <button onClick={() => navigator.clipboard.writeText(m.public_url)} className="flex-1 rounded-md border px-2 py-1 text-xs">Copy URL</button>
+              <CopyUrlButton url={m.public_url} />
               {can(role, "delete_content") && <button onClick={() => del(m.id)} className="rounded-md border border-destructive px-2 py-1 text-xs text-destructive">Delete</button>}
             </div>
           </div>
