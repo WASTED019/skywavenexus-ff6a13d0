@@ -4,7 +4,8 @@ import { Footer } from "@/components/Footer";
 import { divisions, findDivision, findService } from "@/data/divisions";
 import { submitServiceRequest } from "@/lib/requests";
 import { whatsappLink } from "@/lib/whatsapp";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 import { CheckCircle2, MessageCircle } from "lucide-react";
 
