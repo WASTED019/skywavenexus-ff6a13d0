@@ -40,6 +40,10 @@ function RequestPage() {
   const [submitted, setSubmitted] = useState<{ ref: string } | null>(null);
   const [submitError, setSubmitError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setIsSignedIn(!!data.session));
+  }, []);
 
   const [divisionId, setDivisionId] = useState<string>(search.division || "");
   const [serviceId, setServiceId] = useState<string>(search.service || "");
