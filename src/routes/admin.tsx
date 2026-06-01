@@ -374,7 +374,13 @@ function HomepagePanel({ role }: { role: Role }) {
           {slides.map((s) => (
             <SlideEditor key={s.id} slide={s} onSave={upsertSlide} onDelete={() => deleteSlide(s.id)} canDelete={can(role, "delete_content")} />
           ))}
-          <SlideEditor key="new" slide={{ id: "", image_url: "", title: "", subtitle: "", button_text: "", button_link: "", display_order: slides.length, is_active: true }} onSave={(s) => upsertSlide({ ...s, id: undefined })} canDelete={false} isNew />
+          <SlideEditor
+            key={`new-${newSlideKey}`}
+            slide={{ id: "", image_url: "", title: "", subtitle: "", button_text: "", button_link: "", display_order: slides.length, is_active: true }}
+            onSave={async (s) => { await upsertSlide({ ...s, id: undefined }); setNewSlideKey((k) => k + 1); }}
+            canDelete={false}
+            isNew
+          />
         </div>
       </section>
     </div>
