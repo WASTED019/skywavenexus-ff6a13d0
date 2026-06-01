@@ -370,8 +370,11 @@ function HomepagePanel({ role }: { role: Role }) {
       <section className="rounded-2xl border bg-card p-6 shadow-soft">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold">Slideshow</h2>
-          <span className="text-xs text-muted-foreground">{activeCount}/5 active</span>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${activeCount > 0 ? "bg-brand-green/20 text-brand-navy" : "bg-muted text-muted-foreground"}`}>
+            {activeCount} active · {slides.length} total {activeCount > 5 ? "(max 5 will show)" : ""}
+          </span>
         </div>
+        <p className="mt-1 text-xs text-muted-foreground">Active slides appear on the homepage below the hero. Toggle <strong>Active</strong> and click Save.</p>
         <div className="mt-4 space-y-4">
           {slides.map((s) => (
             <SlideEditor key={s.id} slide={s} onSave={upsertSlide} onDelete={() => deleteSlide(s.id)} canDelete={can(role, "delete_content")} />
