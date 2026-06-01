@@ -295,6 +295,7 @@ type HC = { id: string; hero_title: string|null; hero_subtitle: string|null; her
 function HomepagePanel({ role }: { role: Role }) {
   const [hc, setHc] = useState<HC | null>(null);
   const [slides, setSlides] = useState<Slide[]>([]);
+  const [newSlideKey, setNewSlideKey] = useState(0);
   const [versions, setVersions] = useState<Array<{ id: string; created_at: string; payload: HC }>>([]);
   const [msg, setMsg] = useState("");
 
@@ -373,7 +374,13 @@ function HomepagePanel({ role }: { role: Role }) {
           {slides.map((s) => (
             <SlideEditor key={s.id} slide={s} onSave={upsertSlide} onDelete={() => deleteSlide(s.id)} canDelete={can(role, "delete_content")} />
           ))}
-          <SlideEditor key="new" slide={{ id: "", image_url: "", title: "", subtitle: "", button_text: "", button_link: "", display_order: slides.length, is_active: true }} onSave={(s) => upsertSlide({ ...s, id: undefined })} canDelete={false} isNew />
+          <SlideEditor
+            key={`new-${newSlideKey}`}
+            slide={{ id: "", image_url: "", title: "", subtitle: "", button_text: "", button_link: "", display_order: slides.length, is_active: true }}
+            onSave={async (s) => { await upsertSlide({ ...s, id: undefined }); setNewSlideKey((k) => k + 1); }}
+            canDelete={false}
+            isNew
+          />
         </div>
       </section>
     </div>
@@ -501,7 +508,7 @@ function MediaPanel({ role }: { role: Role }) {
             <div className="mt-2 truncate text-xs font-semibold">{m.title || m.storage_path}</div>
             <div className="text-[10px] text-muted-foreground">{m.size_bytes ? Math.round(m.size_bytes/1024) + "KB" : ""}</div>
             <div className="mt-2 flex gap-1">
-              <button onClick={() => navigator.clipboard.writeText(m.public_url)} className="flex-1 rounded-md border px-2 py-1 text-xs">Copy URL</button>
+              <CopyUrlButton url={m.public_url} />
               {can(role, "delete_content") && <button onClick={() => del(m.id)} className="rounded-md border border-destructive px-2 py-1 text-xs text-destructive">Delete</button>}
             </div>
           </div>
@@ -509,6 +516,31 @@ function MediaPanel({ role }: { role: Role }) {
         {list.length === 0 && <p className="col-span-full text-sm text-muted-foreground">No media yet.</p>}
       </div>
     </div>
+  );
+}
+
+function CopyUrlButton({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        document.execCommand("copy"); document.body.removeChild(ta);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      window.prompt("Copy URL:", url);
+    }
+  };
+  return (
+    <button type="button" onClick={copy} className="flex-1 rounded-md border px-2 py-1 text-xs">
+      {copied ? "Copied!" : "Copy URL"}
+    </button>
   );
 }
 
