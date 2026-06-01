@@ -116,29 +116,31 @@ function AdminPage() {
 
 /* ===================== DASHBOARD ===================== */
 function DashboardPanel() {
-  const [stats, setStats] = useState({ requests: 0, pendingResets: 0, slides: 0, media: 0 });
+  const [stats, setStats] = useState({ requests: 0, pendingResets: 0, slides: 0, activeSlides: 0, media: 0 });
   useEffect(() => {
     (async () => {
-      const [r, pr, sl, md] = await Promise.all([
+      const [r, pr, sl, slA, md] = await Promise.all([
         supabase.from("service_requests").select("id", { count: "exact", head: true }),
         supabase.from("password_reset_requests").select("id", { count: "exact", head: true }).eq("status","pending"),
         supabase.from("homepage_slides").select("id", { count: "exact", head: true }),
+        supabase.from("homepage_slides").select("id", { count: "exact", head: true }).eq("is_active", true),
         supabase.from("media_assets").select("id", { count: "exact", head: true }),
       ]);
-      setStats({ requests: r.count ?? 0, pendingResets: pr.count ?? 0, slides: sl.count ?? 0, media: md.count ?? 0 });
+      setStats({ requests: r.count ?? 0, pendingResets: pr.count ?? 0, slides: sl.count ?? 0, activeSlides: slA.count ?? 0, media: md.count ?? 0 });
     })();
   }, []);
-  const Card = ({ k, v }: { k: string; v: number }) => (
+  const Card = ({ k, v, sub }: { k: string; v: number; sub?: string }) => (
     <div className="rounded-2xl border bg-card p-5 shadow-soft">
       <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{k}</div>
       <div className="mt-1 text-2xl font-bold text-brand-navy">{v}</div>
+      {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
     </div>
   );
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Card k="Total Requests" v={stats.requests} />
       <Card k="Pending Resets" v={stats.pendingResets} />
-      <Card k="Slides" v={stats.slides} />
+      <Card k="Slides" v={stats.slides} sub={`${stats.activeSlides} active on homepage`} />
       <Card k="Media Assets" v={stats.media} />
     </div>
   );
