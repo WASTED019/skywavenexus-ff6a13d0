@@ -5,9 +5,10 @@ import { divisions } from "@/data/divisions";
 import { showcase } from "@/data/showcase";
 import { blogPosts } from "@/data/blog";
 import { whatsappLink } from "@/lib/whatsapp";
-import { useHomepageContent, useServiceLines, useSiteSettings } from "@/lib/cms";
+import { useHomepageContent, useHomepageSlides, useServiceLines, useSiteSettings } from "@/lib/cms";
 import logo from "@/assets/logo.png";
-import { Shield, Sprout, Wifi, ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin } from "lucide-react";
+import { Shield, Sprout, Wifi, ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
