@@ -143,6 +143,18 @@ function RequestPage() {
             <div className="text-lg font-bold text-brand-navy">{submitted.ref}</div>
             <div className="mt-2 text-xs text-muted-foreground">Keep this reference to check status on the Track page.</div>
           </div>
+          {!isSignedIn && (
+            <div className="mt-6 rounded-xl border border-brand-blue/30 bg-brand-blue/5 p-4 text-left text-sm">
+              <div className="font-semibold text-brand-navy">Tip: create an account for easier follow-up</div>
+              <p className="mt-1 text-muted-foreground">
+                You don't need an account to submit a request — our team will follow up via phone, WhatsApp, or email using the details you provided. If you'd like to track this request, receive updates, and message us back in one place, create a free account.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link to="/sign-up" className="rounded-md bg-brand-blue px-4 py-2 text-xs font-semibold text-white">Create account</Link>
+                <Link to="/sign-in" className="rounded-md border px-4 py-2 text-xs font-semibold">Sign in</Link>
+              </div>
+            </div>
+          )}
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <a href={whatsappLink(`Hello SKYWAVE NEXUS, my request reference is ${submitted.ref}.`)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-brand-green px-5 py-3 text-sm font-semibold text-brand-navy">
               <MessageCircle className="size-4" /> WhatsApp Us
