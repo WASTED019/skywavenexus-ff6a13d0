@@ -76,6 +76,11 @@ function HomePage() {
         </div>
       </section>
 
+      {/* Slideshow */}
+      {slides.length > 0 && <HomeSlideshow slides={slides} />}
+
+
+
       {/* Service Lines */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="mb-10 max-w-2xl">
