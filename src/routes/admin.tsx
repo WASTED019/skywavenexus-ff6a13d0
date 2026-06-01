@@ -519,6 +519,31 @@ function MediaPanel({ role }: { role: Role }) {
   );
 }
 
+function CopyUrlButton({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        document.execCommand("copy"); document.body.removeChild(ta);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      window.prompt("Copy URL:", url);
+    }
+  };
+  return (
+    <button type="button" onClick={copy} className="flex-1 rounded-md border px-2 py-1 text-xs">
+      {copied ? "Copied!" : "Copy URL"}
+    </button>
+  );
+}
+
 /* ===================== SETTINGS ===================== */
 type Settings = { id: string; phone: string|null; whatsapp: string|null; email: string|null; location: string|null; logo_url: string|null; footer_text: string|null; social_links: Record<string,string>; footer_links: Array<{label:string;href:string}> };
 function SettingsPanel() {
