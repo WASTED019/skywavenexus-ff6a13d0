@@ -104,6 +104,8 @@ function AdminPage() {
           {tab === "requests" && <RequestsPanel role={role} />}
           {tab === "homepage" && <HomepagePanel role={role} />}
           {tab === "service_lines" && <ServiceLinesPanel />}
+          {tab === "showcase" && <ShowcasePanel role={role} />}
+          {tab === "blog" && <BlogPanel role={role} />}
           {tab === "media" && <MediaPanel role={role} />}
           {tab === "settings" && <SettingsPanel />}
           {tab === "users" && <UsersPanel />}
