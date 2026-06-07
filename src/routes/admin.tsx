@@ -35,7 +35,7 @@ type UserRow = {
   email: string | null; is_active: boolean; delete_requested: boolean; roles: string[];
 };
 
-type Tab = "dashboard"|"requests"|"homepage"|"service_lines"|"media"|"settings"|"users"|"resets"|"activity";
+type Tab = "dashboard"|"requests"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"users"|"resets"|"activity";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -66,6 +66,8 @@ function AdminPage() {
     { id: "requests", label: "Requests", show: can(role, "manage_requests") },
     { id: "homepage", label: "Homepage", show: can(role, "edit_content") },
     { id: "service_lines", label: "Service Lines", show: can(role, "edit_content") },
+    { id: "showcase", label: "Selected Work", show: can(role, "edit_content") },
+    { id: "blog", label: "Blog", show: can(role, "edit_content") },
     { id: "media", label: "Media", show: can(role, "edit_content") },
     { id: "settings", label: "Settings", show: can(role, "edit_content") },
     { id: "users", label: "Users & Roles", show: can(role, "manage_users") },
@@ -102,6 +104,8 @@ function AdminPage() {
           {tab === "requests" && <RequestsPanel role={role} />}
           {tab === "homepage" && <HomepagePanel role={role} />}
           {tab === "service_lines" && <ServiceLinesPanel />}
+          {tab === "showcase" && <ShowcasePanel role={role} />}
+          {tab === "blog" && <BlogPanel role={role} />}
           {tab === "media" && <MediaPanel role={role} />}
           {tab === "settings" && <SettingsPanel />}
           {tab === "users" && <UsersPanel />}
@@ -828,5 +832,132 @@ function ActivityPanel() {
         </tbody>
       </table>
     </div>
+  );
+}
+
+/* ===================== SHOWCASE (Selected Work) ===================== */
+type ShowcaseRow = { id: string; title: string; division_id: string; division_name: string; description: string|null; location: string|null; outcome: string|null; image_url: string|null; display_order: number; is_active: boolean };
+function ShowcasePanel({ role }: { role: Role }) {
+  const [list, setList] = useState<ShowcaseRow[]>([]);
+  const [newKey, setNewKey] = useState(0);
+  const [msg, setMsg] = useState("");
+  const reload = useCallback(async () => {
+    const { data } = await supabase.from("showcase_items").select("*").order("display_order");
+    setList((data ?? []) as ShowcaseRow[]);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+  const save = async (s: Partial<ShowcaseRow>) => {
+    const { error } = await supabase.rpc("upsert_showcase_item", { _payload: s as any });
+    setMsg(error ? error.message : "Saved."); if (!error) reload();
+  };
+  const del = async (id: string) => {
+    if (!confirm("Delete this item?")) return;
+    const { error } = await supabase.rpc("delete_showcase_item", { _id: id });
+    setMsg(error ? error.message : "Deleted."); if (!error) reload();
+  };
+  return (
+    <div className="space-y-4">
+      {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
+      {list.map((s) => (
+        <ShowcaseEditor key={s.id} item={s} onSave={save} onDelete={() => del(s.id)} canDelete={can(role, "delete_content")} />
+      ))}
+      <ShowcaseEditor
+        key={`new-${newKey}`}
+        item={{ id: "", title: "", division_id: "food-safety", division_name: "Food Safety & Compliance Solutions", description: "", location: "", outcome: "", image_url: "", display_order: list.length, is_active: true }}
+        onSave={async (s) => { await save({ ...s, id: undefined }); setNewKey((k) => k+1); }}
+        canDelete={false}
+        isNew
+      />
+    </div>
+  );
+}
+
+function ShowcaseEditor({ item, onSave, onDelete, canDelete, isNew }: { item: ShowcaseRow; onSave: (s: Partial<ShowcaseRow>) => void; onDelete?: () => void; canDelete: boolean; isNew?: boolean }) {
+  const [s, setS] = useState(item);
+  return (
+    <section className="rounded-2xl border bg-card p-6 shadow-soft">
+      <h3 className="text-lg font-bold">{isNew ? "Add new item" : s.title}</h3>
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <Field label="Title"><input value={s.title} onChange={(e) => setS({ ...s, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Service line">
+          <select value={s.division_id} onChange={(e) => {
+            const opt = divisions.find(d => d.id === e.target.value);
+            setS({ ...s, division_id: e.target.value, division_name: opt?.title || s.division_name });
+          }} className="w-full rounded-md border px-3 py-2 text-sm">
+            {divisions.map(d => <option key={d.id} value={d.id}>{d.title}</option>)}
+          </select>
+        </Field>
+        <Field label="Location"><input value={s.location || ""} onChange={(e) => setS({ ...s, location: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Order"><input type="number" value={s.display_order} onChange={(e) => setS({ ...s, display_order: parseInt(e.target.value)||0 })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Image" full><ImageField value={s.image_url || ""} onChange={(v) => setS({ ...s, image_url: v })} /></Field>
+        <Field label="Description" full><textarea value={s.description || ""} onChange={(e) => setS({ ...s, description: e.target.value })} rows={3} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Outcome" full><textarea value={s.outcome || ""} onChange={(e) => setS({ ...s, outcome: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+      </div>
+      <div className="mt-3 flex items-center gap-3">
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={s.is_active} onChange={(e) => setS({ ...s, is_active: e.target.checked })} /> Active (shown on site)</label>
+        <button onClick={() => onSave(s)} className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white">{isNew ? "Add item" : "Save"}</button>
+        {canDelete && onDelete && <button onClick={onDelete} className="rounded-md border border-destructive px-3 py-1 text-xs text-destructive">Delete</button>}
+      </div>
+    </section>
+  );
+}
+
+/* ===================== BLOG ===================== */
+type BlogRow = { id: string; slug: string; title: string; category: string|null; summary: string|null; body: string|null; image_url: string|null; published_at: string; is_published: boolean; display_order: number };
+function BlogPanel({ role }: { role: Role }) {
+  const [list, setList] = useState<BlogRow[]>([]);
+  const [newKey, setNewKey] = useState(0);
+  const [msg, setMsg] = useState("");
+  const reload = useCallback(async () => {
+    const { data } = await supabase.from("blog_posts").select("*").order("published_at", { ascending: false });
+    setList((data ?? []) as BlogRow[]);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+  const save = async (p: Partial<BlogRow>) => {
+    const { error } = await supabase.rpc("upsert_blog_post", { _payload: p as any });
+    setMsg(error ? error.message : "Saved."); if (!error) reload();
+  };
+  const del = async (id: string) => {
+    if (!confirm("Delete this post?")) return;
+    const { error } = await supabase.rpc("delete_blog_post", { _id: id });
+    setMsg(error ? error.message : "Deleted."); if (!error) reload();
+  };
+  return (
+    <div className="space-y-4">
+      {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
+      {list.map((p) => (
+        <BlogEditor key={p.id} post={p} onSave={save} onDelete={() => del(p.id)} canDelete={can(role, "delete_content")} />
+      ))}
+      <BlogEditor
+        key={`new-${newKey}`}
+        post={{ id: "", slug: "", title: "", category: "", summary: "", body: "", image_url: "", published_at: new Date().toISOString().slice(0,10), is_published: true, display_order: 0 }}
+        onSave={async (p) => { await save({ ...p, id: undefined }); setNewKey((k) => k+1); }}
+        canDelete={false}
+        isNew
+      />
+    </div>
+  );
+}
+
+function BlogEditor({ post, onSave, onDelete, canDelete, isNew }: { post: BlogRow; onSave: (p: Partial<BlogRow>) => void; onDelete?: () => void; canDelete: boolean; isNew?: boolean }) {
+  const [p, setP] = useState(post);
+  return (
+    <section className="rounded-2xl border bg-card p-6 shadow-soft">
+      <h3 className="text-lg font-bold">{isNew ? "Add new post" : p.title}</h3>
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <Field label="Title"><input value={p.title} onChange={(e) => setP({ ...p, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Slug (URL id)"><input value={p.slug} onChange={(e) => setP({ ...p, slug: e.target.value })} placeholder="auto-generated if blank" className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Category"><input value={p.category || ""} onChange={(e) => setP({ ...p, category: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Published date"><input type="date" value={p.published_at?.slice(0,10) || ""} onChange={(e) => setP({ ...p, published_at: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Cover image" full><ImageField value={p.image_url || ""} onChange={(v) => setP({ ...p, image_url: v })} /></Field>
+        <Field label="Summary" full><textarea value={p.summary || ""} onChange={(e) => setP({ ...p, summary: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Body" full><textarea value={p.body || ""} onChange={(e) => setP({ ...p, body: e.target.value })} rows={8} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+      </div>
+      <div className="mt-3 flex items-center gap-3">
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={p.is_published} onChange={(e) => setP({ ...p, is_published: e.target.checked })} /> Published</label>
+        <button onClick={() => onSave(p)} className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white">{isNew ? "Add post" : "Save"}</button>
+        {canDelete && onDelete && <button onClick={onDelete} className="rounded-md border border-destructive px-3 py-1 text-xs text-destructive">Delete</button>}
+      </div>
+    </section>
   );
 }

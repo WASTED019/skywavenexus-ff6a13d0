@@ -45,6 +45,32 @@ export type ServiceLine = {
   display_order: number;
 };
 
+export type ShowcaseItem = {
+  id: string;
+  title: string;
+  division_id: string;
+  division_name: string;
+  description: string | null;
+  location: string | null;
+  outcome: string | null;
+  image_url: string | null;
+  display_order: number;
+  is_active: boolean;
+};
+
+export type BlogPost = {
+  id: string;
+  slug: string;
+  title: string;
+  category: string | null;
+  summary: string | null;
+  body: string | null;
+  image_url: string | null;
+  published_at: string;
+  is_published: boolean;
+  display_order: number;
+};
+
 export const DEFAULT_SETTINGS: SiteSettings = {
   id: "global",
   phone: "0753366995",
@@ -105,6 +131,28 @@ export function useServiceLines(): ServiceLine[] {
     let alive = true;
     supabase.from("service_lines").select("*").order("display_order")
       .then(({ data }) => { if (alive) setList(((data ?? []) as unknown) as ServiceLine[]); });
+    return () => { alive = false; };
+  }, []);
+  return list;
+}
+
+export function useShowcaseItems(): ShowcaseItem[] {
+  const [list, setList] = useState<ShowcaseItem[]>([]);
+  useEffect(() => {
+    let alive = true;
+    supabase.from("showcase_items").select("*").eq("is_active", true).order("display_order")
+      .then(({ data }) => { if (alive) setList((data as ShowcaseItem[]) ?? []); });
+    return () => { alive = false; };
+  }, []);
+  return list;
+}
+
+export function useBlogPosts(): BlogPost[] {
+  const [list, setList] = useState<BlogPost[]>([]);
+  useEffect(() => {
+    let alive = true;
+    supabase.from("blog_posts").select("*").eq("is_published", true).order("published_at", { ascending: false })
+      .then(({ data }) => { if (alive) setList((data as BlogPost[]) ?? []); });
     return () => { alive = false; };
   }, []);
   return list;

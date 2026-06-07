@@ -47,6 +47,54 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          body: string | null
+          category: string | null
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string | null
+          is_published: boolean
+          published_at: string
+          slug: string
+          summary: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          body?: string | null
+          category?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          published_at?: string
+          slug: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          body?: string | null
+          category?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          published_at?: string
+          slug?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       homepage_content: {
         Row: {
           button_link: string | null
@@ -467,6 +515,54 @@ export type Database = {
         }
         Relationships: []
       }
+      showcase_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          division_id: string
+          division_name: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          location: string | null
+          outcome: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          division_id: string
+          division_name: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          location?: string | null
+          outcome?: string | null
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          division_id?: string
+          division_name?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          location?: string | null
+          outcome?: string | null
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           email: string | null
@@ -635,7 +731,9 @@ export type Database = {
       }
       clear_reset_flag: { Args: never; Returns: undefined }
       customer_can_reset: { Args: { _identifier: string }; Returns: boolean }
+      delete_blog_post: { Args: { _id: string }; Returns: undefined }
       delete_media: { Args: { _id: string }; Returns: undefined }
+      delete_showcase_item: { Args: { _id: string }; Returns: undefined }
       delete_slide: { Args: { _id: string }; Returns: undefined }
       has_min_role: {
         Args: { _min: Database["public"]["Enums"]["app_role"]; _uid: string }
@@ -806,6 +904,30 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      upsert_blog_post: {
+        Args: { _payload: Json }
+        Returns: {
+          body: string | null
+          category: string | null
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string | null
+          is_published: boolean
+          published_at: string
+          slug: string
+          summary: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "blog_posts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       upsert_service_line: {
         Args: { _payload: Json }
         Returns: {
@@ -823,6 +945,30 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "service_lines"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      upsert_showcase_item: {
+        Args: { _payload: Json }
+        Returns: {
+          created_at: string
+          description: string | null
+          display_order: number
+          division_id: string
+          division_name: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          location: string | null
+          outcome: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "showcase_items"
           isOneToOne: true
           isSetofReturn: false
         }

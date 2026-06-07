@@ -2,10 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { divisions } from "@/data/divisions";
-import { showcase } from "@/data/showcase";
-import { blogPosts } from "@/data/blog";
 import { whatsappLink } from "@/lib/whatsapp";
-import { useHomepageContent, useHomepageSlides, useServiceLines, useSiteSettings } from "@/lib/cms";
+import { useHomepageContent, useHomepageSlides, useServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
 import logo from "@/assets/logo.png";
 import { Shield, Sprout, Wifi, ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -34,6 +32,8 @@ function HomePage() {
   const sls = useServiceLines();
   const settings = useSiteSettings();
   const slides = useHomepageSlides();
+  const showcase = useShowcaseItems();
+  const blogPosts = useBlogPosts();
 
   const heroTitle = hc?.hero_title || "SKYWAVE NEXUS — Integrated Solutions for Food Safety & Digital Connectivity";
   const heroSubtitle = hc?.hero_subtitle || "Integrated Solutions for Food Safety, Value Addition and Digital Connectivity.";
@@ -141,14 +141,17 @@ function HomePage() {
           <Link to="/skywave-nexus" className="text-sm font-semibold text-brand-blue hover:underline">View all →</Link>
         </div>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {showcase.map((s) => (
-            <div key={s.id} className="rounded-2xl border bg-card p-6 shadow-soft">
-              <div className="mb-3 inline-block rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
-                {s.divisionName}
+          {showcase.slice(0, 6).map((s) => (
+            <div key={s.id} className="overflow-hidden rounded-2xl border bg-card shadow-soft">
+              {s.image_url && <img src={s.image_url} alt={s.title} className="h-40 w-full object-cover" />}
+              <div className="p-6">
+                <div className="mb-3 inline-block rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
+                  {s.division_name}
+                </div>
+                <h3 className="text-lg font-bold">{s.title}</h3>
+                {s.location && <p className="mt-1 text-xs text-muted-foreground">{s.location}</p>}
+                {s.description && <p className="mt-3 text-sm">{s.description}</p>}
               </div>
-              <h3 className="text-lg font-bold">{s.title}</h3>
-              <p className="mt-1 text-xs text-muted-foreground">{s.location}</p>
-              <p className="mt-3 text-sm">{s.description}</p>
             </div>
           ))}
         </div>
