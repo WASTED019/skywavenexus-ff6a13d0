@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { showcase } from "@/data/showcase";
+import { useShowcaseItems } from "@/lib/cms";
 
 export const Route = createFileRoute("/skywave-nexus")({
   head: () => ({
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/skywave-nexus")({
 });
 
 function ShowcasePage() {
+  const items = useShowcaseItems();
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -32,27 +33,35 @@ function ShowcasePage() {
         </div>
       </section>
       <section className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {showcase.map((s) => (
-            <article key={s.id} className="flex flex-col rounded-2xl border bg-card p-6 shadow-soft">
-              <div className="aspect-video w-full rounded-xl bg-gradient-to-br from-brand-blue/15 to-brand-bright/25" />
-              <div className="mt-4 inline-block w-max rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
-                {s.divisionName}
-              </div>
-              <h2 className="mt-2 text-lg font-bold text-brand-navy">{s.title}</h2>
-              <p className="mt-1 text-xs text-muted-foreground">{s.location}</p>
-              <p className="mt-3 text-sm">{s.description}</p>
-              <p className="mt-3 text-sm"><strong className="text-brand-blue">Outcome:</strong> {s.outcome}</p>
-              <Link
-                to="/request"
-                search={{ division: s.divisionId, service: undefined }}
-                className="mt-5 inline-flex justify-center rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white"
-              >
-                Request Similar Service
-              </Link>
-            </article>
-          ))}
-        </div>
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No showcase items yet.</p>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {items.map((s) => (
+              <article key={s.id} className="flex flex-col rounded-2xl border bg-card p-6 shadow-soft">
+                {s.image_url ? (
+                  <img src={s.image_url} alt={s.title} className="aspect-video w-full rounded-xl object-cover" />
+                ) : (
+                  <div className="aspect-video w-full rounded-xl bg-gradient-to-br from-brand-blue/15 to-brand-bright/25" />
+                )}
+                <div className="mt-4 inline-block w-max rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
+                  {s.division_name}
+                </div>
+                <h2 className="mt-2 text-lg font-bold text-brand-navy">{s.title}</h2>
+                {s.location && <p className="mt-1 text-xs text-muted-foreground">{s.location}</p>}
+                {s.description && <p className="mt-3 text-sm">{s.description}</p>}
+                {s.outcome && <p className="mt-3 text-sm"><strong className="text-brand-blue">Outcome:</strong> {s.outcome}</p>}
+                <Link
+                  to="/request"
+                  search={{ division: s.division_id, service: undefined }}
+                  className="mt-5 inline-flex justify-center rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white"
+                >
+                  Request Similar Service
+                </Link>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
       <Footer />
     </div>
