@@ -661,7 +661,7 @@ function SettingsPanel() {
         <Field label="WhatsApp"><input value={s.whatsapp || ""} onChange={(e) => setS({ ...s, whatsapp: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Email"><input value={s.email || ""} onChange={(e) => setS({ ...s, email: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Location"><input value={s.location || ""} onChange={(e) => setS({ ...s, location: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
-        <Field label="Logo URL" full><input value={s.logo_url || ""} onChange={(e) => setS({ ...s, logo_url: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" placeholder="Paste a URL from Media Manager" /></Field>
+        <Field label="Logo" full><ImageField value={s.logo_url || ""} onChange={(v) => setS({ ...s, logo_url: v })} /></Field>
         <Field label="Footer text" full><textarea value={s.footer_text || ""} onChange={(e) => setS({ ...s, footer_text: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Social links (one per line, e.g. facebook: https://…)" full>
           <textarea value={socialText} onChange={(e) => setSocialText(e.target.value)} rows={4} className="w-full rounded-md border px-3 py-2 text-sm font-mono" />
