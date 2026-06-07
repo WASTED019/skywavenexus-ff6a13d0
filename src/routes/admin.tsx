@@ -397,7 +397,7 @@ function SlideEditor({ slide, onSave, onDelete, canDelete, isNew }: { slide: Sli
   return (
     <div className="rounded-xl border p-4">
       <div className="grid gap-3 md:grid-cols-2">
-        <Field label="Image URL"><input value={s.image_url || ""} onChange={(e) => setS({ ...s, image_url: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Image" full><ImageField value={s.image_url || ""} onChange={(v) => setS({ ...s, image_url: v })} /></Field>
         <Field label="Title"><input value={s.title || ""} onChange={(e) => setS({ ...s, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Subtitle"><input value={s.subtitle || ""} onChange={(e) => setS({ ...s, subtitle: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Button text"><input value={s.button_text || ""} onChange={(e) => setS({ ...s, button_text: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
@@ -408,6 +408,84 @@ function SlideEditor({ slide, onSave, onDelete, canDelete, isNew }: { slide: Sli
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={s.is_active} onChange={(e) => setS({ ...s, is_active: e.target.checked })} /> Active</label>
         <button onClick={() => onSave(s)} className="rounded-md bg-brand-blue px-3 py-1 text-xs font-semibold text-white">{isNew ? "Add slide" : "Save"}</button>
         {canDelete && onDelete && <button onClick={onDelete} className="rounded-md border border-destructive px-3 py-1 text-xs text-destructive">Delete</button>}
+      </div>
+    </div>
+  );
+}
+
+/* ===================== IMAGE FIELD (URL + Media Picker + Inline Upload) ===================== */
+function ImageField({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [picking, setPicking] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    setUploading(true); setMsg("");
+    try {
+      const compressed = await compressImage(file);
+      const path = `${Date.now()}-${compressed.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+      const { error: upErr } = await supabase.storage.from("site-media").upload(path, compressed, { contentType: compressed.type, upsert: false });
+      if (upErr) { setMsg(upErr.message); return; }
+      const { data: urlData } = supabase.storage.from("site-media").getPublicUrl(path);
+      const { error } = await supabase.rpc("register_media", { _payload: {
+        storage_path: path, public_url: urlData.publicUrl, title: file.name, alt_text: file.name,
+        mime_type: compressed.type, size_bytes: String(compressed.size),
+      } as any });
+      if (error) { setMsg(error.message); return; }
+      onChange(urlData.publicUrl);
+    } finally {
+      setUploading(false); e.target.value = "";
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
+        <input value={value} onChange={(e) => onChange(e.target.value)} placeholder="Image URL — paste, pick or upload" className="min-w-[200px] flex-1 rounded-md border px-3 py-2 text-sm" />
+        <button type="button" onClick={() => setPicking(true)} className="rounded-md border px-3 py-2 text-xs font-semibold">Pick from Media</button>
+        <label className="cursor-pointer rounded-md border px-3 py-2 text-xs font-semibold">
+          {uploading ? "Uploading…" : "Upload"}
+          <input type="file" accept="image/*" onChange={onUpload} disabled={uploading} className="hidden" />
+        </label>
+        {value && <button type="button" onClick={() => onChange("")} className="rounded-md border border-destructive px-3 py-2 text-xs text-destructive">Clear</button>}
+      </div>
+      {msg && <p className="text-xs text-destructive">{msg}</p>}
+      {value && (
+        <img src={value} alt="" className="h-24 w-40 rounded-md border object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = "0.3"; }} />
+      )}
+      {picking && <MediaPickerModal onClose={() => setPicking(false)} onPick={(url) => { onChange(url); setPicking(false); }} />}
+    </div>
+  );
+}
+
+function MediaPickerModal({ onClose, onPick }: { onClose: () => void; onPick: (url: string) => void }) {
+  const [list, setList] = useState<Media[]>([]);
+  const [q, setQ] = useState("");
+  useEffect(() => {
+    supabase.from("media_assets").select("*").order("created_at", { ascending: false })
+      .then(({ data }) => setList((data ?? []) as Media[]));
+  }, []);
+  const filtered = list.filter(m => !q || `${m.title||""} ${m.alt_text||""} ${m.storage_path}`.toLowerCase().includes(q.toLowerCase()));
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-2xl bg-card shadow-elegant">
+        <div className="flex items-center justify-between border-b p-4">
+          <h3 className="text-lg font-bold">Pick an image</h3>
+          <button onClick={onClose} className="rounded-md border px-2 py-1 text-xs">Close</button>
+        </div>
+        <div className="border-b p-3">
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search media…" className="w-full rounded-md border px-3 py-2 text-sm" />
+        </div>
+        <div className="grid max-h-[60vh] gap-3 overflow-y-auto p-4 sm:grid-cols-3 md:grid-cols-4">
+          {filtered.map((m) => (
+            <button key={m.id} type="button" onClick={() => onPick(m.public_url)} className="group overflow-hidden rounded-md border bg-card text-left hover:border-brand-blue">
+              <img src={m.public_url} alt={m.alt_text || ""} className="aspect-square w-full object-cover" />
+              <div className="truncate p-2 text-xs">{m.title || m.storage_path}</div>
+            </button>
+          ))}
+          {filtered.length === 0 && <p className="col-span-full text-center text-sm text-muted-foreground">No media yet. Upload via the Media tab or the Upload button above.</p>}
+        </div>
       </div>
     </div>
   );
@@ -446,7 +524,7 @@ function SLEditor({ sl, onChange, onSave }: { sl: SL; onChange: (s: SL) => void;
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         <Field label="Title"><input value={sl.title} onChange={(e) => onChange({ ...sl, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Button link"><input value={sl.button_link || ""} onChange={(e) => onChange({ ...sl, button_link: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
-        <Field label="Image URL" full><input value={sl.image_url || ""} onChange={(e) => onChange({ ...sl, image_url: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Image" full><ImageField value={sl.image_url || ""} onChange={(v) => onChange({ ...sl, image_url: v })} /></Field>
         <Field label="Short description" full><textarea value={sl.short_desc || ""} onChange={(e) => onChange({ ...sl, short_desc: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Full description" full><textarea value={sl.full_desc || ""} onChange={(e) => onChange({ ...sl, full_desc: e.target.value })} rows={4} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Services (one per line)" full>
@@ -583,7 +661,7 @@ function SettingsPanel() {
         <Field label="WhatsApp"><input value={s.whatsapp || ""} onChange={(e) => setS({ ...s, whatsapp: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Email"><input value={s.email || ""} onChange={(e) => setS({ ...s, email: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Location"><input value={s.location || ""} onChange={(e) => setS({ ...s, location: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
-        <Field label="Logo URL" full><input value={s.logo_url || ""} onChange={(e) => setS({ ...s, logo_url: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" placeholder="Paste a URL from Media Manager" /></Field>
+        <Field label="Logo" full><ImageField value={s.logo_url || ""} onChange={(v) => setS({ ...s, logo_url: v })} /></Field>
         <Field label="Footer text" full><textarea value={s.footer_text || ""} onChange={(e) => setS({ ...s, footer_text: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Social links (one per line, e.g. facebook: https://…)" full>
           <textarea value={socialText} onChange={(e) => setSocialText(e.target.value)} rows={4} className="w-full rounded-md border px-3 py-2 text-sm font-mono" />
