@@ -32,6 +32,8 @@ function HomePage() {
   const sls = useServiceLines();
   const settings = useSiteSettings();
   const slides = useHomepageSlides();
+  const showcase = useShowcaseItems();
+  const blogPosts = useBlogPosts();
 
   const heroTitle = hc?.hero_title || "SKYWAVE NEXUS — Integrated Solutions for Food Safety & Digital Connectivity";
   const heroSubtitle = hc?.hero_subtitle || "Integrated Solutions for Food Safety, Value Addition and Digital Connectivity.";
