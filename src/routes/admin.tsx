@@ -35,7 +35,7 @@ type UserRow = {
   email: string | null; is_active: boolean; delete_requested: boolean; roles: string[];
 };
 
-type Tab = "dashboard"|"requests"|"homepage"|"service_lines"|"media"|"settings"|"users"|"resets"|"activity";
+type Tab = "dashboard"|"requests"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"users"|"resets"|"activity";
 
 function AdminPage() {
   const navigate = useNavigate();
