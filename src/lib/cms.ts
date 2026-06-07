@@ -45,6 +45,32 @@ export type ServiceLine = {
   display_order: number;
 };
 
+export type ShowcaseItem = {
+  id: string;
+  title: string;
+  division_id: string;
+  division_name: string;
+  description: string | null;
+  location: string | null;
+  outcome: string | null;
+  image_url: string | null;
+  display_order: number;
+  is_active: boolean;
+};
+
+export type BlogPost = {
+  id: string;
+  slug: string;
+  title: string;
+  category: string | null;
+  summary: string | null;
+  body: string | null;
+  image_url: string | null;
+  published_at: string;
+  is_published: boolean;
+  display_order: number;
+};
+
 export const DEFAULT_SETTINGS: SiteSettings = {
   id: "global",
   phone: "0753366995",
