@@ -66,6 +66,8 @@ function AdminPage() {
     { id: "requests", label: "Requests", show: can(role, "manage_requests") },
     { id: "homepage", label: "Homepage", show: can(role, "edit_content") },
     { id: "service_lines", label: "Service Lines", show: can(role, "edit_content") },
+    { id: "showcase", label: "Selected Work", show: can(role, "edit_content") },
+    { id: "blog", label: "Blog", show: can(role, "edit_content") },
     { id: "media", label: "Media", show: can(role, "edit_content") },
     { id: "settings", label: "Settings", show: can(role, "edit_content") },
     { id: "users", label: "Users & Roles", show: can(role, "manage_users") },
