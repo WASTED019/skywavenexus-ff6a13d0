@@ -135,3 +135,25 @@ export function useServiceLines(): ServiceLine[] {
   }, []);
   return list;
 }
+
+export function useShowcaseItems(): ShowcaseItem[] {
+  const [list, setList] = useState<ShowcaseItem[]>([]);
+  useEffect(() => {
+    let alive = true;
+    supabase.from("showcase_items").select("*").eq("is_active", true).order("display_order")
+      .then(({ data }) => { if (alive) setList((data as ShowcaseItem[]) ?? []); });
+    return () => { alive = false; };
+  }, []);
+  return list;
+}
+
+export function useBlogPosts(): BlogPost[] {
+  const [list, setList] = useState<BlogPost[]>([]);
+  useEffect(() => {
+    let alive = true;
+    supabase.from("blog_posts").select("*").eq("is_published", true).order("published_at", { ascending: false })
+      .then(({ data }) => { if (alive) setList((data as BlogPost[]) ?? []); });
+    return () => { alive = false; };
+  }, []);
+  return list;
+}
