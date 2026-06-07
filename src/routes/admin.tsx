@@ -524,7 +524,7 @@ function SLEditor({ sl, onChange, onSave }: { sl: SL; onChange: (s: SL) => void;
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         <Field label="Title"><input value={sl.title} onChange={(e) => onChange({ ...sl, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Button link"><input value={sl.button_link || ""} onChange={(e) => onChange({ ...sl, button_link: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
-        <Field label="Image URL" full><input value={sl.image_url || ""} onChange={(e) => onChange({ ...sl, image_url: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Image" full><ImageField value={sl.image_url || ""} onChange={(v) => onChange({ ...sl, image_url: v })} /></Field>
         <Field label="Short description" full><textarea value={sl.short_desc || ""} onChange={(e) => onChange({ ...sl, short_desc: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Full description" full><textarea value={sl.full_desc || ""} onChange={(e) => onChange({ ...sl, full_desc: e.target.value })} rows={4} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Services (one per line)" full>
