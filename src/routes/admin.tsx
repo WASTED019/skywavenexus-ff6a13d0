@@ -35,7 +35,7 @@ type UserRow = {
   email: string | null; is_active: boolean; delete_requested: boolean; roles: string[];
 };
 
-type Tab = "dashboard"|"requests"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"users"|"resets"|"activity";
+type Tab = "dashboard"|"requests"|"leads"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"users"|"resets"|"activity";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -64,6 +64,7 @@ function AdminPage() {
   const tabs: { id: Tab; label: string; show: boolean }[] = [
     { id: "dashboard", label: "Dashboard", show: true },
     { id: "requests", label: "Requests", show: can(role, "manage_requests") },
+    { id: "leads", label: "Chat Leads", show: true },
     { id: "homepage", label: "Homepage", show: can(role, "edit_content") },
     { id: "service_lines", label: "Service Lines", show: can(role, "edit_content") },
     { id: "showcase", label: "Selected Work", show: can(role, "edit_content") },
@@ -102,6 +103,7 @@ function AdminPage() {
         <div className="mt-6">
           {tab === "dashboard" && <DashboardPanel />}
           {tab === "requests" && <RequestsPanel role={role} />}
+          {tab === "leads" && <ChatLeadsPanel role={role} />}
           {tab === "homepage" && <HomepagePanel role={role} />}
           {tab === "service_lines" && <ServiceLinesPanel />}
           {tab === "showcase" && <ShowcasePanel role={role} />}
