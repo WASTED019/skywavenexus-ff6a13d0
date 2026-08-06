@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { ChatAssistant } from "@/components/ChatAssistant";
 
 function NotFoundComponent() {
   return (
@@ -132,6 +133,7 @@ function RootComponent() {
       <main>
         <Outlet />
       </main>
+      <ChatAssistant />
     </QueryClientProvider>
   );
 }

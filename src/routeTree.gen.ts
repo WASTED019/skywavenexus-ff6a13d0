@@ -25,6 +25,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
 import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const TrackRoute = TrackRouteImport.update({
   id: '/track',
@@ -106,6 +107,11 @@ const DivisionsDivisionIdRoute = DivisionsDivisionIdRouteImport.update({
   path: '/divisions/$divisionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
+  '/api/chat': typeof ApiChatRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
 }
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
+  '/api/chat': typeof ApiChatRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions': typeof DivisionsIndexRoute
 }
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
+  '/api/chat': typeof ApiChatRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
 }
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
+    | '/api/chat'
     | '/divisions/$divisionId'
     | '/divisions/'
   fileRoutesByTo: FileRoutesByTo
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
+    | '/api/chat'
     | '/divisions/$divisionId'
     | '/divisions'
   id:
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
+    | '/api/chat'
     | '/divisions/$divisionId'
     | '/divisions/'
   fileRoutesById: FileRoutesById
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SkywaveNexusRoute: typeof SkywaveNexusRoute
   TrackRoute: typeof TrackRoute
+  ApiChatRoute: typeof ApiChatRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
 }
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DivisionsDivisionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -370,19 +390,10 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SkywaveNexusRoute: SkywaveNexusRoute,
   TrackRoute: TrackRoute,
+  ApiChatRoute: ApiChatRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -35,7 +35,7 @@ type UserRow = {
   email: string | null; is_active: boolean; delete_requested: boolean; roles: string[];
 };
 
-type Tab = "dashboard"|"requests"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"users"|"resets"|"activity";
+type Tab = "dashboard"|"requests"|"leads"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"users"|"resets"|"activity";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -64,6 +64,7 @@ function AdminPage() {
   const tabs: { id: Tab; label: string; show: boolean }[] = [
     { id: "dashboard", label: "Dashboard", show: true },
     { id: "requests", label: "Requests", show: can(role, "manage_requests") },
+    { id: "leads", label: "Chat Leads", show: true },
     { id: "homepage", label: "Homepage", show: can(role, "edit_content") },
     { id: "service_lines", label: "Service Lines", show: can(role, "edit_content") },
     { id: "showcase", label: "Selected Work", show: can(role, "edit_content") },
@@ -102,6 +103,7 @@ function AdminPage() {
         <div className="mt-6">
           {tab === "dashboard" && <DashboardPanel />}
           {tab === "requests" && <RequestsPanel role={role} />}
+          {tab === "leads" && <ChatLeadsPanel role={role} />}
           {tab === "homepage" && <HomepagePanel role={role} />}
           {tab === "service_lines" && <ServiceLinesPanel />}
           {tab === "showcase" && <ShowcasePanel role={role} />}
@@ -959,5 +961,63 @@ function BlogEditor({ post, onSave, onDelete, canDelete, isNew }: { post: BlogRo
         {canDelete && onDelete && <button onClick={onDelete} className="rounded-md border border-destructive px-3 py-1 text-xs text-destructive">Delete</button>}
       </div>
     </section>
+  );
+}
+
+/* ===================== CHAT LEADS ===================== */
+type ChatLead = {
+  id: string; name: string|null; phone: string|null; email: string|null;
+  division_of_interest: string|null; description: string|null; scale_context: string|null;
+  location: string|null; timeline: string|null; created_at: string;
+};
+function ChatLeadsPanel({ role }: { role: Role }) {
+  const [list, setList] = useState<ChatLead[]>([]);
+  const [msg, setMsg] = useState("");
+  const reload = useCallback(async () => {
+    const { data, error } = await supabase.from("chatbot_leads").select("*").order("created_at", { ascending: false });
+    if (error) setMsg(error.message);
+    setList(((data ?? []) as unknown) as ChatLead[]);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+  const del = async (id: string) => {
+    if (!confirm("Delete this lead?")) return;
+    const { error } = await supabase.from("chatbot_leads").delete().eq("id", id);
+    setMsg(error ? error.message : "Deleted."); if (!error) reload();
+  };
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">{list.length} lead{list.length === 1 ? "" : "s"} captured by the website assistant.</p>
+        <button onClick={reload} className="rounded-md border px-3 py-1 text-xs">Refresh</button>
+      </div>
+      {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
+      {list.length === 0 && <p className="text-sm text-muted-foreground">No chat leads yet.</p>}
+      {list.map((l) => (
+        <section key={l.id} className="rounded-2xl border bg-card p-5 shadow-soft">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <h3 className="text-base font-bold">{l.name || "Unnamed visitor"}</h3>
+              <p className="text-xs text-muted-foreground">{new Date(l.created_at).toLocaleString()}</p>
+            </div>
+            {can(role, "delete_content") && (
+              <button onClick={() => del(l.id)} className="rounded-md border border-destructive px-3 py-1 text-xs text-destructive">Delete</button>
+            )}
+          </div>
+          <dl className="mt-3 grid gap-2 text-sm md:grid-cols-2">
+            <div><dt className="text-xs text-muted-foreground">Phone</dt><dd>{l.phone || "—"}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Email</dt><dd>{l.email || "—"}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Service line</dt><dd>{l.division_of_interest || "—"}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Location</dt><dd>{l.location || "—"}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Timeline</dt><dd>{l.timeline || "—"}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Scale / context</dt><dd>{l.scale_context || "—"}</dd></div>
+            <div className="md:col-span-2"><dt className="text-xs text-muted-foreground">What they need</dt><dd className="whitespace-pre-wrap">{l.description || "—"}</dd></div>
+          </dl>
+          {l.phone && (
+            <a href={`https://wa.me/${l.phone.replace(/\D/g, "").replace(/^0/, "254")}`} target="_blank" rel="noreferrer"
+              className="mt-3 inline-block rounded-md bg-brand-blue px-3 py-1.5 text-xs font-semibold text-white">WhatsApp this lead</a>
+          )}
+        </section>
+      ))}
+    </div>
   );
 }
