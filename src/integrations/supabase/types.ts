@@ -95,6 +95,45 @@ export type Database = {
         }
         Relationships: []
       }
+      chatbot_leads: {
+        Row: {
+          created_at: string
+          description: string | null
+          division_of_interest: string | null
+          email: string | null
+          id: string
+          location: string | null
+          name: string | null
+          phone: string | null
+          scale_context: string | null
+          timeline: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          division_of_interest?: string | null
+          email?: string | null
+          id?: string
+          location?: string | null
+          name?: string | null
+          phone?: string | null
+          scale_context?: string | null
+          timeline?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          division_of_interest?: string | null
+          email?: string | null
+          id?: string
+          location?: string | null
+          name?: string | null
+          phone?: string | null
+          scale_context?: string | null
+          timeline?: string | null
+        }
+        Relationships: []
+      }
       homepage_content: {
         Row: {
           button_link: string | null
