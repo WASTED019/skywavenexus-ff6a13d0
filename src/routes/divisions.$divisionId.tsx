@@ -54,6 +54,25 @@ export const Route = createFileRoute("/divisions/$divisionId")({
 
 function DivisionPage() {
   const { division } = Route.useLoaderData();
+  const cms = useServiceLine(division.id);
+
+  const title = cms?.title || division.title;
+  const description = cms?.full_desc || cms?.short_desc || division.description;
+  const services: Service[] = cms?.services?.length
+    ? cms.services.map((s, i) => {
+        const match = division.services.find(
+          (f) => f.name.trim().toLowerCase() === (s.name || "").trim().toLowerCase(),
+        );
+        return {
+          id: s.id || match?.id || `svc-${i}`,
+          name: s.name,
+          explanation: s.explanation || match?.explanation || "",
+          audience: s.audience || match?.audience || "",
+          outcome: s.outcome || match?.outcome || "",
+        };
+      })
+    : division.services;
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -62,8 +81,8 @@ function DivisionPage() {
           <Link to="/divisions" className="mb-4 inline-flex items-center gap-1 text-sm text-white/80 hover:text-white">
             <ArrowLeft className="size-4" /> Back to Service Lines
           </Link>
-          <h1 className="text-3xl font-bold sm:text-4xl">{division.title}</h1>
-          <p className="mt-3 max-w-3xl text-white/85">{division.description}</p>
+          <h1 className="text-3xl font-bold sm:text-4xl">{title}</h1>
+          <p className="mt-3 max-w-3xl text-white/85">{description}</p>
         </div>
       </section>
 
