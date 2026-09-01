@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { divisions } from "@/data/divisions";
+import { useServiceLines } from "@/lib/cms";
 import { Shield, Sprout, Wifi, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/divisions/")({
