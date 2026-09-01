@@ -136,24 +136,55 @@ export function useServiceLines(): ServiceLine[] {
   return list;
 }
 
-export function useShowcaseItems(): ShowcaseItem[] {
+export function useServiceLine(slug: string): ServiceLine | null {
+  const [row, setRow] = useState<ServiceLine | null>(null);
+  useEffect(() => {
+    let alive = true;
+    setRow(null);
+    supabase.from("service_lines").select("*").eq("slug", slug).maybeSingle()
+      .then(({ data }) => { if (alive) setRow(((data ?? null) as unknown) as ServiceLine | null); });
+    return () => { alive = false; };
+  }, [slug]);
+  return row;
+}
+
+/**
+ * Preview mode: `?preview=1` in the URL AND a signed-in staff (or higher) user.
+ * Public visitors never see drafts even with the param — unpublished rows are
+ * only readable by staff under RLS.
+ */
+export function usePreviewMode(): boolean {
+  const [flag, setFlag] = useState(false);
+  const { role, loading } = useAuth();
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setFlag(new URLSearchParams(window.location.search).get("preview") === "1");
+  }, []);
+  return flag && !loading && hasMin(role, "staff");
+}
+
+export function useShowcaseItems(preview = false): ShowcaseItem[] {
   const [list, setList] = useState<ShowcaseItem[]>([]);
   useEffect(() => {
     let alive = true;
-    supabase.from("showcase_items").select("*").eq("is_active", true).order("display_order")
+    let q = supabase.from("showcase_items").select("*");
+    if (!preview) q = q.eq("is_active", true);
+    q.order("display_order")
       .then(({ data }) => { if (alive) setList((data as ShowcaseItem[]) ?? []); });
     return () => { alive = false; };
-  }, []);
+  }, [preview]);
   return list;
 }
 
-export function useBlogPosts(): BlogPost[] {
+export function useBlogPosts(preview = false): BlogPost[] {
   const [list, setList] = useState<BlogPost[]>([]);
   useEffect(() => {
     let alive = true;
-    supabase.from("blog_posts").select("*").eq("is_published", true).order("published_at", { ascending: false })
+    let q = supabase.from("blog_posts").select("*");
+    if (!preview) q = q.eq("is_published", true);
+    q.order("published_at", { ascending: false })
       .then(({ data }) => { if (alive) setList((data as BlogPost[]) ?? []); });
     return () => { alive = false; };
-  }, []);
+  }, [preview]);
   return list;
 }
