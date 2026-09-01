@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { useBlogPosts } from "@/lib/cms";
+import { useBlogPosts, usePreviewMode } from "@/lib/cms";
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
