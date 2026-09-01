@@ -20,10 +20,16 @@ export const Route = createFileRoute("/skywave-nexus")({
 });
 
 function ShowcasePage() {
-  const items = useShowcaseItems();
+  const preview = usePreviewMode();
+  const items = useShowcaseItems(preview);
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
+      {preview && (
+        <div className="bg-amber-500 px-4 py-2 text-center text-xs font-semibold text-black">
+          Preview mode — drafts are visible to you only.
+        </div>
+      )}
       <section className="bg-hero-gradient text-white">
         <div className="mx-auto max-w-7xl px-4 py-14">
           <h1 className="text-3xl font-bold sm:text-4xl">SKYWAVE NEXUS — Selected Work and Outcomes</h1>
