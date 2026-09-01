@@ -53,6 +53,7 @@ function ShowcasePage() {
                 <div className="mt-4 inline-block w-max rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
                   {s.division_name}
                 </div>
+                {preview && !s.is_active && <div className="mt-2 inline-block w-max rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-700">Draft</div>}
                 <h2 className="mt-2 text-lg font-bold text-brand-navy">{s.title}</h2>
                 {s.location && <p className="mt-1 text-xs text-muted-foreground">{s.location}</p>}
                 {s.description && <p className="mt-3 text-sm">{s.description}</p>}
