@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { divisions } from "@/data/divisions";
+import { useServiceLines } from "@/lib/cms";
 import { Shield, Sprout, Wifi, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/divisions/")({
@@ -24,6 +25,14 @@ const iconFor = (id: string) =>
   id === "food-safety" ? Shield : id === "value-addition" ? Sprout : Wifi;
 
 function DivisionsIndex() {
+  const cms = useServiceLines();
+  const cards = cms.length
+    ? cms.map((s) => ({
+        id: s.slug,
+        title: s.title,
+        description: s.short_desc || s.full_desc || "",
+      }))
+    : divisions.map((d) => ({ id: d.id, title: d.title, description: d.description }));
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -37,7 +46,7 @@ function DivisionsIndex() {
       </section>
       <section className="mx-auto max-w-7xl px-4 py-12">
         <div className="grid gap-6 md:grid-cols-3">
-          {divisions.map((d) => {
+          {cards.map((d) => {
             const Icon = iconFor(d.id);
             return (
               <Link

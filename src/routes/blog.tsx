@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { useBlogPosts } from "@/lib/cms";
+import { useBlogPosts, usePreviewMode } from "@/lib/cms";
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
@@ -29,10 +29,16 @@ export const Route = createFileRoute("/blog")({
 });
 
 function BlogPage() {
-  const posts = useBlogPosts();
+  const preview = usePreviewMode();
+  const posts = useBlogPosts(preview);
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
+      {preview && (
+        <div className="bg-amber-500 px-4 py-2 text-center text-xs font-semibold text-black">
+          Preview mode — drafts are visible to you only.
+        </div>
+      )}
       <section className="bg-hero-gradient text-white">
         <div className="mx-auto max-w-7xl px-4 py-14">
           <h1 className="text-3xl font-bold sm:text-4xl">Blog / Updates</h1>
@@ -52,6 +58,7 @@ function BlogPage() {
                   <div className="aspect-video w-full rounded-xl bg-gradient-to-br from-brand-blue/15 to-brand-bright/25" />
                 )}
                 {p.category && <div className="mt-4 text-xs font-semibold uppercase tracking-wider text-brand-blue">{p.category}</div>}
+                {preview && !p.is_published && <div className="mt-2 inline-block w-max rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-700">Draft</div>}
                 <h2 className="mt-2 text-lg font-bold">{p.title}</h2>
                 <p className="mt-1 text-xs text-muted-foreground">{new Date(p.published_at).toLocaleDateString()}</p>
                 {p.summary && <p className="mt-3 text-sm">{p.summary}</p>}
