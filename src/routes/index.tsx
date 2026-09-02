@@ -32,6 +32,9 @@ function HomePage() {
   const sls = useServiceLines();
   const settings = useSiteSettings();
   const slides = useHomepageSlides();
+  const mediaSlides = useMediaSlides();
+  // Explicit slides win; otherwise every picture in the media library is used.
+  const heroSlides = slides.length > 0 ? slides : mediaSlides;
   const showcase = useShowcaseItems();
   const blogPosts = useBlogPosts();
 
