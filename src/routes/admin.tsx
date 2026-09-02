@@ -514,6 +514,10 @@ function ServiceLinesPanel() {
   };
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-bold">Service Lines</h2>
+        <a href="/divisions" target="_blank" rel="noopener noreferrer" className="rounded-md border px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/5">View on site ↗</a>
+      </div>
       {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
       {list.map((sl, i) => (
         <SLEditor key={sl.slug} sl={sl} onChange={(next) => setList(list.map((x, j) => i === j ? next : x))} onSave={() => save(list[i])} />
@@ -859,6 +863,10 @@ function ShowcasePanel({ role }: { role: Role }) {
   };
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-bold">Selected Work (Showcase)</h2>
+        <a href="/skywave-nexus?preview=1" target="_blank" rel="noopener noreferrer" className="rounded-md border px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/5">Preview drafts on site ↗</a>
+      </div>
       {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
       {list.map((s) => (
         <ShowcaseEditor key={s.id} item={s} onSave={save} onDelete={() => del(s.id)} canDelete={can(role, "delete_content")} />
@@ -926,6 +934,10 @@ function BlogPanel({ role }: { role: Role }) {
   };
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-bold">Blog Posts</h2>
+        <a href="/blog?preview=1" target="_blank" rel="noopener noreferrer" className="rounded-md border px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/5">Preview drafts on site ↗</a>
+      </div>
       {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
       {list.map((p) => (
         <BlogEditor key={p.id} post={p} onSave={save} onDelete={() => del(p.id)} canDelete={can(role, "delete_content")} />
