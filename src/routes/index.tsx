@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { divisions } from "@/data/divisions";
 import { whatsappLink } from "@/lib/whatsapp";
-import { useHomepageContent, useHomepageSlides, useServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
+import { useHomepageContent, useHomepageSlides, useMediaSlides, useServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
 import logo from "@/assets/logo.png";
 import { Shield, Sprout, Wifi, ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
