@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { divisions } from "@/data/divisions";
 import { whatsappLink } from "@/lib/whatsapp";
-import { useHomepageContent, useHomepageSlides, useServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
+import { useHomepageContent, useHomepageSlides, useMediaSlides, useServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
 import logo from "@/assets/logo.png";
 import { Shield, Sprout, Wifi, ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -32,6 +32,9 @@ function HomePage() {
   const sls = useServiceLines();
   const settings = useSiteSettings();
   const slides = useHomepageSlides();
+  const mediaSlides = useMediaSlides();
+  // Explicit slides win; otherwise every picture in the media library is used.
+  const heroSlides = slides.length > 0 ? slides : mediaSlides;
   const showcase = useShowcaseItems();
   const blogPosts = useBlogPosts();
 
@@ -69,15 +72,18 @@ function HomePage() {
               </a>
             </div>
           </div>
-          <div className="relative hidden md:block">
+          <div className="relative">
             <div className="absolute -inset-10 rounded-full bg-white/10 blur-3xl" />
-            <img src={settings.logo_url || logo} alt="" className="relative mx-auto h-80 w-80 rounded-2xl bg-white p-6 shadow-elegant" />
+            {heroSlides.length > 0 ? (
+              <HomeSlideshow slides={heroSlides} />
+            ) : (
+              <img src={settings.logo_url || logo} alt="" className="relative mx-auto h-80 w-80 rounded-2xl bg-white p-6 shadow-elegant" />
+            )}
           </div>
         </div>
       </section>
 
-      {/* Slideshow */}
-      {slides.length > 0 && <HomeSlideshow slides={slides} />}
+
 
 
 
