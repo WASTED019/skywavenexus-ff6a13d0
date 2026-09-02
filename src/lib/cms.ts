@@ -127,6 +127,37 @@ export function useHomepageSlides(): HomepageSlide[] {
   return list;
 }
 
+/**
+ * Fallback slides built from every image in the media library.
+ * Used only when no explicit homepage slides exist, so admins can still
+ * add/remove individual pictures from Admin → Media.
+ */
+export function useMediaSlides(): HomepageSlide[] {
+  const [list, setList] = useState<HomepageSlide[]>([]);
+  useEffect(() => {
+    let alive = true;
+    supabase.from("media_assets").select("*").order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (!alive) return;
+        const rows = ((data ?? []) as any[])
+          .filter((m) => m.public_url)
+          .map((m, i) => ({
+            id: m.id,
+            image_url: m.public_url,
+            title: null,
+            subtitle: null,
+            button_text: null,
+            button_link: null,
+            display_order: i,
+            is_active: true,
+          })) as unknown as HomepageSlide[];
+        setList(rows);
+      });
+    return () => { alive = false; };
+  }, []);
+  return list;
+}
+
 export function useServiceLines(): ServiceLine[] {
   const [list, setList] = useState<ServiceLine[]>([]);
   useEffect(() => {
