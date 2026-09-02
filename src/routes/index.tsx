@@ -69,15 +69,18 @@ function HomePage() {
               </a>
             </div>
           </div>
-          <div className="relative hidden md:block">
+          <div className="relative">
             <div className="absolute -inset-10 rounded-full bg-white/10 blur-3xl" />
-            <img src={settings.logo_url || logo} alt="" className="relative mx-auto h-80 w-80 rounded-2xl bg-white p-6 shadow-elegant" />
+            {heroSlides.length > 0 ? (
+              <HomeSlideshow slides={heroSlides} />
+            ) : (
+              <img src={settings.logo_url || logo} alt="" className="relative mx-auto h-80 w-80 rounded-2xl bg-white p-6 shadow-elegant" />
+            )}
           </div>
         </div>
       </section>
 
-      {/* Slideshow */}
-      {slides.length > 0 && <HomeSlideshow slides={slides} />}
+
 
 
 
