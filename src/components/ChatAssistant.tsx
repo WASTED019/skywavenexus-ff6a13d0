@@ -50,7 +50,7 @@ export function ChatAssistant() {
         <button
           onClick={() => setOpen(true)}
           aria-label="Open SKYWAVE NEXUS Assistant"
-          className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-brand-blue px-4 py-3 text-sm font-semibold text-white shadow-elegant transition hover:brightness-110"
+          className="fixed top-20 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-brand-blue px-4 py-3 text-sm font-semibold text-white shadow-elegant transition hover:brightness-110"
         >
           <MessageCircle className="size-5" />
           <span className="hidden sm:inline">Chat with us</span>
@@ -58,7 +58,7 @@ export function ChatAssistant() {
       )}
 
       {open && (
-        <div className="fixed inset-x-3 bottom-3 z-50 flex max-h-[85dvh] flex-col overflow-hidden rounded-2xl border bg-background shadow-elegant sm:inset-x-auto sm:right-5 sm:bottom-5 sm:h-[600px] sm:max-h-[85dvh] sm:w-[380px]">
+        <div className="fixed inset-x-3 top-20 z-50 flex max-h-[85dvh] flex-col overflow-hidden rounded-2xl border bg-background shadow-elegant sm:inset-x-auto sm:right-5 sm:top-24 sm:h-[600px] sm:max-h-[80dvh] sm:w-[380px]">
           <div className="flex items-start justify-between gap-2 bg-brand-navy px-4 py-3 text-white">
             <div>
               <p className="text-sm font-bold">SKYWAVE NEXUS Assistant</p>
