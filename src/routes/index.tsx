@@ -48,13 +48,16 @@ function HomePage() {
     ? sls.map(s => ({ id: s.slug, title: s.title, short: s.short_desc || "", link: s.button_link || `/divisions/${s.slug}`, image: s.image_url }))
     : divisions.map(d => ({ id: d.id, title: d.title, short: d.short, link: `/divisions/${d.id}`, image: null as string | null }));
 
+  const intervalMs = Number((hc?.sections as any)?.slide_interval_ms) || 6000;
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
 
-      {/* Hero */}
+      {/* Hero with slideshow background */}
       <section className="bg-hero-gradient relative overflow-hidden text-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-24">
+        <HeroSlideshow slides={heroSlides} intervalMs={intervalMs} />
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-24">
           <div>
             <img src={settings.logo_url || logo} alt="SKYWAVE NEXUS Integrated Solutions" className="mb-6 h-24 w-24 rounded-xl bg-white/95 p-2 shadow-elegant" />
             <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">{heroTitle}</h1>
@@ -72,16 +75,10 @@ function HomePage() {
               </a>
             </div>
           </div>
-          <div className="relative">
-            <div className="absolute -inset-10 rounded-full bg-white/10 blur-3xl" />
-            {heroSlides.length > 0 ? (
-              <HomeSlideshow slides={heroSlides} />
-            ) : (
-              <img src={settings.logo_url || logo} alt="" className="relative mx-auto h-80 w-80 rounded-2xl bg-white p-6 shadow-elegant" />
-            )}
-          </div>
+          <div className="hidden md:block" />
         </div>
       </section>
+
 
 
 
