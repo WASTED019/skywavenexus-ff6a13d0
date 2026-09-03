@@ -226,8 +226,8 @@ function HeroSlideshow({ slides, intervalMs }: { slides: ReturnType<typeof useHo
           />
         ) : null
       ))}
-      {/* Light neutral scrim only — keeps text legible without tinting the photos blue */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent" />
+      {/* Dark scrim so hero text stays legible over bright photos */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
 
       {s?.title && (
         <div className="absolute bottom-14 right-4 z-20 hidden max-w-sm rounded-xl bg-black/40 p-4 text-right text-white backdrop-blur-sm md:block">
