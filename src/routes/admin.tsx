@@ -298,7 +298,7 @@ function Field({ label, full, children }: { label: string; full?: boolean; child
 
 /* ===================== HOMEPAGE ===================== */
 type Slide = { id: string; image_url: string|null; title: string|null; subtitle: string|null; button_text: string|null; button_link: string|null; display_order: number; is_active: boolean };
-type HC = { id: string; hero_title: string|null; hero_subtitle: string|null; hero_body: string|null; button_text: string|null; button_link: string|null };
+type HC = { id: string; hero_title: string|null; hero_subtitle: string|null; hero_body: string|null; button_text: string|null; button_link: string|null; sections?: Record<string, any> | null };
 
 function HomepagePanel({ role }: { role: Role }) {
   const [hc, setHc] = useState<HC | null>(null);
