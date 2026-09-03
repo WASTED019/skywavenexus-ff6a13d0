@@ -380,7 +380,20 @@ function HomepagePanel({ role }: { role: Role }) {
             {activeCount} active · {slides.length} total {activeCount > 5 ? "(max 5 will show)" : ""}
           </span>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground">Active slides appear on the homepage below the hero. Toggle <strong>Active</strong> and click Save.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Active slides play as the background of the homepage hero. Toggle <strong>Active</strong> and click Save.</p>
+        <div className="mt-4 flex flex-wrap items-end gap-3 rounded-xl border bg-secondary/40 p-4">
+          <Field label="Seconds per image">
+            <input
+              type="number"
+              min={2}
+              max={60}
+              value={Math.round((Number(hc.sections?.slide_interval_ms) || 6000) / 1000)}
+              onChange={(e) => setHc({ ...hc, sections: { ...(hc.sections || {}), slide_interval_ms: Math.max(2, Math.min(60, Number(e.target.value) || 6)) * 1000 } })}
+              className="w-28 rounded-md border px-3 py-2 text-sm"
+            />
+          </Field>
+          <button onClick={saveContent} className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white">Save timing</button>
+        </div>
         <div className="mt-4 space-y-4">
           {slides.map((s) => (
             <SlideEditor key={s.id} slide={s} onSave={upsertSlide} onDelete={() => deleteSlide(s.id)} canDelete={can(role, "delete_content")} />
