@@ -203,48 +203,60 @@ function HomePage() {
   );
 }
 
-function HomeSlideshow({ slides }: { slides: ReturnType<typeof useHomepageSlides> }) {
+function HeroSlideshow({ slides, intervalMs }: { slides: ReturnType<typeof useHomepageSlides>; intervalMs: number }) {
   const [i, setI] = useState(0);
   const n = slides.length;
   useEffect(() => {
     if (n <= 1) return;
-    const t = setInterval(() => setI((x) => (x + 1) % n), 6000);
+    const t = setInterval(() => setI((x) => (x + 1) % n), Math.max(1500, intervalMs));
     return () => clearInterval(t);
-  }, [n]);
+  }, [n, intervalMs]);
+  if (n === 0) return null;
   const s = slides[i];
-  if (!s) return null;
   return (
-    <section className="relative mx-auto max-w-7xl px-4 pt-12">
-      <div className="relative h-72 w-full overflow-hidden rounded-2xl bg-brand-navy shadow-elegant sm:h-96 md:h-[28rem]">
-        {s.image_url && (
-          <img src={s.image_url} alt={s.title || ""} className="absolute inset-0 h-full w-full object-cover opacity-80" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-        <div className="relative z-10 flex h-full flex-col justify-end p-6 text-white sm:p-10">
-          {s.title && <h2 className="text-2xl font-extrabold sm:text-3xl md:text-4xl">{s.title}</h2>}
-          {s.subtitle && <p className="mt-2 max-w-2xl text-sm text-white/90 sm:text-base">{s.subtitle}</p>}
+    <div className="absolute inset-0 z-0">
+      {slides.map((sl, k) => (
+        sl.image_url ? (
+          <img
+            key={sl.id}
+            src={sl.image_url}
+            alt={sl.title || ""}
+            aria-hidden={k !== i}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${k === i ? "opacity-100" : "opacity-0"}`}
+          />
+        ) : null
+      ))}
+      <div className="absolute inset-0 bg-brand-navy/75" />
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-navy/90 via-brand-navy/60 to-transparent" />
+
+      {s?.title && (
+        <div className="absolute bottom-14 right-4 z-20 hidden max-w-sm rounded-xl bg-black/40 p-4 text-right text-white backdrop-blur-sm md:block">
+          <h2 className="text-xl font-bold">{s.title}</h2>
+          {s.subtitle && <p className="mt-1 text-sm text-white/85">{s.subtitle}</p>}
           {s.button_text && s.button_link && (
-            <a href={s.button_link} className="mt-4 inline-flex w-fit items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-brand-navy hover:bg-white/90">
-              {s.button_text} <ArrowRight className="size-4" />
+            <a href={s.button_link} className="mt-3 inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-xs font-semibold text-brand-navy hover:bg-white/90">
+              {s.button_text} <ArrowRight className="size-3" />
             </a>
           )}
         </div>
-        {n > 1 && (
-          <>
-            <button aria-label="Previous slide" onClick={() => setI((x) => (x - 1 + n) % n)} className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/80 p-2 text-brand-navy hover:bg-white">
-              <ChevronLeft className="size-5" />
-            </button>
-            <button aria-label="Next slide" onClick={() => setI((x) => (x + 1) % n)} className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/80 p-2 text-brand-navy hover:bg-white">
-              <ChevronRight className="size-5" />
-            </button>
-            <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
-              {slides.map((_, k) => (
-                <button key={k} aria-label={`Slide ${k + 1}`} onClick={() => setI(k)} className={`h-2 rounded-full transition-all ${k === i ? "w-6 bg-white" : "w-2 bg-white/50"}`} />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </section>
+      )}
+
+      {n > 1 && (
+        <>
+          <button aria-label="Previous slide" onClick={() => setI((x) => (x - 1 + n) % n)} className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/70 p-2 text-brand-navy hover:bg-white">
+            <ChevronLeft className="size-5" />
+          </button>
+          <button aria-label="Next slide" onClick={() => setI((x) => (x + 1) % n)} className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/70 p-2 text-brand-navy hover:bg-white">
+            <ChevronRight className="size-5" />
+          </button>
+          <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
+            {slides.map((_, k) => (
+              <button key={k} aria-label={`Slide ${k + 1}`} onClick={() => setI(k)} className={`h-2 rounded-full transition-all ${k === i ? "w-6 bg-white" : "w-2 bg-white/50"}`} />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
+
