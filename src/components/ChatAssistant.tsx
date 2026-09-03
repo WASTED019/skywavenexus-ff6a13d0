@@ -18,12 +18,30 @@ export function ChatAssistant() {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const busy = status === "submitted" || status === "streaming";
+
+  // Auto teaser: open briefly on load to show the welcome message, then close.
+  useEffect(() => {
+    const openTimer = setTimeout(() => {
+      setOpen(true);
+      autoCloseTimer.current = setTimeout(() => setOpen(false), 2000);
+    }, 1500);
+    return () => {
+      clearTimeout(openTimer);
+      if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
+    };
+  }, []);
+
+  const handleOpen = () => {
+    if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
+    setOpen(true);
+  };
 
   useEffect(() => {
     if (open) inputRef.current?.focus();
