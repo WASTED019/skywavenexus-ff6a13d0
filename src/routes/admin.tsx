@@ -584,7 +584,10 @@ function SLEditor({ sl: initial, onSaveRow, onDelete, onCancel, isNew }: { sl: S
           <textarea value={servicesText} onChange={(e) => { setServicesText(e.target.value); onChange({ ...sl, services: e.target.value.split("\n").filter(Boolean).map(name => ({ name })) }); }} rows={6} className="w-full rounded-md border px-3 py-2 text-sm font-mono" />
         </Field>
       </div>
-      <button onClick={onSave} className="mt-3 rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white">Save</button>
+      <div className="mt-3 flex gap-2">
+        <button onClick={() => onSaveRow(sl)} disabled={!sl.slug || !sl.title} className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{isNew ? "Create" : "Save"}</button>
+        {onCancel && <button onClick={onCancel} className="rounded-md border px-4 py-2 text-sm font-semibold">Cancel</button>}
+      </div>
     </section>
   );
 }
