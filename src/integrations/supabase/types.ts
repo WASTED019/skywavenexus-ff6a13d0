@@ -772,6 +772,7 @@ export type Database = {
       customer_can_reset: { Args: { _identifier: string }; Returns: boolean }
       delete_blog_post: { Args: { _id: string }; Returns: undefined }
       delete_media: { Args: { _id: string }; Returns: undefined }
+      delete_service_line: { Args: { _slug: string }; Returns: undefined }
       delete_showcase_item: { Args: { _id: string }; Returns: undefined }
       delete_slide: { Args: { _id: string }; Returns: undefined }
       has_min_role: {
@@ -834,6 +835,27 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "password_reset_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      rename_service_line: {
+        Args: { _new_slug: string; _old_slug: string }
+        Returns: {
+          button_link: string | null
+          display_order: number
+          full_desc: string | null
+          image_url: string | null
+          services: Json
+          short_desc: string | null
+          slug: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "service_lines"
           isOneToOne: true
           isSetofReturn: false
         }

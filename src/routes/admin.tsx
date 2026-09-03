@@ -515,37 +515,67 @@ type SL = { slug: string; title: string; short_desc: string|null; full_desc: str
 function ServiceLinesPanel() {
   const [list, setList] = useState<SL[]>([]);
   const [msg, setMsg] = useState("");
+  const [adding, setAdding] = useState(false);
   const reload = async () => {
     const { data } = await supabase.from("service_lines").select("*").order("display_order");
     setList(((data ?? []) as unknown) as SL[]);
   };
   useEffect(() => { reload(); }, []);
-  const save = async (sl: SL) => {
+  const save = async (sl: SL, originalSlug?: string) => {
+    if (originalSlug && originalSlug !== sl.slug) {
+      const { error: rErr } = await supabase.rpc("rename_service_line", { _old_slug: originalSlug, _new_slug: sl.slug } as any);
+      if (rErr) { setMsg(rErr.message); return; }
+    }
     const { error } = await supabase.rpc("upsert_service_line", { _payload: sl as any });
     setMsg(error ? error.message : "Saved.");
+    if (!error) { setAdding(false); reload(); }
+  };
+  const remove = async (slug: string) => {
+    if (!confirm(`Delete service line "${slug}"? This cannot be undone.`)) return;
+    const { error } = await supabase.rpc("delete_service_line", { _slug: slug } as any);
+    setMsg(error ? error.message : "Deleted.");
     if (!error) reload();
   };
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-bold">Service Lines</h2>
-        <a href="/divisions" target="_blank" rel="noopener noreferrer" className="rounded-md border px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/5">View on site ↗</a>
+        <div className="flex gap-2">
+          <button onClick={() => setAdding(true)} className="rounded-md bg-brand-blue px-3 py-1.5 text-xs font-semibold text-white">+ New service line</button>
+          <a href="/divisions" target="_blank" rel="noopener noreferrer" className="rounded-md border px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/5">View on site ↗</a>
+        </div>
       </div>
       {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
-      {list.map((sl, i) => (
-        <SLEditor key={sl.slug} sl={sl} onChange={(next) => setList(list.map((x, j) => i === j ? next : x))} onSave={() => save(list[i])} />
+      {adding && (
+        <SLEditor
+          key="new"
+          isNew
+          sl={{ slug: "", title: "", short_desc: "", full_desc: "", services: [], button_link: "", image_url: "", display_order: list.length }}
+          onSaveRow={(row) => save(row)}
+          onCancel={() => setAdding(false)}
+        />
+      )}
+      {list.map((sl) => (
+        <SLEditor key={sl.slug} sl={sl} onSaveRow={(row) => save(row, sl.slug)} onDelete={() => remove(sl.slug)} />
       ))}
     </div>
   );
 }
 
-function SLEditor({ sl, onChange, onSave }: { sl: SL; onChange: (s: SL) => void; onSave: () => void }) {
-  const [servicesText, setServicesText] = useState((sl.services || []).map(s => s.name).join("\n"));
+function SLEditor({ sl: initial, onSaveRow, onDelete, onCancel, isNew }: { sl: SL; onSaveRow: (s: SL) => void; onDelete?: () => void; onCancel?: () => void; isNew?: boolean }) {
+  const [sl, setSl] = useState<SL>(initial);
+  const onChange = (next: SL) => setSl(next);
+  const [servicesText, setServicesText] = useState((initial.services || []).map(s => s.name).join("\n"));
   return (
     <section className="rounded-2xl border bg-card p-6 shadow-soft">
-      <h3 className="text-lg font-bold">{sl.title}</h3>
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="text-lg font-bold">{sl.title || (isNew ? "New service line" : sl.slug)}</h3>
+        {onDelete && <button onClick={onDelete} className="rounded-md border border-destructive px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/5">Delete</button>}
+      </div>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         <Field label="Title"><input value={sl.title} onChange={(e) => onChange({ ...sl, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="URL id (slug)"><input value={sl.slug} onChange={(e) => onChange({ ...sl, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") })} placeholder="e.g. energy-systems" className="w-full rounded-md border px-3 py-2 text-sm font-mono" /></Field>
+        <Field label="Display order"><input type="number" value={sl.display_order} onChange={(e) => onChange({ ...sl, display_order: Number(e.target.value) || 0 })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Button link"><input value={sl.button_link || ""} onChange={(e) => onChange({ ...sl, button_link: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Image" full><ImageField value={sl.image_url || ""} onChange={(v) => onChange({ ...sl, image_url: v })} /></Field>
         <Field label="Short description" full><textarea value={sl.short_desc || ""} onChange={(e) => onChange({ ...sl, short_desc: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
@@ -554,7 +584,10 @@ function SLEditor({ sl, onChange, onSave }: { sl: SL; onChange: (s: SL) => void;
           <textarea value={servicesText} onChange={(e) => { setServicesText(e.target.value); onChange({ ...sl, services: e.target.value.split("\n").filter(Boolean).map(name => ({ name })) }); }} rows={6} className="w-full rounded-md border px-3 py-2 text-sm font-mono" />
         </Field>
       </div>
-      <button onClick={onSave} className="mt-3 rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white">Save</button>
+      <div className="mt-3 flex gap-2">
+        <button onClick={() => onSaveRow(sl)} disabled={!sl.slug || !sl.title} className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{isNew ? "Create" : "Save"}</button>
+        {onCancel && <button onClick={onCancel} className="rounded-md border px-4 py-2 text-sm font-semibold">Cancel</button>}
+      </div>
     </section>
   );
 }
