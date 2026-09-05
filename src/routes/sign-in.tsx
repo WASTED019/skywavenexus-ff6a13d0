@@ -34,24 +34,25 @@ function SignIn() {
 
     setBusy(true);
     try {
-      // Resolve username -> email
-      const { data: emailResolved, error: rpcErr } = await supabase.rpc("resolve_login_email", { identifier: parsed.data.identifier });
-      if (rpcErr || !emailResolved) { setError("No account found for that username or email."); return; }
-
-      const { data, error: signErr } = await supabase.auth.signInWithPassword({
-        email: emailResolved,
-        password: parsed.data.password,
+      const res = await signInWithIdentifier({
+        data: { identifier: parsed.data.identifier, password: parsed.data.password },
       });
-      if (signErr || !data.session) { setError(signErr?.message || "Sign in failed"); return; }
+      if (!res.ok) { setError(res.message); return; }
 
-      // Check role
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.session.user.id);
-      const isAdmin = (roles ?? []).some((r) => ["admin","super_admin","staff","viewer"].includes(r.role));
-      navigate({ to: isAdmin ? "/admin" : "/dashboard" });
+      const { error: sessErr } = await supabase.auth.setSession({
+        access_token: res.access_token,
+        refresh_token: res.refresh_token,
+      });
+      if (sessErr) { setError("Sign in failed. Please try again."); return; }
+
+      navigate({ to: res.isStaff ? "/admin" : "/dashboard" });
+    } catch {
+      setError("Sign in failed. Please try again.");
     } finally {
       setBusy(false);
     }
   };
+
 
   return (
     <div className="flex min-h-screen flex-col">

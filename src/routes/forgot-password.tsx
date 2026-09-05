@@ -27,26 +27,24 @@ function ForgotPassword() {
 
     setBusy(true);
     try {
-      // Step 1: check if reset already approved by an admin
-      const { data: approved } = await supabase.rpc("customer_can_reset", { _identifier: parsed.data.identifier });
-      if (approved) {
-        const { data: email } = await supabase.rpc("resolve_login_email", { identifier: parsed.data.identifier });
-        if (!email) { setError("No account found."); return; }
-        const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
+      const res = await requestPasswordResetFn({
+        data: {
+          identifier: parsed.data.identifier,
           redirectTo: `${window.location.origin}/reset-password`,
-        });
-        if (resetErr) { setError(resetErr.message); return; }
-        setInfo("Reset link sent. Check your email.");
-        return;
+        },
+      });
+      if (res.sent) {
+        setInfo("If that account exists and has been approved, a reset link has been sent. Check your email.");
+      } else {
+        setInfo("Your password reset request has been submitted. The office will review and approve it shortly. After approval, return to this page and submit again to receive your reset link.");
       }
-      // Step 2: queue a reset request awaiting Super Admin approval
-      const { error: reqErr } = await supabase.rpc("request_password_reset", { _identifier: parsed.data.identifier });
-      if (reqErr) { setError(reqErr.message); return; }
-      setInfo("Your password reset request has been submitted. The office will review and approve it shortly. After approval, return to this page and submit again to receive your reset link.");
+    } catch {
+      setError("Something went wrong. Please try again later.");
     } finally {
       setBusy(false);
     }
   };
+
 
   return (
     <div className="flex min-h-screen flex-col">
