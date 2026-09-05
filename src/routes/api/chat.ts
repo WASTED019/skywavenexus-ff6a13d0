@@ -19,8 +19,19 @@ export const Route = createFileRoute("/api/chat")({
           return new Response("Messages are required", { status: 400 });
         }
 
+        // Unrestricted resource consumption guard (OWASP API4:2023 / LLM Top 10 "Unbounded Consumption"):
+        // cap conversation length and total payload so a script cannot burn AI credits.
+        if (messages.length > 40) {
+          return new Response("Conversation too long. Please start a new chat.", { status: 413 });
+        }
+        const payloadSize = JSON.stringify(messages).length;
+        if (payloadSize > 24_000) {
+          return new Response("Message too large.", { status: 413 });
+        }
+
         const key = process.env["LOVABLE_API_KEY"];
         if (!key) return new Response("AI assistant is not configured", { status: 500 });
+
 
         const initialRunId = getLovableAiGatewayRunId(request);
         const gateway = createLovableAiGatewayProvider(key, initialRunId);
