@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { requestPasswordResetFn } from "@/lib/account.functions";
 import { z } from "zod";
+
 
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({ meta: [{ title: "Forgot Password — SKYWAVE NEXUS" }] }),

@@ -3,7 +3,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { signInWithIdentifier } from "@/lib/account.functions";
 import { z } from "zod";
+
 
 export const Route = createFileRoute("/sign-in")({
   head: () => ({ meta: [{ title: "Sign In — SKYWAVE NEXUS" }] }),
