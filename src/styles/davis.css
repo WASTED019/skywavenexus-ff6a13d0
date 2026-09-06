@@ -1,0 +1,282 @@
+/* Isolated style scope for the personal portfolio page (/davis).
+   Nothing here uses SKYWAVE NEXUS tokens, and nothing here leaks out:
+   every rule is nested under .dvs. */
+
+.dvs {
+  --dvs-bg: #eef1f0;
+  --dvs-ink: #20201c;
+  --dvs-forest: #1f3d2e;
+  --dvs-ochre: #a85c32;
+  --dvs-gold: #c99a3d;
+  --dvs-rule: rgba(31, 61, 46, 0.18);
+
+  background: var(--dvs-bg);
+  color: var(--dvs-ink);
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dvs .dvs-wrap {
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.dvs .dvs-measure {
+  max-width: 40rem;
+}
+
+.dvs h1,
+.dvs h2,
+.dvs h3 {
+  font-family: Fraunces, Georgia, "Times New Roman", serif;
+  color: var(--dvs-forest);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.6rem;
+  letter-spacing: -0.01em;
+}
+
+.dvs h1 {
+  font-size: clamp(2.4rem, 6vw, 3.9rem);
+}
+.dvs h2 {
+  font-size: clamp(1.5rem, 3.2vw, 2rem);
+}
+.dvs h3 {
+  font-size: 1.15rem;
+}
+
+.dvs p {
+  margin: 0 0 1rem;
+}
+
+.dvs a {
+  color: var(--dvs-ochre);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.dvs a:hover {
+  color: var(--dvs-forest);
+}
+
+.dvs .dvs-section {
+  padding: 3.5rem 0;
+  border-top: 1px solid var(--dvs-rule);
+}
+
+.dvs .dvs-kicker {
+  color: var(--dvs-forest);
+  opacity: 0.7;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.dvs .dvs-hero {
+  padding: 4.5rem 0 3.5rem;
+}
+
+.dvs .dvs-hero-grid {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: 1fr;
+  align-items: end;
+}
+
+@media (min-width: 900px) {
+  .dvs .dvs-hero-grid {
+    grid-template-columns: 1.05fr 1fr;
+  }
+}
+
+.dvs .dvs-hero img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-top: 3px solid var(--dvs-gold);
+}
+
+.dvs .dvs-rise {
+  animation: dvs-rise 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.dvs .dvs-rise-2 {
+  animation-delay: 140ms;
+}
+
+@keyframes dvs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dvs .dvs-rise {
+    animation: none;
+  }
+}
+
+.dvs .dvs-role {
+  color: var(--dvs-ochre);
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.dvs .dvs-entry {
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--dvs-rule);
+}
+.dvs .dvs-entry:first-of-type {
+  border-top: none;
+}
+
+.dvs .dvs-note {
+  color: rgba(32, 32, 28, 0.62);
+  font-size: 0.95rem;
+}
+
+.dvs .dvs-bg-list {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 760px) {
+  .dvs .dvs-bg-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.dvs .dvs-bg-list h3 {
+  border-left: 2px solid var(--dvs-gold);
+  padding-left: 0.75rem;
+}
+
+.dvs .dvs-gallery-main {
+  position: relative;
+  background: #dfe4e2;
+}
+.dvs .dvs-gallery-main img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+}
+
+.dvs .dvs-thumbs {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.dvs .dvs-thumbs button {
+  padding: 0;
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+}
+.dvs .dvs-thumbs button[data-active="true"] {
+  border-color: var(--dvs-ochre);
+}
+.dvs .dvs-thumbs img {
+  width: 84px;
+  height: 58px;
+  object-fit: cover;
+  display: block;
+}
+
+.dvs .dvs-caption {
+  font-size: 0.9rem;
+  color: rgba(32, 32, 28, 0.62);
+  margin-top: 0.5rem;
+}
+
+.dvs .dvs-contact dt {
+  color: var(--dvs-forest);
+  font-size: 0.9rem;
+}
+.dvs .dvs-contact dd {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+}
+
+.dvs .dvs-foot {
+  border-top: 1px solid var(--dvs-rule);
+  padding: 2rem 0 3rem;
+  font-size: 0.9rem;
+  color: rgba(32, 32, 28, 0.6);
+}
+
+/* --- editor --- */
+.dvs .dvs-field {
+  display: block;
+  margin-bottom: 1rem;
+}
+.dvs .dvs-field span {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--dvs-forest);
+  margin-bottom: 0.25rem;
+}
+.dvs input[type="text"],
+.dvs input[type="password"],
+.dvs textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--dvs-rule);
+  background: #fff;
+  color: var(--dvs-ink);
+  border-radius: 2px;
+}
+.dvs textarea {
+  min-height: 6.5rem;
+  resize: vertical;
+}
+.dvs .dvs-btn {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--dvs-forest);
+  background: var(--dvs-forest);
+  color: #eef1f0;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.dvs .dvs-btn[data-variant="ghost"] {
+  background: transparent;
+  color: var(--dvs-forest);
+}
+.dvs .dvs-btn[data-variant="accent"] {
+  background: var(--dvs-ochre);
+  border-color: var(--dvs-ochre);
+  color: #fff;
+}
+.dvs .dvs-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.dvs .dvs-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.dvs .dvs-card {
+  border: 1px solid var(--dvs-rule);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+}
+.dvs .dvs-status {
+  font-size: 0.9rem;
+  color: var(--dvs-ochre);
+}
