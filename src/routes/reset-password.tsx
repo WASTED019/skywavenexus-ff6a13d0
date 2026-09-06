@@ -69,7 +69,7 @@ function ResetPassword() {
             <Link to="/sign-in" className="font-semibold text-brand-blue hover:underline">Sign In</Link>.
           </p>
         ) : (
-          <form onSubmit={onSubmit} className="mt-6 space-y-4 rounded-2xl border bg-card p-6 shadow-soft">
+          <form method="post" onSubmit={onSubmit} className="mt-6 space-y-4 rounded-2xl border bg-card p-6 shadow-soft">
             <label className="block">
               <span className="mb-1 block text-xs font-semibold">New password</span>
               <input name="password" type="password" required maxLength={128} className="w-full rounded-md border px-3 py-2 text-sm" />

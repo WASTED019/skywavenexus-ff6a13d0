@@ -61,7 +61,7 @@ function SignIn() {
         <h1 className="text-2xl font-bold">Sign In</h1>
         <p className="mt-2 text-sm text-muted-foreground">Welcome back. Sign in to access your dashboard.</p>
 
-        <form onSubmit={onSubmit} className="mt-6 space-y-4 rounded-2xl border bg-card p-6 shadow-soft">
+        <form method="post" onSubmit={onSubmit} className="mt-6 space-y-4 rounded-2xl border bg-card p-6 shadow-soft">
           <label className="block">
             <span className="mb-1 block text-xs font-semibold">Username or Email</span>
             <input name="identifier" type="text" autoComplete="username" required maxLength={255} className="w-full rounded-md border px-3 py-2 text-sm" />

@@ -78,7 +78,7 @@ function SignUp() {
         <h1 className="text-2xl font-bold">Create your account</h1>
         <p className="mt-2 text-sm text-muted-foreground">Sign up to track your service requests and receive admin feedback.</p>
 
-        <form onSubmit={onSubmit} className="mt-6 grid gap-4 rounded-2xl border bg-card p-6 shadow-soft sm:grid-cols-2">
+        <form method="post" onSubmit={onSubmit} className="mt-6 grid gap-4 rounded-2xl border bg-card p-6 shadow-soft sm:grid-cols-2">
           <F label="Username" name="username" err={errors.username} maxLength={40} />
           <F label="Full name" name="full_name" err={errors.full_name} maxLength={100} />
           <F label="Phone" name="phone" type="tel" err={errors.phone} maxLength={20} />
