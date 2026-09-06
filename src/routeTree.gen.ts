@@ -26,6 +26,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
 import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiPublicDavisMediaSplatRouteImport } from './routes/api/public/davis-media.$'
 
 const TrackRoute = TrackRouteImport.update({
   id: '/track',
@@ -112,6 +113,12 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDavisMediaSplatRoute =
+  ApiPublicDavisMediaSplatRouteImport.update({
+    id: '/api/public/davis-media/$',
+    path: '/api/public/davis-media/$',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
+  '/api/public/davis-media/$': typeof ApiPublicDavisMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -150,6 +158,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions': typeof DivisionsIndexRoute
+  '/api/public/davis-media/$': typeof ApiPublicDavisMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,6 +179,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/divisions/': typeof DivisionsIndexRoute
+  '/api/public/davis-media/$': typeof ApiPublicDavisMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/divisions/$divisionId'
     | '/divisions/'
+    | '/api/public/davis-media/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/divisions/$divisionId'
     | '/divisions'
+    | '/api/public/davis-media/$'
   id:
     | '__root__'
     | '/'
@@ -229,6 +241,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/divisions/$divisionId'
     | '/divisions/'
+    | '/api/public/davis-media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -249,6 +262,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
+  ApiPublicDavisMediaSplatRoute: typeof ApiPublicDavisMediaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -372,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/davis-media/$': {
+      id: '/api/public/davis-media/$'
+      path: '/api/public/davis-media/$'
+      fullPath: '/api/public/davis-media/$'
+      preLoaderRoute: typeof ApiPublicDavisMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -393,6 +414,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
+  ApiPublicDavisMediaSplatRoute: ApiPublicDavisMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
