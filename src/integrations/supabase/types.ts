@@ -134,6 +134,33 @@ export type Database = {
         }
         Relationships: []
       }
+      davis_portfolio: {
+        Row: {
+          created_at: string
+          draft: Json
+          id: string
+          published: Json
+          published_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          draft?: Json
+          id?: string
+          published?: Json
+          published_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          draft?: Json
+          id?: string
+          published?: Json
+          published_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       homepage_content: {
         Row: {
           button_link: string | null
