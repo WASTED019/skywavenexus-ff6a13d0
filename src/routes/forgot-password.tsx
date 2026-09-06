@@ -56,7 +56,7 @@ function ForgotPassword() {
           Once approved, return here and submit again to receive your reset link.
         </p>
 
-        <form onSubmit={onSubmit} className="mt-6 space-y-4 rounded-2xl border bg-card p-6 shadow-soft">
+        <form method="post" onSubmit={onSubmit} className="mt-6 space-y-4 rounded-2xl border bg-card p-6 shadow-soft">
           <label className="block">
             <span className="mb-1 block text-xs font-semibold">Username or Email</span>
             <input name="identifier" type="text" required maxLength={255} className="w-full rounded-md border px-3 py-2 text-sm" />
