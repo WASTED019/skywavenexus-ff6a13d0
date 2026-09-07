@@ -20,6 +20,7 @@ export type GalleryEntry = { url: string; caption: string };
 export type PortfolioDoc = {
   hero_name: string;
   hero_line: string;
+  hero_image: string;
   about: string;
   work: WorkEntry[];
   background: BackgroundEntry[];
@@ -119,6 +120,7 @@ function sanitize(doc: PortfolioDoc): PortfolioDoc {
   return {
     hero_name: s(doc.hero_name, 120),
     hero_line: s(doc.hero_line, 600),
+    hero_image: s(doc.hero_image, 500),
     about: s(doc.about, 2000),
     work: (Array.isArray(doc.work) ? doc.work : []).slice(0, 6).map((w) => ({
       title: s(w?.title, 120),

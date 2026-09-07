@@ -24,7 +24,9 @@ import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
+import { Route as DavisIndexRouteImport } from './routes/davis.index'
 import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
+import { Route as DavisAdminRouteImport } from './routes/davis.admin'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiPublicDavisMediaSplatRouteImport } from './routes/api/public/davis-media.$'
 
@@ -103,9 +105,19 @@ const DivisionsIndexRoute = DivisionsIndexRouteImport.update({
   path: '/divisions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DavisIndexRoute = DavisIndexRouteImport.update({
+  id: '/davis/',
+  path: '/davis/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DivisionsDivisionIdRoute = DivisionsDivisionIdRouteImport.update({
   id: '/divisions/$divisionId',
   path: '/divisions/$divisionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DavisAdminRoute = DavisAdminRouteImport.update({
+  id: '/davis/admin',
+  path: '/davis/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
@@ -136,7 +148,9 @@ export interface FileRoutesByFullPath {
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
+  '/davis/admin': typeof DavisAdminRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
+  '/davis/': typeof DavisIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
   '/api/public/davis-media/$': typeof ApiPublicDavisMediaSplatRoute
 }
@@ -156,7 +170,9 @@ export interface FileRoutesByTo {
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
+  '/davis/admin': typeof DavisAdminRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
+  '/davis': typeof DavisIndexRoute
   '/divisions': typeof DivisionsIndexRoute
   '/api/public/davis-media/$': typeof ApiPublicDavisMediaSplatRoute
 }
@@ -177,7 +193,9 @@ export interface FileRoutesById {
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
+  '/davis/admin': typeof DavisAdminRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
+  '/davis/': typeof DavisIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
   '/api/public/davis-media/$': typeof ApiPublicDavisMediaSplatRoute
 }
@@ -199,7 +217,9 @@ export interface FileRouteTypes {
     | '/skywave-nexus'
     | '/track'
     | '/api/chat'
+    | '/davis/admin'
     | '/divisions/$divisionId'
+    | '/davis/'
     | '/divisions/'
     | '/api/public/davis-media/$'
   fileRoutesByTo: FileRoutesByTo
@@ -219,7 +239,9 @@ export interface FileRouteTypes {
     | '/skywave-nexus'
     | '/track'
     | '/api/chat'
+    | '/davis/admin'
     | '/divisions/$divisionId'
+    | '/davis'
     | '/divisions'
     | '/api/public/davis-media/$'
   id:
@@ -239,7 +261,9 @@ export interface FileRouteTypes {
     | '/skywave-nexus'
     | '/track'
     | '/api/chat'
+    | '/davis/admin'
     | '/divisions/$divisionId'
+    | '/davis/'
     | '/divisions/'
     | '/api/public/davis-media/$'
   fileRoutesById: FileRoutesById
@@ -260,7 +284,9 @@ export interface RootRouteChildren {
   SkywaveNexusRoute: typeof SkywaveNexusRoute
   TrackRoute: typeof TrackRoute
   ApiChatRoute: typeof ApiChatRoute
+  DavisAdminRoute: typeof DavisAdminRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
+  DavisIndexRoute: typeof DavisIndexRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
   ApiPublicDavisMediaSplatRoute: typeof ApiPublicDavisMediaSplatRoute
 }
@@ -372,11 +398,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DivisionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/davis/': {
+      id: '/davis/'
+      path: '/davis'
+      fullPath: '/davis/'
+      preLoaderRoute: typeof DavisIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/divisions/$divisionId': {
       id: '/divisions/$divisionId'
       path: '/divisions/$divisionId'
       fullPath: '/divisions/$divisionId'
       preLoaderRoute: typeof DivisionsDivisionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/davis/admin': {
+      id: '/davis/admin'
+      path: '/davis/admin'
+      fullPath: '/davis/admin'
+      preLoaderRoute: typeof DavisAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/chat': {
@@ -412,7 +452,9 @@ const rootRouteChildren: RootRouteChildren = {
   SkywaveNexusRoute: SkywaveNexusRoute,
   TrackRoute: TrackRoute,
   ApiChatRoute: ApiChatRoute,
+  DavisAdminRoute: DavisAdminRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
+  DavisIndexRoute: DavisIndexRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
   ApiPublicDavisMediaSplatRoute: ApiPublicDavisMediaSplatRoute,
 }

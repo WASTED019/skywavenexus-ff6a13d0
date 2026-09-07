@@ -22,6 +22,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/skywave-nexus", changefreq: "monthly", priority: "0.7" },
           { path: "/blog", changefreq: "weekly", priority: "0.7" },
           { path: "/contact", changefreq: "monthly", priority: "0.6" },
+          { path: "/davis", changefreq: "monthly", priority: "0.4" },
           ...divisions.map((d) => ({
             path: `/divisions/${d.id}`,
             changefreq: "monthly" as const,
