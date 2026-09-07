@@ -20,6 +20,7 @@ export type GalleryEntry = { url: string; caption: string };
 export type PortfolioDoc = {
   hero_name: string;
   hero_line: string;
+  hero_image: string;
   about: string;
   work: WorkEntry[];
   background: BackgroundEntry[];
