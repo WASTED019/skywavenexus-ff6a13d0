@@ -1,0 +1,399 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  davisLogin,
+  davisLogout,
+  getDavisEditorState,
+  publishDavisDraft,
+  saveDavisDraft,
+  uploadDavisImage,
+  type PortfolioDoc,
+} from "@/lib/davis.functions";
+import "@/styles/davis.css";
+
+export const Route = createFileRoute("/davis/admin")({
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Editor" },
+      { name: "robots", content: "noindex, nofollow" },
+      { name: "description", content: "Private editor." },
+      { property: "og:title", content: "Editor" },
+      { property: "og:description", content: "Private editor." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500&display=swap",
+      },
+    ],
+  }),
+  component: DavisAdmin,
+});
+
+const EMPTY: PortfolioDoc = {
+  hero_name: "",
+  hero_line: "",
+  hero_image: "",
+  about: "",
+  work: [],
+  background: [],
+  gallery: [],
+  contact_phone: "",
+  contact_email: "",
+  contact_note: "",
+};
+
+function Field({
+  label,
+  value,
+  onChange,
+  area,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  area?: boolean;
+}) {
+  return (
+    <label className="dvs-field">
+      <span>{label}</span>
+      {area ? (
+        <textarea value={value} onChange={(e) => onChange(e.target.value)} />
+      ) : (
+        <input type="text" value={value} onChange={(e) => onChange(e.target.value)} />
+      )}
+    </label>
+  );
+}
+
+function DavisAdmin() {
+  const loadState = useServerFn(getDavisEditorState);
+  const login = useServerFn(davisLogin);
+  const logout = useServerFn(davisLogout);
+  const save = useServerFn(saveDavisDraft);
+  const publish = useServerFn(publishDavisDraft);
+  const upload = useServerFn(uploadDavisImage);
+
+  const [ready, setReady] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
+  const [doc, setDoc] = useState<PortfolioDoc>(EMPTY);
+  const [busy, setBusy] = useState(false);
+
+  async function refresh() {
+    const s = await loadState({});
+    setUnlocked(s.unlocked);
+    if (s.unlocked && s.draft) setDoc({ ...EMPTY, ...(s.draft as PortfolioDoc) });
+    setReady(true);
+  }
+
+  useEffect(() => {
+    void refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const set = <K extends keyof PortfolioDoc>(key: K, value: PortfolioDoc[K]) =>
+    setDoc((d) => ({ ...d, [key]: value }));
+
+  async function onLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setBusy(true);
+    try {
+      const r = await login({ data: { password } });
+      if (!r.ok) setError("Incorrect password");
+      else {
+        setPassword("");
+        await refresh();
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onSave() {
+    setBusy(true);
+    setStatus("");
+    try {
+      await save({ data: { doc } });
+      setStatus("Draft saved");
+    } catch (err) {
+      setStatus(err instanceof Error ? err.message : "Could not save");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onPublish() {
+    setBusy(true);
+    setStatus("");
+    try {
+      await save({ data: { doc } });
+      await publish({});
+      setStatus("Published — the page is live");
+    } catch (err) {
+      setStatus(err instanceof Error ? err.message : "Could not publish");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function pickImage(file: File): Promise<string> {
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
+      reader.onerror = () => reject(new Error("Could not read the file"));
+      reader.readAsDataURL(file);
+    });
+    const r = await upload({ data: { name: file.name, mime: file.type, base64 } });
+    return r.url;
+  }
+
+  function ImagePicker({ onDone }: { onDone: (url: string) => void }) {
+    return (
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          e.target.value = "";
+          if (!file) return;
+          setBusy(true);
+          setStatus("Uploading…");
+          try {
+            onDone(await pickImage(file));
+            setStatus("Photo uploaded — remember to save");
+          } catch (err) {
+            setStatus(err instanceof Error ? err.message : "Upload failed");
+          } finally {
+            setBusy(false);
+          }
+        }}
+      />
+    );
+  }
+
+  if (!ready) {
+    return (
+      <div className="dvs">
+        <div className="dvs-wrap dvs-section">
+          <p>Loading…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!unlocked) {
+    return (
+      <div className="dvs">
+        <div className="dvs-wrap dvs-section" style={{ maxWidth: "26rem" }}>
+          <h1>Editor</h1>
+          <form method="post" onSubmit={onLogin}>
+            <label className="dvs-field">
+              <span>Password</span>
+              <input
+                type="password"
+                name="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+            {error && <p className="dvs-status">{error}</p>}
+            <button className="dvs-btn" disabled={busy || !password}>
+              Enter
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dvs">
+      <div className="dvs-wrap dvs-section">
+        <div className="dvs-row" style={{ justifyContent: "space-between" }}>
+          <h1 style={{ fontSize: "1.9rem" }}>Edit my page</h1>
+          <div className="dvs-row">
+            <a className="dvs-btn" data-variant="ghost" href="/davis" target="_blank" rel="noreferrer">
+              Preview
+            </a>
+            <button
+              className="dvs-btn"
+              data-variant="ghost"
+              onClick={async () => {
+                await logout({});
+                setUnlocked(false);
+              }}
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
+        {status && <p className="dvs-status">{status}</p>}
+
+        <div className="dvs-card">
+          <h2>Header</h2>
+          <Field label="Name" value={doc.hero_name} onChange={(v) => set("hero_name", v)} />
+          <Field label="Intro line" value={doc.hero_line} onChange={(v) => set("hero_line", v)} area />
+          <Field label="Header photo URL" value={doc.hero_image} onChange={(v) => set("hero_image", v)} />
+          <ImagePicker onDone={(url) => set("hero_image", url)} />
+        </div>
+
+        <div className="dvs-card">
+          <h2>About</h2>
+          <Field label="About text" value={doc.about} onChange={(v) => set("about", v)} area />
+        </div>
+
+        <div className="dvs-card">
+          <h2>Selected work</h2>
+          {doc.work.map((w, i) => (
+            <div className="dvs-card" key={i}>
+              <Field
+                label="Title"
+                value={w.title}
+                onChange={(v) =>
+                  set("work", doc.work.map((x, j) => (j === i ? { ...x, title: v } : x)))
+                }
+              />
+              <Field
+                label="Role"
+                value={w.role}
+                onChange={(v) => set("work", doc.work.map((x, j) => (j === i ? { ...x, role: v } : x)))}
+              />
+              <Field
+                label="Description"
+                area
+                value={w.body}
+                onChange={(v) => set("work", doc.work.map((x, j) => (j === i ? { ...x, body: v } : x)))}
+              />
+              <Field
+                label="Small note"
+                value={w.note}
+                onChange={(v) => set("work", doc.work.map((x, j) => (j === i ? { ...x, note: v } : x)))}
+              />
+              <button
+                className="dvs-btn"
+                data-variant="ghost"
+                onClick={() => set("work", doc.work.filter((_, j) => j !== i))}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <button
+            className="dvs-btn"
+            data-variant="ghost"
+            onClick={() => set("work", [...doc.work, { title: "", role: "", body: "", note: "" }])}
+          >
+            Add entry
+          </button>
+        </div>
+
+        <div className="dvs-card">
+          <h2>Background</h2>
+          {doc.background.map((b, i) => (
+            <div className="dvs-card" key={i}>
+              <Field
+                label="Label"
+                value={b.label}
+                onChange={(v) =>
+                  set("background", doc.background.map((x, j) => (j === i ? { ...x, label: v } : x)))
+                }
+              />
+              <Field
+                label="Text"
+                area
+                value={b.body}
+                onChange={(v) =>
+                  set("background", doc.background.map((x, j) => (j === i ? { ...x, body: v } : x)))
+                }
+              />
+              <button
+                className="dvs-btn"
+                data-variant="ghost"
+                onClick={() => set("background", doc.background.filter((_, j) => j !== i))}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <button
+            className="dvs-btn"
+            data-variant="ghost"
+            onClick={() => set("background", [...doc.background, { label: "", body: "" }])}
+          >
+            Add item
+          </button>
+        </div>
+
+        <div className="dvs-card">
+          <h2>Gallery</h2>
+          {doc.gallery.map((g, i) => (
+            <div className="dvs-card" key={i}>
+              {g.url && <img src={g.url} alt="" style={{ width: 140, display: "block", marginBottom: 8 }} />}
+              <Field
+                label="Photo URL"
+                value={g.url}
+                onChange={(v) =>
+                  set("gallery", doc.gallery.map((x, j) => (j === i ? { ...x, url: v } : x)))
+                }
+              />
+              <Field
+                label="Caption"
+                value={g.caption}
+                onChange={(v) =>
+                  set("gallery", doc.gallery.map((x, j) => (j === i ? { ...x, caption: v } : x)))
+                }
+              />
+              <div className="dvs-row">
+                <button
+                  className="dvs-btn"
+                  data-variant="ghost"
+                  disabled={i === 0}
+                  onClick={() => {
+                    const next = [...doc.gallery];
+                    [next[i - 1], next[i]] = [next[i]!, next[i - 1]!];
+                    set("gallery", next);
+                  }}
+                >
+                  Move up
+                </button>
+                <button
+                  className="dvs-btn"
+                  data-variant="ghost"
+                  onClick={() => set("gallery", doc.gallery.filter((_, j) => j !== i))}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+          <ImagePicker onDone={(url) => set("gallery", [...doc.gallery, { url, caption: "" }])} />
+        </div>
+
+        <div className="dvs-card">
+          <h2>Contact</h2>
+          <Field label="Phone" value={doc.contact_phone} onChange={(v) => set("contact_phone", v)} />
+          <Field label="Email" value={doc.contact_email} onChange={(v) => set("contact_email", v)} />
+          <Field label="Note" area value={doc.contact_note} onChange={(v) => set("contact_note", v)} />
+        </div>
+
+        <div className="dvs-row">
+          <button className="dvs-btn" data-variant="ghost" disabled={busy} onClick={onSave}>
+            Save draft
+          </button>
+          <button className="dvs-btn" data-variant="accent" disabled={busy} onClick={onPublish}>
+            Publish
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
