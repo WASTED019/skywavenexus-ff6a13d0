@@ -1,0 +1,2 @@
+- Keep Davis portfolio content in its isolated document and password-gated editor; this prevents SKYWAVE account permissions from changing personal content.
+- Treat unverified impact figures as unset values rather than fabricated claims; the editor must supply evidence before numbers appear.

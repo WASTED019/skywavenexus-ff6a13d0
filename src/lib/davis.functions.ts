@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { useSession } from "@tanstack/react-start/server";
 import { createHash, timingSafeEqual } from "node:crypto";
+import { normalizePortfolio, type PortfolioDoc } from "./davis-content";
+export type { PortfolioDoc } from "./davis-content";
 
 /**
  * Personal portfolio (/davis) content layer.
@@ -12,23 +14,6 @@ import { createHash, timingSafeEqual } from "node:crypto";
  *    Supabase Auth, so the SKYWAVE admin login grants nothing here and this
  *    gate grants nothing on SKYWAVE's tables.
  */
-
-export type WorkEntry = { title: string; role: string; body: string; note: string };
-export type BackgroundEntry = { label: string; body: string };
-export type GalleryEntry = { url: string; caption: string };
-
-export type PortfolioDoc = {
-  hero_name: string;
-  hero_line: string;
-  hero_image: string;
-  about: string;
-  work: WorkEntry[];
-  background: BackgroundEntry[];
-  gallery: GalleryEntry[];
-  contact_phone: string;
-  contact_email: string;
-  contact_note: string;
-};
 
 type GateSession = { unlocked?: boolean };
 
@@ -79,8 +64,8 @@ export const getDavisPage = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const row = await readRow();
     if (!row) return { doc: null as PortfolioDoc | null, isDraft: false };
-    if (data.draft && (await isUnlocked())) return { doc: row.draft, isDraft: true };
-    return { doc: row.published, isDraft: false };
+    if (data.draft && (await isUnlocked())) return { doc: normalizePortfolio(row.draft), isDraft: true };
+    return { doc: normalizePortfolio(row.published), isDraft: false };
   });
 
 export const davisStatus = createServerFn({ method: "GET" }).handler(async () => ({
@@ -109,36 +94,47 @@ export const getDavisEditorState = createServerFn({ method: "GET" }).handler(asy
   const row = await readRow();
   return {
     unlocked: true as const,
-    draft: row?.draft ?? null,
-    published: row?.published ?? null,
+    draft: row?.draft ? normalizePortfolio(row.draft) : null,
+    published: row?.published ? normalizePortfolio(row.published) : null,
     published_at: row?.published_at ?? null,
   };
 });
 
 function sanitize(doc: PortfolioDoc): PortfolioDoc {
   const s = (v: unknown, max = 4000) => String(v ?? "").slice(0, max);
+  const normalized = normalizePortfolio(doc);
   return {
-    hero_name: s(doc.hero_name, 120),
-    hero_line: s(doc.hero_line, 600),
-    hero_image: s(doc.hero_image, 500),
-    about: s(doc.about, 2000),
-    work: (Array.isArray(doc.work) ? doc.work : []).slice(0, 6).map((w) => ({
+    hero_name: s(normalized.hero_name, 120),
+    hero_line: s(normalized.hero_line, 600),
+    hero_image: s(normalized.hero_image, 500),
+    authority: s(normalized.authority, 200),
+    about: s(normalized.about, 2000),
+    metrics: normalized.metrics.slice(0, 8).map((m) => ({ label: s(m?.label, 80), value: s(m?.value, 100) })),
+    pillars: normalized.pillars.slice(0, 6).map((p) => ({ title: s(p?.title, 120), description: s(p?.description, 500), specialties: s(p?.specialties, 300) })),
+    work: normalized.work.slice(0, 8).map((w) => ({
       title: s(w?.title, 120),
       role: s(w?.role, 80),
       body: s(w?.body, 1200),
       note: s(w?.note, 200),
+      problem: s(w?.problem, 700),
+      solution: s(w?.solution, 700),
+      image: s(w?.image, 500),
+      verification_url: s(w?.verification_url, 500),
     })),
-    background: (Array.isArray(doc.background) ? doc.background : []).slice(0, 12).map((b) => ({
+    background: normalized.background.slice(0, 12).map((b) => ({
       label: s(b?.label, 120),
       body: s(b?.body, 800),
     })),
-    gallery: (Array.isArray(doc.gallery) ? doc.gallery : []).slice(0, 40).map((g) => ({
+    gallery: normalized.gallery.slice(0, 40).map((g) => ({
       url: s(g?.url, 500),
       caption: s(g?.caption, 200),
     })),
-    contact_phone: s(doc.contact_phone, 40),
-    contact_email: s(doc.contact_email, 120),
-    contact_note: s(doc.contact_note, 400),
+    consultation_heading: s(normalized.consultation_heading, 160),
+    consultation_note: s(normalized.consultation_note, 500),
+    consultation_options: normalized.consultation_options.slice(0, 8).map((v) => s(v, 100)),
+    contact_phone: s(normalized.contact_phone, 40),
+    contact_email: s(normalized.contact_email, 120),
+    contact_note: s(normalized.contact_note, 400),
   };
 }
 

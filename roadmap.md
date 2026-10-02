@@ -1,0 +1,3 @@
+- [x] Redesign /davis as a dark executive portfolio with editable authority, metrics, pillars, case studies, and consultation actions.
+- [x] Preserve the private editor's save, draft, publish, image, and contact workflows for all new content.
+- [x] Check desktop/mobile rendering and editor availability; draft save verified through editor sign-in.
