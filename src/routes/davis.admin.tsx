@@ -11,15 +11,17 @@ import {
   type PortfolioDoc,
 } from "@/lib/davis.functions";
 import "@/styles/davis.css";
+import { defaultMetrics, defaultPillars, defaultOptions } from "@/lib/davis-content";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/davis/admin")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Editor" },
+      { title: "Davis Waithaka — Private Portfolio Editor" },
       { name: "robots", content: "noindex, nofollow" },
       { name: "description", content: "Private editor." },
-      { property: "og:title", content: "Editor" },
+      { property: "og:title", content: "Davis Waithaka — Private Portfolio Editor" },
       { property: "og:description", content: "Private editor." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -27,7 +29,7 @@ export const Route = createFileRoute("/davis/admin")({
     links: [
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap",
       },
     ],
   }),
@@ -38,10 +40,16 @@ const EMPTY: PortfolioDoc = {
   hero_name: "",
   hero_line: "",
   hero_image: "",
+  authority: "Cold Chain Systems / Field Infrastructure / Traceability ERPs",
   about: "",
+  metrics: defaultMetrics,
+  pillars: defaultPillars,
   work: [],
   background: [],
   gallery: [],
+  consultation_heading: "Let's put the right systems in place.",
+  consultation_note: "Tell me what you're working through. I'll respond directly.",
+  consultation_options: defaultOptions,
   contact_phone: "",
   contact_email: "",
   contact_note: "",
@@ -206,9 +214,9 @@ function DavisAdmin() {
               />
             </label>
             {error && <p className="dvs-status">{error}</p>}
-            <button className="dvs-btn" disabled={busy || !password}>
+            <Button className="dvs-btn" disabled={busy || !password}>
               Enter
-            </button>
+            </Button>
           </form>
         </div>
       </div>
@@ -217,14 +225,14 @@ function DavisAdmin() {
 
   return (
     <div className="dvs">
-      <div className="dvs-wrap dvs-section">
+      <div className="dvs-wrap dvs-editor">
         <div className="dvs-row" style={{ justifyContent: "space-between" }}>
           <h1 style={{ fontSize: "1.9rem" }}>Edit my page</h1>
           <div className="dvs-row">
             <a className="dvs-btn" data-variant="ghost" href="/davis" target="_blank" rel="noreferrer">
               Preview
             </a>
-            <button
+            <Button
               className="dvs-btn"
               data-variant="ghost"
               onClick={async () => {
@@ -233,7 +241,7 @@ function DavisAdmin() {
               }}
             >
               Sign out
-            </button>
+            </Button>
           </div>
         </div>
         {status && <p className="dvs-status">{status}</p>}
@@ -241,9 +249,32 @@ function DavisAdmin() {
         <div className="dvs-card">
           <h2>Header</h2>
           <Field label="Name" value={doc.hero_name} onChange={(v) => set("hero_name", v)} />
+          <Field label="Authority line" value={doc.authority} onChange={(v) => set("authority", v)} />
           <Field label="Intro line" value={doc.hero_line} onChange={(v) => set("hero_line", v)} area />
           <Field label="Header photo URL" value={doc.hero_image} onChange={(v) => set("hero_image", v)} />
           <ImagePicker onDone={(url) => set("hero_image", url)} />
+        </div>
+
+        <div className="dvs-card">
+          <h2>Impact metrics</h2>
+          <p className="dvs-status">Only metrics with a value are shown. Leave unverified figures blank.</p>
+          {doc.metrics.map((m, i) => <div className="dvs-card" key={i}>
+            <Field label="Metric label" value={m.label} onChange={(v) => set("metrics", doc.metrics.map((x, j) => j === i ? {...x, label:v} : x))}/>
+            <Field label="Verified value" value={m.value} onChange={(v) => set("metrics", doc.metrics.map((x, j) => j === i ? {...x, value:v} : x))}/>
+            <Button type="button" className="dvs-btn" data-variant="ghost" onClick={() => set("metrics", doc.metrics.filter((_,j) => j !== i))}>Remove</Button>
+          </div>)}
+          <Button type="button" className="dvs-btn" data-variant="ghost" onClick={() => set("metrics", [...doc.metrics, {label:"", value:""}])}>Add metric</Button>
+        </div>
+
+        <div className="dvs-card">
+          <h2>Capability pillars</h2>
+          {doc.pillars.map((p, i) => <div className="dvs-card" key={i}>
+            <Field label="Title" value={p.title} onChange={(v) => set("pillars", doc.pillars.map((x,j) => j === i ? {...x,title:v} : x))}/>
+            <Field label="Description" area value={p.description} onChange={(v) => set("pillars", doc.pillars.map((x,j) => j === i ? {...x,description:v} : x))}/>
+            <Field label="Specialties" value={p.specialties} onChange={(v) => set("pillars", doc.pillars.map((x,j) => j === i ? {...x,specialties:v} : x))}/>
+            <Button type="button" className="dvs-btn" data-variant="ghost" onClick={() => set("pillars", doc.pillars.filter((_,j) => j !== i))}>Remove</Button>
+          </div>)}
+          <Button type="button" className="dvs-btn" data-variant="ghost" onClick={() => set("pillars", [...doc.pillars,{title:"",description:"",specialties:""}])}>Add pillar</Button>
         </div>
 
         <div className="dvs-card">
@@ -278,6 +309,11 @@ function DavisAdmin() {
                 value={w.note}
                 onChange={(v) => set("work", doc.work.map((x, j) => (j === i ? { ...x, note: v } : x)))}
               />
+              <Field label="Challenge" area value={w.problem ?? ""} onChange={(v) => set("work", doc.work.map((x,j) => j === i ? {...x,problem:v} : x))}/>
+              <Field label="Approach / solution" area value={w.solution ?? ""} onChange={(v) => set("work", doc.work.map((x,j) => j === i ? {...x,solution:v} : x))}/>
+              <Field label="Case photo URL" value={w.image ?? ""} onChange={(v) => set("work", doc.work.map((x,j) => j === i ? {...x,image:v} : x))}/>
+              <ImagePicker onDone={(url) => set("work", doc.work.map((x,j) => j === i ? {...x,image:url} : x))}/>
+              <Field label="Live verification link (https://)" value={w.verification_url ?? ""} onChange={(v) => set("work", doc.work.map((x,j) => j === i ? {...x,verification_url:v} : x))}/>
               <button
                 className="dvs-btn"
                 data-variant="ghost"
@@ -379,7 +415,14 @@ function DavisAdmin() {
         </div>
 
         <div className="dvs-card">
-          <h2>Contact</h2>
+          <h2>Consultation & contact</h2>
+          <Field label="Call to action heading" value={doc.consultation_heading} onChange={(v) => set("consultation_heading", v)} />
+          <Field label="Introduction" area value={doc.consultation_note} onChange={(v) => set("consultation_note", v)} />
+          {doc.consultation_options.map((option, i) => <div className="dvs-row" key={i}>
+            <div style={{flex:1}}><Field label={`Requirement ${i+1}`} value={option} onChange={(v) => set("consultation_options", doc.consultation_options.map((x,j) => j === i ? v : x))}/></div>
+            <Button type="button" className="dvs-btn" data-variant="ghost" onClick={() => set("consultation_options", doc.consultation_options.filter((_,j) => j !== i))}>Remove</Button>
+          </div>)}
+          <Button type="button" className="dvs-btn" data-variant="ghost" onClick={() => set("consultation_options", [...doc.consultation_options, ""])}>Add requirement</Button>
           <Field label="Phone" value={doc.contact_phone} onChange={(v) => set("contact_phone", v)} />
           <Field label="Email" value={doc.contact_email} onChange={(v) => set("contact_email", v)} />
           <Field label="Note" area value={doc.contact_note} onChange={(v) => set("contact_note", v)} />

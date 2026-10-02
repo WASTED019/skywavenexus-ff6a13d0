@@ -38,7 +38,7 @@ export function normalizePortfolio(input: PortfolioDoc): PortfolioDoc {
     authority: input.authority ?? "Cold Chain Systems / Field Infrastructure / Traceability ERPs",
     metrics: Array.isArray(input.metrics) ? input.metrics : defaultMetrics,
     pillars: Array.isArray(input.pillars) ? input.pillars : defaultPillars,
-    work: hasOperations ? work : [...work, defaultOperations],
+    work: hasOperations || input.authority !== undefined ? work : [...work, defaultOperations],
     background: Array.isArray(input.background) ? input.background : [],
     gallery: Array.isArray(input.gallery) ? input.gallery : [],
     consultation_heading: input.consultation_heading ?? "Let's put the right systems in place.",
