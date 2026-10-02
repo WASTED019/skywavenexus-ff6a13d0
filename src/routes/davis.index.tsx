@@ -39,7 +39,10 @@ function DavisPage() {
   const message = `Hello Davis, I'd like to discuss ${requirement || "a consultation"}.`;
   const whatsapp = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}` : "";
   const email = doc.contact_email ? `mailto:${doc.contact_email}?subject=${encodeURIComponent(`Consultation: ${requirement || "New enquiry"}`)}&body=${encodeURIComponent(message)}` : "";
-  const cases = doc.work ?? [];
+  const cases = [...(doc.work ?? [])].sort((a, b) => {
+    const priority = (title: string) => title.toLowerCase().includes("ustawi") ? 0 : title.toLowerCase().includes("operationsmanagement") ? 1 : title.toLowerCase().includes("skywave") ? 2 : 3;
+    return priority(a.title) - priority(b.title);
+  });
 
   return <div className="dvs">
     {isDraft && <div className="dvs-wrap dvs-draft"><p className="dvs-status">Draft preview — visible only to you.</p></div>}
@@ -58,7 +61,7 @@ function DavisPage() {
     </section>
 
     <section className="dvs-impact dvs-wrap" aria-label="Impact and scope">
-      {doc.metrics.filter((m) => m.value.trim()).map((m, i) => <div className="dvs-metric" key={i}><strong>{m.value}</strong><span>{m.label}</span></div>)}
+      {doc.metrics.filter((m) => m.label.trim()).map((m, i) => <div className="dvs-metric" key={i}><strong>{m.value.trim() || "—"}</strong><span>{m.label}</span></div>)}
     </section>
 
     <section className="dvs-section dvs-capabilities" id="capabilities"><div className="dvs-wrap">
