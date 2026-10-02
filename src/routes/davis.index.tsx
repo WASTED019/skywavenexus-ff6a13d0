@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { ArrowDownRight, ArrowUpRight, Mail, MessageCircle, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { getDavisPage } from "@/lib/davis.functions";
 import "@/styles/davis.css";
 
@@ -7,191 +9,81 @@ export const Route = createFileRoute("/davis/")({
   loader: () => getDavisPage({ data: { draft: true } }),
   head: () => ({
     meta: [
-      { title: "Davis Waithaka — Food Science, Cold Chain and Connectivity" },
-      {
-        name: "description",
-        content:
-          "Personal page of Davis Waithaka: cold-chain and produce aggregation in the Nanyuki–Laikipia–Narumoru corridor, plus technical operations and rural connectivity work.",
-      },
+      { title: "Davis Waithaka — Cold Chain, Infrastructure & Traceability" },
+      { name: "description", content: "Davis Waithaka works across cold-chain systems, field infrastructure and traceability software in Kenya." },
       { property: "og:type", content: "profile" },
-      { property: "og:title", content: "Davis Waithaka — Food Science, Cold Chain and Connectivity" },
-      {
-        property: "og:description",
-        content:
-          "Cold-chain and produce aggregation on the ground, and technical operations and connectivity across food safety, value addition and ISP work.",
-      },
+      { property: "og:title", content: "Davis Waithaka — Cold Chain, Infrastructure & Traceability" },
+      { property: "og:description", content: "Field-led cold chain, connectivity and traceability systems across the Nanyuki–Laikipia–Narumoru corridor." },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500&display=swap",
-      },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" },
     ],
   }),
-  errorComponent: () => (
-    <div className="dvs">
-      <div className="dvs-wrap dvs-section">
-        <h1>This page didn't load</h1>
-        <p>Please refresh in a moment.</p>
-      </div>
-    </div>
-  ),
-  notFoundComponent: () => (
-    <div className="dvs">
-      <div className="dvs-wrap dvs-section">
-        <h1>Not found</h1>
-      </div>
-    </div>
-  ),
+  errorComponent: () => <div className="dvs"><div className="dvs-wrap dvs-section"><h1>This page didn't load</h1><p>Please refresh in a moment.</p></div></div>,
+  notFoundComponent: () => <div className="dvs"><div className="dvs-wrap dvs-section"><h1>Not found</h1></div></div>,
   component: DavisPage,
 });
 
 function DavisPage() {
   const { doc, isDraft } = Route.useLoaderData();
   const [active, setActive] = useState(0);
-
-  if (!doc) {
-    return (
-      <div className="dvs">
-        <div className="dvs-wrap dvs-section">
-          <h1>Coming soon</h1>
-        </div>
-      </div>
-    );
-  }
+  const [requirement, setRequirement] = useState("");
+  if (!doc) return <div className="dvs"><div className="dvs-wrap dvs-section"><h1>Coming soon</h1></div></div>;
 
   const gallery = doc.gallery ?? [];
   const shown = gallery[Math.min(active, Math.max(gallery.length - 1, 0))];
+  const phone = doc.contact_phone.replace(/[^\d]/g, "");
+  const message = `Hello Davis, I'd like to discuss ${requirement || "a consultation"}.`;
+  const whatsapp = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}` : "";
+  const email = doc.contact_email ? `mailto:${doc.contact_email}?subject=${encodeURIComponent(`Consultation: ${requirement || "New enquiry"}`)}&body=${encodeURIComponent(message)}` : "";
+  const cases = doc.work ?? [];
 
-  return (
-    <div className="dvs">
-      {isDraft && (
-        <div className="dvs-wrap" style={{ paddingTop: "0.75rem" }}>
-          <p className="dvs-status">Draft preview — visible only to you.</p>
+  return <div className="dvs">
+    {isDraft && <div className="dvs-wrap dvs-draft"><p className="dvs-status">Draft preview — visible only to you.</p></div>}
+    <header className="dvs-topbar dvs-wrap"><a href="#top" className="dvs-mark">DW<span>.</span></a><span>INDEPENDENT PRACTICE / KENYA</span><a href="#consultation" className="dvs-top-link">LET'S TALK <ArrowUpRight size={15}/></a></header>
+    <section className="dvs-hero" id="top">
+      <div className="dvs-wrap dvs-hero-layout">
+        <div className="dvs-hero-copy dvs-rise">
+          <div className="dvs-eyebrow"><span className="dvs-line"/> FOOD SYSTEMS × TECHNOLOGY × OPERATIONS</div>
+          <h1>{doc.hero_name}</h1>
+          <p className="dvs-authority">{doc.authority}</p>
+          <p className="dvs-hero-intro">{doc.hero_line}</p>
+          <div className="dvs-hero-actions"><a className="dvs-primary-action" href="#consultation">Work with me <ArrowUpRight size={18}/></a><a className="dvs-text-action" href="#work">Explore selected work <ArrowDownRight size={18}/></a></div>
         </div>
-      )}
+        {doc.hero_image && <div className="dvs-portrait dvs-rise dvs-rise-2"><img src={doc.hero_image} alt={`${doc.hero_name} portrait`} /><span className="dvs-photo-label">FIELD / SYSTEMS / IMPACT</span></div>}
+      </div>
+    </section>
 
-      <header className="dvs-hero">
-        <div className="dvs-wrap dvs-hero-grid">
-          <div className="dvs-rise">
-            <h1>{doc.hero_name}</h1>
-            <p className="dvs-measure">{doc.hero_line}</p>
-          </div>
-          {doc.hero_image && (
-            <div className="dvs-rise dvs-rise-2">
-              <img src={doc.hero_image} alt={`${doc.hero_name} at work`} />
-            </div>
-          )}
-        </div>
-      </header>
+    <section className="dvs-impact dvs-wrap" aria-label="Impact and scope">
+      {doc.metrics.filter((m) => m.value.trim()).map((m, i) => <div className="dvs-metric" key={i}><strong>{m.value}</strong><span>{m.label}</span></div>)}
+    </section>
 
-      {doc.about && (
-        <section className="dvs-section">
-          <div className="dvs-wrap">
-            <p className="dvs-kicker">About</p>
-            <div className="dvs-measure">
-              {doc.about.split("\n").filter(Boolean).map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+    <section className="dvs-section dvs-capabilities" id="capabilities"><div className="dvs-wrap">
+      <div className="dvs-section-heading"><div><p className="dvs-kicker">01 / EXPERTISE</p><h2>Three disciplines.<br/>One operating lens.</h2></div><p>From production floor to network edge to the systems that connect them.</p></div>
+      <div className="dvs-pillar-grid">{doc.pillars.map((p, i) => <article className="dvs-pillar" key={i}><span className="dvs-index">0{i + 1} / 0{doc.pillars.length}</span><h3>{p.title}</h3><p>{p.description}</p><div className="dvs-specialties">{p.specialties}</div></article>)}</div>
+    </div></section>
 
-      {doc.work.length > 0 && (
-        <section className="dvs-section">
-          <div className="dvs-wrap">
-            <p className="dvs-kicker">Selected work</p>
-            {doc.work.map((w, i) => (
-              <article className="dvs-entry" key={i}>
-                {w.role && <p className="dvs-role">{w.role}</p>}
-                <h2>{w.title}</h2>
-                <p className="dvs-measure">{w.body}</p>
-                {w.note && <p className="dvs-note">{w.note}</p>}
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
+    {cases.length > 0 && <section className="dvs-work" id="work"><div className="dvs-wrap">
+      <div className="dvs-section-heading"><div><p className="dvs-kicker">02 / SELECTED WORK</p><h2>Problems met on the ground.</h2></div><p>Selected engagements across food systems, digital operations and connectivity.</p></div>
+      <div className="dvs-case-grid">{cases.map((w, i) => <article className={`dvs-case ${i === 0 ? "dvs-case-feature" : ""}`} key={i}>
+        {w.image && <div className="dvs-case-image"><img src={w.image} alt={`${w.title} project`} /></div>}
+        <div className="dvs-case-content"><div className="dvs-case-top"><span>{String(i + 1).padStart(2, "0")} / {w.role || "CASE STUDY"}</span><ArrowUpRight size={20}/></div><h3>{w.title}</h3><p className="dvs-case-body">{w.body}</p>
+          {(w.problem || w.solution) && <div className="dvs-problem-solution">{w.problem && <div><span>THE CHALLENGE</span><p>{w.problem}</p></div>}{w.solution && <div><span>THE APPROACH</span><p>{w.solution}</p></div>}</div>}
+          {w.verification_url && /^https:\/\//i.test(w.verification_url) && <a href={w.verification_url} target="_blank" rel="noopener noreferrer" className="dvs-verify">Live verification <ArrowUpRight size={16}/></a>}
+          {w.note && <p className="dvs-case-note">{w.note}</p>}</div>
+      </article>)}</div>
+    </div></section>}
 
-      {doc.background.length > 0 && (
-        <section className="dvs-section">
-          <div className="dvs-wrap">
-            <p className="dvs-kicker">Background</p>
-            <div className="dvs-bg-list">
-              {doc.background.map((b, i) => (
-                <div key={i}>
-                  <h3>{b.label}</h3>
-                  <p>{b.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+    {doc.about && <section className="dvs-section dvs-about"><div className="dvs-wrap dvs-about-grid"><div><p className="dvs-kicker">03 / PERSPECTIVE</p><h2>Built for the realities of the field.</h2></div><div className="dvs-about-copy">{doc.about.split("\n").filter(Boolean).map((p, i) => <p key={i}>{p}</p>)}</div></div></section>}
 
-      {gallery.length > 0 && shown && (
-        <section className="dvs-section">
-          <div className="dvs-wrap">
-            <p className="dvs-kicker">Gallery</p>
-            <div className="dvs-gallery-main">
-              <img src={shown.url} alt={shown.caption || "Gallery photograph"} />
-            </div>
-            {shown.caption && <p className="dvs-caption">{shown.caption}</p>}
-            {gallery.length > 1 && (
-              <div className="dvs-thumbs">
-                {gallery.map((g, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    data-active={i === active}
-                    aria-label={g.caption || `Photo ${i + 1}`}
-                    onClick={() => setActive(i)}
-                  >
-                    <img src={g.url} alt="" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+    {doc.background.length > 0 && <section className="dvs-section dvs-background"><div className="dvs-wrap"><p className="dvs-kicker">FOUNDATIONS</p><div className="dvs-bg-grid">{doc.background.map((b, i) => <div key={i}><span className="dvs-index">0{i + 1}</span><h3>{b.label}</h3><p>{b.body}</p></div>)}</div></div></section>}
 
-      <section className="dvs-section">
-        <div className="dvs-wrap">
-          <p className="dvs-kicker">Contact</p>
-          <dl className="dvs-contact dvs-measure">
-            {doc.contact_phone && (
-              <>
-                <dt>Phone</dt>
-                <dd>
-                  <a href={`tel:${doc.contact_phone.replace(/\s/g, "")}`}>{doc.contact_phone}</a>
-                </dd>
-              </>
-            )}
-            {doc.contact_email && (
-              <>
-                <dt>Email</dt>
-                <dd>
-                  <a href={`mailto:${doc.contact_email}`}>{doc.contact_email}</a>
-                </dd>
-              </>
-            )}
-          </dl>
-          {doc.contact_note && <p className="dvs-note dvs-measure">{doc.contact_note}</p>}
-        </div>
-      </section>
+    {shown && <section className="dvs-section dvs-gallery"><div className="dvs-wrap"><p className="dvs-kicker">FIELD NOTES / IMAGES</p><div className="dvs-gallery-main"><img src={shown.url} alt={shown.caption || "Gallery photograph"}/></div>{shown.caption && <p className="dvs-caption">{shown.caption}</p>}{gallery.length > 1 && <div className="dvs-thumbs">{gallery.map((g, i) => <Button variant="ghost" size="icon" key={i} data-active={i === active} aria-label={g.caption || `Photo ${i + 1}`} onClick={() => setActive(i)}><img src={g.url} alt=""/></Button>)}</div>}</div></section>}
 
-      <footer className="dvs-foot">
-        <div className="dvs-wrap">
-          <p>
-            © {new Date().getFullYear()} {doc.hero_name}. Personal page.
-          </p>
-        </div>
-      </footer>
-    </div>
-  );
+    <section className="dvs-consultation" id="consultation"><div className="dvs-wrap dvs-consult-grid"><div><p className="dvs-kicker">04 / WORK WITH ME</p><h2>{doc.consultation_heading}</h2><p>{doc.consultation_note}</p></div><div className="dvs-consult-form"><label htmlFor="dvs-requirement">WHAT DO YOU NEED HELP WITH?</label><select id="dvs-requirement" value={requirement} onChange={(e) => setRequirement(e.target.value)}><option value="">Select a requirement</option>{doc.consultation_options.filter(Boolean).map((option, i) => <option key={i} value={option}>{option}</option>)}</select><div className="dvs-contact-actions">{whatsapp && <a className="dvs-primary-action" href={whatsapp} target="_blank" rel="noopener noreferrer"><MessageCircle size={18}/> WhatsApp <ArrowUpRight size={18}/></a>}{email && <a className="dvs-outline-action" href={email}><Mail size={18}/> Email me <ArrowUpRight size={18}/></a>}</div>{doc.contact_phone && <a className="dvs-phone" href={`tel:${phone}`}><Phone size={15}/> {doc.contact_phone}</a>}{doc.contact_note && <p className="dvs-contact-note">{doc.contact_note}</p>}</div></div></section>
+    <footer className="dvs-foot"><div className="dvs-wrap"><span>{doc.hero_name}</span><span>© {new Date().getFullYear()} / PERSONAL PORTFOLIO</span><a href="#top">BACK TO TOP ↑</a></div></footer>
+  </div>;
 }
