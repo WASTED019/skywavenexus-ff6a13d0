@@ -49,7 +49,7 @@ export const Route = createFileRoute("/divisions/$divisionId")({
     </div>
   ),
   errorComponent: ({ error }) => (
-    <div className="p-10 text-center">{error.message}</div>
+    <div className="p-10 text-center">{error instanceof Error ? error.message : "This service line didn't load."}</div>
   ),
 });
 
