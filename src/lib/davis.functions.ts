@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { useSession } from "@tanstack/react-start/server";
+import { useSession, getRequest } from "@tanstack/react-start/server";
+import { createClient } from "@supabase/supabase-js";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { dispatchSchema, normalizePortfolio, type PortfolioDoc } from "./davis-content";
 export type { PortfolioDoc } from "./davis-content";
@@ -32,9 +33,39 @@ function matches(input: string, expected: string): boolean {
   return timingSafeEqual(a, b);
 }
 
-async function isUnlocked(): Promise<boolean> {
+// Only this one personal account may unlock the editor via account sign-in.
+// SKYWAVE roles (admin/super_admin) grant nothing here.
+const OWNER_EMAIL = "daviwaithaks22@gmail.com";
+
+async function ownerSignedIn(): Promise<boolean> {
+  try {
+    const auth = getRequest()?.headers.get("authorization") ?? "";
+    if (!auth.startsWith("Bearer ")) return false;
+    const token = auth.slice(7);
+    const url = process.env["SUPABASE_URL"];
+    const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
+    if (!token || !url || !key) return false;
+    const client = createClient(url, key, {
+      auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    });
+    const { data, error } = await client.auth.getUser(token);
+    const user = data?.user;
+    if (error || !user?.email || !user.email_confirmed_at) return false;
+    return user.email.toLowerCase() === OWNER_EMAIL;
+  } catch {
+    return false;
+  }
+}
+
+async function unlockMethod(): Promise<"password" | "account" | null> {
   const session = await useSession<GateSession>(sessionConfig());
-  return session.data.unlocked === true;
+  if (session.data.unlocked === true) return "password";
+  if (await ownerSignedIn()) return "account";
+  return null;
+}
+
+async function isUnlocked(): Promise<boolean> {
+  return (await unlockMethod()) !== null;
 }
 
 async function db() {
@@ -90,10 +121,12 @@ export const davisLogout = createServerFn({ method: "POST" }).handler(async () =
 });
 
 export const getDavisEditorState = createServerFn({ method: "GET" }).handler(async () => {
-  if (!(await isUnlocked())) return { unlocked: false as const, draft: null, published: null };
+  const method = await unlockMethod();
+  if (!method) return { unlocked: false as const, method: null, draft: null, published: null };
   const row = await readRow();
   return {
     unlocked: true as const,
+    method,
     draft: row?.draft ? normalizePortfolio(row.draft) : null,
     published: row?.published ? normalizePortfolio(row.published) : null,
     published_at: row?.published_at ?? null,
