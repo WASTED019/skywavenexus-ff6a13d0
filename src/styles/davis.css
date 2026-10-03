@@ -121,3 +121,4 @@
 .dvs .dvs-card {border:1px solid var(--dvs-border);padding:22px;margin:22px 0;background:var(--dvs-surface)}
 .dvs .dvs-card .dvs-card {background:var(--dvs-bg);margin:15px 0}
 .dvs input[type="file"] {max-width:100%;color:var(--dvs-muted);font-size:13px}
+.dvs .dvs-editor-photo {display:block;width:160px;max-width:100%;aspect-ratio:4/3;object-fit:cover;margin-bottom:16px}

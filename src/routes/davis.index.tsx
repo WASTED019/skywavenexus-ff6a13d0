@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Mail, MessageCircle, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { getDavisPage } from "@/lib/davis.functions";
 import "@/styles/davis.css";
 
