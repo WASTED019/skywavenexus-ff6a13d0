@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Mail, MessageCircle, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { getDavisPage } from "@/lib/davis.functions";
 import "@/styles/davis.css";
 
@@ -29,12 +28,10 @@ export const Route = createFileRoute("/davis/")({
 
 function DavisPage() {
   const { doc, isDraft } = Route.useLoaderData();
-  const [active, setActive] = useState(0);
   const [requirement, setRequirement] = useState("");
   if (!doc) return <div className="dvs"><div className="dvs-wrap dvs-section"><h1>Coming soon</h1></div></div>;
 
   const gallery = doc.gallery ?? [];
-  const shown = gallery[Math.min(active, Math.max(gallery.length - 1, 0))];
   const phone = doc.contact_phone.replace(/[^\d]/g, "");
   const message = `Hello Davis, I'd like to discuss ${requirement || "a consultation"}.`;
   const whatsapp = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}` : "";
@@ -84,7 +81,17 @@ function DavisPage() {
 
     {doc.background.length > 0 && <section className="dvs-section dvs-background"><div className="dvs-wrap"><p className="dvs-kicker">FOUNDATIONS</p><div className="dvs-bg-grid">{doc.background.map((b, i) => <div key={i}><span className="dvs-index">0{i + 1}</span><h3>{b.label}</h3><p>{b.body}</p></div>)}</div></div></section>}
 
-    {shown && <section className="dvs-section dvs-gallery"><div className="dvs-wrap"><p className="dvs-kicker">FIELD NOTES / IMAGES</p><div className="dvs-gallery-main"><img src={shown.url} alt={shown.caption || "Gallery photograph"}/></div>{shown.caption && <p className="dvs-caption">{shown.caption}</p>}{gallery.length > 1 && <div className="dvs-thumbs">{gallery.map((g, i) => <Button variant="ghost" size="icon" key={i} data-active={i === active} aria-label={g.caption || `Photo ${i + 1}`} onClick={() => setActive(i)}><img src={g.url} alt=""/></Button>)}</div>}</div></section>}
+    {gallery.some((g) => g.url) && <section className="dvs-section dvs-gallery" id="dispatches"><div className="dvs-wrap">
+      <div className="dvs-section-heading"><div><p className="dvs-kicker">FIELD DISPATCHES / ON THE GROUND</p><h2>From the field.</h2></div><p>Observations from the systems, sites and people behind the work.</p></div>
+      <div className="dvs-dispatch-list">{gallery.filter((g) => g.url).map((g, i) => <article className="dvs-dispatch" key={i}>
+        <div className="dvs-dispatch-photo"><img src={g.url} alt={g.title || g.location || `Field dispatch ${i + 1}`} loading="lazy" /></div>
+        <div className="dvs-dispatch-copy"><div className="dvs-dispatch-meta"><span>FIELD DISPATCH / {String(i + 1).padStart(2, "0")}</span>{g.location && <span>{g.location}</span>}</div>
+          <h3>{g.title || `Field dispatch ${String(i + 1).padStart(2, "0")}`}</h3>
+          {g.story && <p className="dvs-dispatch-story">{g.story}</p>}
+          {g.takeaway && <div className="dvs-dispatch-takeaway"><span>OPERATIONAL TAKEAWAY</span><p>{g.takeaway}</p></div>}
+        </div>
+      </article>)}</div>
+    </div></section>}
 
     <section className="dvs-consultation" id="consultation"><div className="dvs-wrap dvs-consult-grid"><div><p className="dvs-kicker">04 / WORK WITH ME</p><h2>{doc.consultation_heading}</h2><p>{doc.consultation_note}</p></div><div className="dvs-consult-form"><label htmlFor="dvs-requirement">WHAT DO YOU NEED HELP WITH?</label><select id="dvs-requirement" value={requirement} onChange={(e) => setRequirement(e.target.value)}><option value="">Select a requirement</option>{doc.consultation_options.filter(Boolean).map((option, i) => <option key={i} value={option}>{option}</option>)}</select><div className="dvs-contact-actions">{whatsapp && <a className="dvs-primary-action" href={whatsapp} target="_blank" rel="noopener noreferrer"><MessageCircle size={18}/> WhatsApp <ArrowUpRight size={18}/></a>}{email && <a className="dvs-outline-action" href={email}><Mail size={18}/> Email me <ArrowUpRight size={18}/></a>}</div>{doc.contact_phone && <a className="dvs-phone" href={`tel:${phone}`}><Phone size={15}/> {doc.contact_phone}</a>}{doc.contact_note && <p className="dvs-contact-note">{doc.contact_note}</p>}</div></div></section>
     <footer className="dvs-foot"><div className="dvs-wrap"><span>{doc.hero_name}</span><span>© {new Date().getFullYear()} / PERSONAL PORTFOLIO</span><a href="#top">BACK TO TOP ↑</a></div></footer>

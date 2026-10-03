@@ -1,6 +1,15 @@
 export type WorkEntry = { title: string; role: string; body: string; note: string; problem?: string; solution?: string; image?: string; verification_url?: string };
 export type BackgroundEntry = { label: string; body: string };
-export type GalleryEntry = { url: string; caption: string };
+import { z } from "zod";
+
+export type GalleryEntry = { url: string; location: string; title: string; story: string; takeaway: string; caption?: string };
+export const dispatchSchema = z.object({
+  url: z.string().trim().max(500).refine((url) => !url || /^https:\/\//i.test(url) || /^\/(?!\/)/.test(url), "Use an HTTPS or site image URL"),
+  location: z.string().trim().max(120),
+  title: z.string().trim().max(160),
+  story: z.string().trim().max(1500),
+  takeaway: z.string().trim().max(600),
+});
 export type MetricEntry = { label: string; value: string };
 export type PillarEntry = { title: string; description: string; specialties: string };
 export type PortfolioDoc = {
@@ -40,7 +49,13 @@ export function normalizePortfolio(input: PortfolioDoc): PortfolioDoc {
     pillars: Array.isArray(input.pillars) ? input.pillars : defaultPillars,
     work: hasOperations || input.authority !== undefined ? work : [...work, defaultOperations],
     background: Array.isArray(input.background) ? input.background : [],
-    gallery: Array.isArray(input.gallery) ? input.gallery : [],
+    gallery: Array.isArray(input.gallery) ? input.gallery.map((entry) => ({
+      url: entry.url ?? "",
+      location: entry.location ?? "",
+      title: entry.title || entry.caption || "",
+      story: entry.story ?? "",
+      takeaway: entry.takeaway ?? "",
+    })) : [],
     consultation_heading: input.consultation_heading ?? "Let's put the right systems in place.",
     consultation_note: input.consultation_note ?? "Tell me what you're working through. I'll respond directly.",
     consultation_options: Array.isArray(input.consultation_options) ? input.consultation_options : defaultOptions,

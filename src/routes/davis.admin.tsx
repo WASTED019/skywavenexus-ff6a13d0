@@ -11,7 +11,7 @@ import {
   type PortfolioDoc,
 } from "@/lib/davis.functions";
 import "@/styles/davis.css";
-import { defaultMetrics, defaultPillars, defaultOptions } from "@/lib/davis-content";
+import { defaultMetrics, defaultPillars, defaultOptions, dispatchSchema, type GalleryEntry } from "@/lib/davis-content";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/davis/admin")({
@@ -109,6 +109,9 @@ function DavisAdmin() {
   const set = <K extends keyof PortfolioDoc>(key: K, value: PortfolioDoc[K]) =>
     setDoc((d) => ({ ...d, [key]: value }));
 
+  const updateDispatch = (index: number, change: Partial<GalleryEntry>) =>
+    setDoc((current) => ({ ...current, gallery: current.gallery.map((entry, i) => i === index ? { ...entry, ...change } : entry) }));
+
   async function onLogin(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -126,6 +129,8 @@ function DavisAdmin() {
   }
 
   async function onSave() {
+    const validation = dispatchSchema.array().safeParse(doc.gallery);
+    if (!validation.success) { setStatus(`Check Field Dispatches: ${validation.error.issues[0]?.message ?? "Invalid entry"}`); return; }
     setBusy(true);
     setStatus("");
     try {
@@ -139,6 +144,8 @@ function DavisAdmin() {
   }
 
   async function onPublish() {
+    const validation = dispatchSchema.array().safeParse(doc.gallery);
+    if (!validation.success) { setStatus(`Check Field Dispatches: ${validation.error.issues[0]?.message ?? "Invalid entry"}`); return; }
     setBusy(true);
     setStatus("");
     try {
@@ -370,48 +377,65 @@ function DavisAdmin() {
         </div>
 
         <div className="dvs-card">
-          <h2>Gallery</h2>
+          <h2>Field Dispatches</h2>
           {doc.gallery.map((g, i) => (
             <div className="dvs-card" key={i}>
-              {g.url && <img src={g.url} alt="" style={{ width: 140, display: "block", marginBottom: 8 }} />}
+              <p className="dvs-status">Dispatch {String(i + 1).padStart(2, "0")}</p>
+              {g.url && <img src={g.url} alt={g.title || "Dispatch preview"} className="dvs-editor-photo" />}
               <Field
-                label="Photo URL"
+                label="Image URL"
                 value={g.url}
-                onChange={(v) =>
-                  set("gallery", doc.gallery.map((x, j) => (j === i ? { ...x, url: v } : x)))
-                }
+                onChange={(v) => updateDispatch(i, { url: v })}
               />
+              <ImagePicker onDone={(url) => updateDispatch(i, { url })} />
               <Field
-                label="Caption"
-                value={g.caption}
-                onChange={(v) =>
-                  set("gallery", doc.gallery.map((x, j) => (j === i ? { ...x, caption: v } : x)))
-                }
+                label="Location tag"
+                value={g.location}
+                onChange={(v) => updateDispatch(i, { location: v })}
               />
+              <Field label="Headline" value={g.title} onChange={(v) => updateDispatch(i, { title: v })} />
+              <Field label="Field story context" value={g.story} area onChange={(v) => updateDispatch(i, { story: v })} />
+              <Field label="Operational takeaway" value={g.takeaway} area onChange={(v) => updateDispatch(i, { takeaway: v })} />
               <div className="dvs-row">
-                <button
+                <Button type="button"
                   className="dvs-btn"
                   data-variant="ghost"
                   disabled={i === 0}
                   onClick={() => {
                     const next = [...doc.gallery];
-                    [next[i - 1], next[i]] = [next[i]!, next[i - 1]!];
+                    const previous = next[i - 1];
+                    const current = next[i];
+                    if (!previous || !current) return;
+                    [next[i - 1], next[i]] = [current, previous];
                     set("gallery", next);
                   }}
                 >
                   Move up
-                </button>
-                <button
+                </Button>
+                <Button type="button"
+                  className="dvs-btn"
+                  data-variant="ghost"
+                  disabled={i === doc.gallery.length - 1}
+                  onClick={() => {
+                    const next = [...doc.gallery];
+                    const current = next[i];
+                    const following = next[i + 1];
+                    if (!current || !following) return;
+                    [next[i], next[i + 1]] = [following, current];
+                    set("gallery", next);
+                  }}
+                >Move down</Button>
+                <Button type="button"
                   className="dvs-btn"
                   data-variant="ghost"
                   onClick={() => set("gallery", doc.gallery.filter((_, j) => j !== i))}
                 >
                   Remove
-                </button>
+                </Button>
               </div>
             </div>
           ))}
-          <ImagePicker onDone={(url) => set("gallery", [...doc.gallery, { url, caption: "" }])} />
+          <Button type="button" className="dvs-btn" data-variant="ghost" onClick={() => set("gallery", [...doc.gallery, { url: "", location: "", title: "", story: "", takeaway: "" }])}>Add dispatch</Button>
         </div>
 
         <div className="dvs-card">
