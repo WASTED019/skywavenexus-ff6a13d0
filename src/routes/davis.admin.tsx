@@ -13,6 +13,7 @@ import {
 import "@/styles/davis.css";
 import { defaultMetrics, defaultPillars, defaultOptions, dispatchSchema, type GalleryEntry } from "@/lib/davis-content";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/davis/admin")({
   ssr: false,
@@ -225,6 +226,11 @@ function DavisAdmin() {
               Enter
             </Button>
           </form>
+          <p className="dvs-status" style={{ marginTop: "1.5rem" }}>Or use your account</p>
+          <a className="dvs-btn" data-variant="ghost" href="/sign-in">
+            Sign in with account
+          </a>
+          <p className="dvs-status">After signing in, come back to this page — it unlocks automatically for the owner account.</p>
         </div>
       </div>
     );
@@ -244,6 +250,7 @@ function DavisAdmin() {
               data-variant="ghost"
               onClick={async () => {
                 await logout({});
+                await supabase.auth.signOut();
                 setUnlocked(false);
               }}
             >
