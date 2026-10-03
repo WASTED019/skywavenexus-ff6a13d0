@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { useSession } from "@tanstack/react-start/server";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { normalizePortfolio, type PortfolioDoc } from "./davis-content";
+import { dispatchSchema, normalizePortfolio, type PortfolioDoc } from "./davis-content";
 export type { PortfolioDoc } from "./davis-content";
 
 /**
@@ -125,9 +125,12 @@ function sanitize(doc: PortfolioDoc): PortfolioDoc {
       label: s(b?.label, 120),
       body: s(b?.body, 800),
     })),
-    gallery: normalized.gallery.slice(0, 40).map((g) => ({
-      url: s(g?.url, 500),
-      caption: s(g?.caption, 200),
+    gallery: dispatchSchema.array().max(40).parse(normalized.gallery).map((g) => ({
+      url: g.url,
+      location: g.location,
+      title: g.title,
+      story: g.story,
+      takeaway: g.takeaway,
     })),
     consultation_heading: s(normalized.consultation_heading, 160),
     consultation_note: s(normalized.consultation_note, 500),
