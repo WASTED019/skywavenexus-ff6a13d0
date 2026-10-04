@@ -45,6 +45,8 @@ export type ServiceLine = {
   button_link: string | null;
   image_url: string | null;
   display_order: number;
+  is_active?: boolean;
+  icon?: string | null;
 };
 
 export type ShowcaseItem = {
@@ -165,6 +167,31 @@ export function useServiceLines(): ServiceLine[] {
     supabase.from("service_lines").select("*").order("display_order")
       .then(({ data }) => { if (alive) setList(((data ?? []) as unknown) as ServiceLine[]); });
     return () => { alive = false; };
+  }, []);
+  return list;
+}
+
+/**
+ * Live service lines (active only). `null` until the first load finishes or if
+ * the read fails, so callers can fall back to the built-in list. Subscribes to
+ * changes so admin edits appear on open pages without a refresh.
+ */
+export function useLiveServiceLines(): ServiceLine[] | null {
+  const [list, setList] = useState<ServiceLine[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    const load = () =>
+      supabase.from("service_lines").select("*").order("display_order")
+        .then(({ data, error }) => {
+          if (!alive || error) return;
+          setList(((data ?? []) as unknown as ServiceLine[]).filter((l) => l.is_active !== false));
+        });
+    load();
+    const ch = supabase
+      .channel(`service-lines-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "service_lines" }, () => load())
+      .subscribe();
+    return () => { alive = false; supabase.removeChannel(ch); };
   }, []);
   return list;
 }
