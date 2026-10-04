@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { divisions, findDivision, findService } from "@/data/divisions";
+import { useLiveServiceLines } from "@/lib/cms";
+import { lineViews } from "@/lib/service-lines";
 import { submitServiceRequest } from "@/lib/requests";
 import { whatsappLink } from "@/lib/whatsapp";
 import { useEffect, useMemo, useState } from "react";
@@ -48,8 +49,10 @@ function RequestPage() {
   const [divisionId, setDivisionId] = useState<string>(search.division || "");
   const [serviceId, setServiceId] = useState<string>(search.service || "");
 
-  const division = useMemo(() => findDivision(divisionId), [divisionId]);
-  const service = useMemo(() => (divisionId && serviceId ? findService(divisionId, serviceId) : undefined), [divisionId, serviceId]);
+  const live = useLiveServiceLines();
+  const lines = useMemo(() => lineViews(live), [live]);
+  const division = useMemo(() => lines.find((l) => l.id === divisionId), [lines, divisionId]);
+  const service = useMemo(() => division?.services.find((s) => s.id === serviceId), [division, serviceId]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -95,8 +98,9 @@ function RequestPage() {
     const upload = fd.get("upload");
     const file = upload instanceof File && upload.size > 0 ? upload : null;
 
-    const div = findDivision(divisionId);
-    const svc = findService(divisionId, serviceId);
+    const div = division;
+    const svc = service;
+    if (!div || !svc) { setErrors({ divisionId: div ? "" : "Select a service line", serviceId: "Select a service" }); return; }
 
     setBusy(true);
     try {
@@ -189,7 +193,7 @@ function RequestPage() {
                 className="input"
               >
                 <option value="">Select a service line</option>
-                {divisions.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
+                {lines.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
               </select>
             </Field>
             <Field label="Service" error={errors.serviceId}>

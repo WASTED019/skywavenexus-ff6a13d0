@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { divisions } from "@/data/divisions";
+import { iconFor, lineViews } from "@/lib/service-lines";
 import { whatsappLink } from "@/lib/whatsapp";
-import { useHomepageContent, useHomepageSlides, useMediaSlides, useServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
+import { useHomepageContent, useHomepageSlides, useMediaSlides, useLiveServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
 import logo from "@/assets/logo.png";
-import { Shield, Sprout, Wifi, ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -24,12 +24,10 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const iconFor = (id: string) =>
-  id === "food-safety" ? Shield : id === "value-addition" ? Sprout : Wifi;
 
 function HomePage() {
   const hc = useHomepageContent();
-  const sls = useServiceLines();
+  const sls = useLiveServiceLines();
   const settings = useSiteSettings();
   const slides = useHomepageSlides();
   const mediaSlides = useMediaSlides();
@@ -44,9 +42,7 @@ function HomePage() {
   const primaryBtn = hc?.button_text || "Request a Service";
   const primaryBtnLink = hc?.button_link || "/request";
 
-  const serviceCards = sls.length > 0
-    ? sls.map(s => ({ id: s.slug, title: s.title, short: s.short_desc || "", link: s.button_link || `/divisions/${s.slug}`, image: s.image_url }))
-    : divisions.map(d => ({ id: d.id, title: d.title, short: d.short, link: `/divisions/${d.id}`, image: null as string | null }));
+  const serviceCards = lineViews(sls);
 
   const intervalMs = Number((hc?.sections as any)?.slide_interval_ms) || 6000;
 
@@ -88,15 +84,15 @@ function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="mb-10 max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-blue">Our Service Lines</p>
-          <h2 className="mt-2 text-3xl font-bold">Three service lines, one trusted partner.</h2>
+          <h2 className="mt-2 text-3xl font-bold">Practical service lines, one trusted partner.</h2>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {serviceCards.map((d) => {
-            const Icon = iconFor(d.id);
+            const Icon = iconFor(d.id, d.icon);
             return (
               <div key={d.id} className="bg-card-gradient group rounded-2xl border p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-elegant">
                 {d.image ? (
-                  <img src={d.image} alt="" className="mb-4 h-32 w-full rounded-xl object-cover" />
+                  <img src={d.image} alt={d.title} loading="lazy" className="mb-4 h-32 w-full rounded-xl object-cover" />
                 ) : (
                   <div className="inline-flex rounded-xl bg-brand-blue/10 p-3 text-brand-blue">
                     <Icon className="size-6" />

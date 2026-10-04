@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { divisions } from "@/data/divisions";
-import { useServiceLines } from "@/lib/cms";
-import { Shield, Sprout, Wifi, ArrowRight } from "lucide-react";
+import { useLiveServiceLines } from "@/lib/cms";
+import { iconFor, lineViews } from "@/lib/service-lines";
+import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/divisions/")({
   head: () => ({
@@ -21,18 +21,9 @@ export const Route = createFileRoute("/divisions/")({
   component: DivisionsIndex,
 });
 
-const iconFor = (id: string) =>
-  id === "food-safety" ? Shield : id === "value-addition" ? Sprout : Wifi;
 
 function DivisionsIndex() {
-  const cms = useServiceLines();
-  const cards = cms.length
-    ? cms.map((s) => ({
-        id: s.slug,
-        title: s.title,
-        description: s.short_desc || s.full_desc || "",
-      }))
-    : divisions.map((d) => ({ id: d.id, title: d.title, description: d.description }));
+  const cards = lineViews(useLiveServiceLines());
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -47,7 +38,7 @@ function DivisionsIndex() {
       <section className="mx-auto max-w-7xl px-4 py-12">
         <div className="grid gap-6 md:grid-cols-3">
           {cards.map((d) => {
-            const Icon = iconFor(d.id);
+            const Icon = iconFor(d.id, d.icon);
             return (
               <Link
                 key={d.id}
@@ -59,7 +50,8 @@ function DivisionsIndex() {
                   <Icon className="size-6" />
                 </div>
                 <h2 className="mt-4 text-xl font-bold text-brand-navy">{d.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">{d.description}</p>
+                {d.image && <img src={d.image} alt={d.title} loading="lazy" className="mt-4 h-32 w-full rounded-xl object-cover" />}
+                <p className="mt-2 text-sm text-muted-foreground">{d.short}</p>
                 <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-blue">
                   View Services <ArrowRight className="size-4" />
                 </span>

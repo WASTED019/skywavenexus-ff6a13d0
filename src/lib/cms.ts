@@ -45,6 +45,8 @@ export type ServiceLine = {
   button_link: string | null;
   image_url: string | null;
   display_order: number;
+  is_active?: boolean;
+  icon?: string | null;
 };
 
 export type ShowcaseItem = {
@@ -169,16 +171,47 @@ export function useServiceLines(): ServiceLine[] {
   return list;
 }
 
-export function useServiceLine(slug: string): ServiceLine | null {
-  const [row, setRow] = useState<ServiceLine | null>(null);
+/**
+ * Live service lines (active only). `null` until the first load finishes or if
+ * the read fails, so callers can fall back to the built-in list. Subscribes to
+ * changes so admin edits appear on open pages without a refresh.
+ */
+export function useLiveServiceLines(): ServiceLine[] | null {
+  const [list, setList] = useState<ServiceLine[] | null>(null);
   useEffect(() => {
     let alive = true;
-    setRow(null);
-    supabase.from("service_lines").select("*").eq("slug", slug).maybeSingle()
-      .then(({ data }) => { if (alive) setRow(((data ?? null) as unknown) as ServiceLine | null); });
-    return () => { alive = false; };
+    const load = () =>
+      supabase.from("service_lines").select("*").order("display_order")
+        .then(({ data, error }) => {
+          if (!alive || error) return;
+          setList(((data ?? []) as unknown as ServiceLine[]).filter((l) => l.is_active !== false));
+        });
+    load();
+    const ch = supabase
+      .channel(`service-lines-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "service_lines" }, () => load())
+      .subscribe();
+    return () => { alive = false; supabase.removeChannel(ch); };
+  }, []);
+  return list;
+}
+
+export function useServiceLine(slug: string): { row: ServiceLine | null; loaded: boolean } {
+  const [state, setState] = useState<{ row: ServiceLine | null; loaded: boolean }>({ row: null, loaded: false });
+  useEffect(() => {
+    let alive = true;
+    setState({ row: null, loaded: false });
+    const load = () =>
+      supabase.from("service_lines").select("*").eq("slug", slug).maybeSingle()
+        .then(({ data }) => { if (alive) setState({ row: ((data ?? null) as unknown) as ServiceLine | null, loaded: true }); });
+    load();
+    const ch = supabase
+      .channel(`service-line-${slug}-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "service_lines" }, () => load())
+      .subscribe();
+    return () => { alive = false; supabase.removeChannel(ch); };
   }, [slug]);
-  return row;
+  return state;
 }
 
 /**
