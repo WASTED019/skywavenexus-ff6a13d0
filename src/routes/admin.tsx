@@ -35,7 +35,7 @@ type UserRow = {
   email: string | null; is_active: boolean; delete_requested: boolean; roles: string[];
 };
 
-type Tab = "dashboard"|"requests"|"leads"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"users"|"resets"|"activity";
+type Tab = "dashboard"|"requests"|"leads"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"members"|"users"|"resets"|"activity";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -71,6 +71,7 @@ function AdminPage() {
     { id: "blog", label: "Blog", show: can(role, "edit_content") },
     { id: "media", label: "Media", show: can(role, "edit_content") },
     { id: "settings", label: "Settings", show: can(role, "edit_content") },
+    { id: "members", label: "Members", show: hasMin(role, "admin") },
     { id: "users", label: "Users & Roles", show: can(role, "manage_users") },
     { id: "resets", label: "Password Resets", show: can(role, "manage_resets") },
     { id: "activity", label: "Activity Log", show: can(role, "view_activity") },
@@ -85,7 +86,10 @@ function AdminPage() {
             <h1 className="text-2xl font-bold">Admin Dashboard</h1>
             <p className="text-xs text-muted-foreground">Signed in as {roleLabel(role)}</p>
           </div>
-          <button onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/sign-in" }); }} className="rounded-md border px-3 py-2 text-sm">Sign out</button>
+          <div className="flex items-center gap-2">
+            <a href="/davis/admin" target="_blank" rel="noreferrer" title="Personal portfolio editor" className="rounded-md px-3 py-2 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground">Portfolio editor ↗</a>
+            <button onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/sign-in" }); }} className="rounded-md border px-3 py-2 text-sm">Sign out</button>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -111,6 +115,7 @@ function AdminPage() {
           {tab === "media" && <MediaPanel role={role} />}
           {tab === "settings" && <SettingsPanel />}
           {tab === "users" && <UsersPanel />}
+          {tab === "members" && <MembersPanel />}
           {tab === "resets" && <ResetsPanel />}
           {tab === "activity" && <ActivityPanel />}
         </div>
@@ -793,6 +798,74 @@ function UsersPanel() {
         </table>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">The system refuses to demote the last super admin.</p>
+    </div>
+  );
+}
+
+/* ===================== MEMBERS DIRECTORY ===================== */
+type MemberRow = {
+  id: string; full_name: string | null; username: string | null; email: string | null;
+  phone: string | null; whatsapp: string | null; is_active: boolean; created_at: string; roles: string[];
+};
+
+function MembersPanel() {
+  const [rows, setRows] = useState<MemberRow[]>([]);
+  const [q, setQ] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      const [{ data: profs, error }, { data: roleRows }] = await Promise.all([
+        supabase.from("profiles").select("id, full_name, username, email, phone, whatsapp, is_active, created_at").order("created_at", { ascending: false }),
+        supabase.from("user_roles").select("user_id, role"),
+      ]);
+      if (error) setErr(error.message);
+      const map = new Map<string, string[]>();
+      for (const r of (roleRows ?? []) as { user_id: string; role: string }[]) {
+        const a = map.get(r.user_id) ?? []; a.push(r.role); map.set(r.user_id, a);
+      }
+      setRows(((profs ?? []) as Omit<MemberRow, "roles">[]).map((p) => ({ ...p, roles: map.get(p.id) ?? [] })));
+      setLoading(false);
+    })();
+  }, []);
+
+  const term = q.trim().toLowerCase();
+  const filtered = rows.filter((m) => !term || `${m.full_name || ""} ${m.username || ""} ${m.email || ""}`.toLowerCase().includes(term));
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name or email…" className="w-full max-w-sm rounded-md border px-3 py-2 text-sm" />
+        <span className="text-xs text-muted-foreground">{filtered.length} of {rows.length} members</span>
+      </div>
+      {err && <p className="mt-2 text-xs text-destructive">{err}</p>}
+      <div className="mt-3 overflow-x-auto rounded-2xl border bg-card shadow-soft">
+        <table className="min-w-full text-sm">
+          <thead className="bg-secondary text-left text-xs uppercase tracking-wider">
+            <tr>{["Name","Email","Phone / WhatsApp","Role","Signed up","Status"].map((h) => <th key={h} className="px-3 py-2">{h}</th>)}</tr>
+          </thead>
+          <tbody>
+            {loading && <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">Loading…</td></tr>}
+            {!loading && filtered.length === 0 && <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No members found.</td></tr>}
+            {filtered.map((m) => {
+              const best = m.roles.reduce<Role>((acc, r) => (rank(r) > rank(acc) ? (r as Role) : acc), null);
+              return (
+                <tr key={m.id} className="border-t">
+                  <td className="px-3 py-2">{m.full_name || m.username || "—"}</td>
+                  <td className="px-3 py-2 text-xs">{m.email || "—"}</td>
+                  <td className="px-3 py-2 text-xs">{m.phone || "—"}{m.whatsapp ? ` / ${m.whatsapp}` : ""}</td>
+                  <td className="px-3 py-2 text-xs"><span className="rounded-full bg-secondary px-2 py-0.5">{roleLabel(best)}</span></td>
+                  <td className="px-3 py-2 text-xs">{new Date(m.created_at).toLocaleDateString()}</td>
+                  <td className="px-3 py-2 text-xs">
+                    <span className={`rounded-full px-2 py-0.5 font-semibold ${m.is_active ? "bg-secondary" : "bg-destructive/10 text-destructive"}`}>{m.is_active ? "Active" : "Inactive"}</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
