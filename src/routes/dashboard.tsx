@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
 
 type Req = {
   id: string;
@@ -18,6 +19,8 @@ type Profile = {
   username: string | null;
   full_name: string | null;
   email: string | null;
+  phone: string | null;
+  whatsapp: string | null;
   delete_requested: boolean;
 };
 
@@ -25,6 +28,84 @@ export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — SKYWAVE NEXUS" }] }),
   component: CustomerDashboard,
 });
+
+const phoneRe = /^\+?[0-9 ]{9,15}$/;
+const profileSchema = z.object({
+  full_name: z.string().trim().min(2, "Full name must be at least 2 characters").max(100, "Full name is too long"),
+  phone: z.string().trim().refine((v) => v === "" || phoneRe.test(v), "Enter a valid phone number, e.g. 0712345678"),
+  whatsapp: z.string().trim().refine((v) => v === "" || phoneRe.test(v), "Enter a valid WhatsApp number, e.g. 0712345678"),
+});
+
+function ProfileCard({ profile, onSaved }: { profile: Profile; onSaved: (p: Partial<Profile>) => void }) {
+  const [form, setForm] = useState({
+    full_name: profile.full_name ?? "",
+    phone: profile.phone ?? "",
+    whatsapp: profile.whatsapp ?? "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [status, setStatus] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus(null);
+    const parsed = profileSchema.safeParse(form);
+    if (!parsed.success) {
+      const errs: Record<string, string> = {};
+      for (const i of parsed.error.issues) errs[String(i.path[0])] = i.message;
+      setErrors(errs);
+      return;
+    }
+    setErrors({});
+    setSaving(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { setSaving(false); setStatus({ kind: "err", text: "Your session expired. Please sign in again." }); return; }
+    const payload = {
+      full_name: parsed.data.full_name,
+      phone: parsed.data.phone || null,
+      whatsapp: parsed.data.whatsapp || null,
+    };
+    const { error } = await supabase.from("profiles").update(payload).eq("id", session.user.id);
+    setSaving(false);
+    if (error) { setStatus({ kind: "err", text: "Could not save your changes. Please try again." }); return; }
+    onSaved(payload);
+    setStatus({ kind: "ok", text: "Saved ✓" });
+    setTimeout(() => setStatus(null), 3000);
+  };
+
+  const field = (key: keyof typeof form, label: string, type = "text", auto?: string) => (
+    <label className="block">
+      <span className="mb-1 block text-xs font-semibold">{label}</span>
+      <input
+        type={type}
+        autoComplete={auto}
+        value={form[key]}
+        maxLength={key === "full_name" ? 100 : 16}
+        onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+        className="w-full rounded-md border px-3 py-2 text-sm"
+      />
+      {errors[key] && <span className="mt-1 block text-xs text-destructive">{errors[key]}</span>}
+    </label>
+  );
+
+  return (
+    <form onSubmit={onSubmit} className="mt-10 rounded-2xl border bg-card p-5 shadow-soft">
+      <h2 className="text-lg font-semibold">Profile & Settings</h2>
+      <p className="mt-1 text-xs text-muted-foreground">Email: {profile.email || "—"} (cannot be changed here)</p>
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        {field("full_name", "Full name", "text", "name")}
+        {field("phone", "Phone number", "tel", "tel")}
+        {field("whatsapp", "WhatsApp number", "tel")}
+      </div>
+      <div className="mt-4 flex items-center gap-3">
+        <button disabled={saving} className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
+          {saving ? "Saving…" : "Save changes"}
+        </button>
+        {status && <span className={`text-xs font-semibold ${status.kind === "ok" ? "text-brand-blue" : "text-destructive"}`}>{status.text}</span>}
+      </div>
+    </form>
+  );
+}
 
 function CustomerDashboard() {
   const navigate = useNavigate();
@@ -44,7 +125,7 @@ function CustomerDashboard() {
       if ((roles ?? []).some((r) => ["admin","super_admin","staff","viewer"].includes(r.role))) { navigate({ to: "/admin" }); return; }
 
       const [{ data: prof }, { data: reqs }] = await Promise.all([
-        supabase.from("profiles").select("username, full_name, email, delete_requested").eq("id", session.user.id).maybeSingle(),
+        supabase.from("profiles").select("username, full_name, email, phone, whatsapp, delete_requested").eq("id", session.user.id).maybeSingle(),
         supabase.from("my_requests").select("id, ref, status, division_name, service_name, admin_feedback, created_at").order("created_at", { ascending: false }),
       ]);
       if (!active) return;
@@ -117,6 +198,8 @@ function CustomerDashboard() {
             </tbody>
           </table>
         </div>
+
+        {profile && <ProfileCard profile={profile} onSaved={(p) => setProfile((cur) => cur ? { ...cur, ...p } : cur)} />}
 
         <div className="mt-10 rounded-2xl border border-destructive/30 bg-destructive/5 p-5">
           <h3 className="text-sm font-semibold text-destructive">Account removal</h3>
