@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { findDivision, type Service } from "@/data/divisions";
+import { findDivision, type Service as _S } from "@/data/divisions";
 import { useServiceLine } from "@/lib/cms";
 import { toLineView } from "@/lib/service-lines";
 import { ArrowLeft } from "lucide-react";
@@ -14,8 +14,8 @@ export const Route = createFileRoute("/divisions/$divisionId")({
     return { id: params.divisionId, division: fb ? { title: fb.title, description: fb.description } : null };
   },
   head: ({ loaderData, params }) => {
-    const title = `${loaderData?.division.title ?? "Division"} — SKYWAVE NEXUS`;
-    const desc = loaderData?.division.description ?? "Service line at SKYWAVE NEXUS Integrated Solutions.";
+    const title = `${loaderData?.division?.title ?? "Division"} — SKYWAVE NEXUS`;
+    const desc = loaderData?.division?.description ?? "Service line at SKYWAVE NEXUS Integrated Solutions.";
     const url = `https://skywavenexus.lovable.app/divisions/${params.divisionId}`;
     return {
       meta: [
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/divisions/$divisionId")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Service",
-          name: loaderData?.division.title,
+          name: loaderData?.division?.title,
           description: desc,
           provider: { "@type": "Organization", name: "SKYWAVE NEXUS Integrated Solutions" },
           url,
@@ -94,7 +94,7 @@ function DivisionPage() {
       <section className="mx-auto max-w-7xl px-4 py-12">
         <h2 className="mb-6 text-2xl font-bold">Services</h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {services.map((s: Service) => (
+          {services.map((s) => (
             <article key={s.id} className="flex flex-col rounded-2xl border bg-card p-6 shadow-soft transition hover:shadow-elegant">
               <h3 className="text-lg font-bold text-brand-navy">{s.name}</h3>
               <p className="mt-2 text-sm">{s.explanation}</p>
