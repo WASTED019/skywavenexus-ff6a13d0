@@ -3,13 +3,15 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { findDivision, type Service } from "@/data/divisions";
 import { useServiceLine } from "@/lib/cms";
+import { toLineView } from "@/lib/service-lines";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/divisions/$divisionId")({
   loader: ({ params }) => {
-    const division = findDivision(params.divisionId);
-    if (!division) throw notFound();
-    return { division };
+    if (!/^[a-z0-9-]{1,80}$/.test(params.divisionId)) throw notFound();
+    // Built-in lines give instant SEO text; lines added in admin load in the page.
+    const fb = findDivision(params.divisionId);
+    return { id: params.divisionId, division: fb ? { title: fb.title, description: fb.description } : null };
   },
   head: ({ loaderData, params }) => {
     const title = `${loaderData?.division.title ?? "Division"} — SKYWAVE NEXUS`;
@@ -54,25 +56,26 @@ export const Route = createFileRoute("/divisions/$divisionId")({
 });
 
 function DivisionPage() {
-  const { division } = Route.useLoaderData();
-  const cms = useServiceLine(division.id);
+  const { id } = Route.useLoaderData();
+  const { row: cms, loaded } = useServiceLine(id);
+  const hidden = loaded && cms?.is_active === false;
+  const view = hidden ? null : toLineView(cms, id);
 
-  const title = cms?.title || division.title;
-  const description = cms?.full_desc || cms?.short_desc || division.description;
-  const services: Service[] = cms?.services?.length
-    ? cms.services.map((s, i) => {
-        const match = division.services.find(
-          (f) => f.name.trim().toLowerCase() === (s.name || "").trim().toLowerCase(),
-        );
-        return {
-          id: s.id || match?.id || `svc-${i}`,
-          name: s.name,
-          explanation: s.explanation || match?.explanation || "",
-          audience: s.audience || match?.audience || "",
-          outcome: s.outcome || match?.outcome || "",
-        };
-      })
-    : division.services;
+  if (!view) {
+    if (!loaded) return <div className="flex min-h-screen flex-col"><Header /><div className="flex-1" /><Footer /></div>;
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <div className="mx-auto max-w-3xl px-4 py-20 text-center">
+          <h1 className="text-3xl font-bold">Service line not available</h1>
+          <Link to="/divisions" className="mt-4 inline-block text-brand-blue hover:underline">Back to Service Lines</Link>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+  const { title, description, services } = view;
+  const division = { id };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -84,6 +87,7 @@ function DivisionPage() {
           </Link>
           <h1 className="text-3xl font-bold sm:text-4xl">{title}</h1>
           <p className="mt-3 max-w-3xl text-white/85">{description}</p>
+          {view.image && <img src={view.image} alt={title} className="mt-6 h-48 w-full max-w-3xl rounded-2xl object-cover" />}
         </div>
       </section>
 
@@ -95,8 +99,8 @@ function DivisionPage() {
               <h3 className="text-lg font-bold text-brand-navy">{s.name}</h3>
               <p className="mt-2 text-sm">{s.explanation}</p>
               <dl className="mt-4 space-y-2 text-xs">
-                <div><dt className="font-semibold text-brand-blue">For</dt><dd className="text-muted-foreground">{s.audience}</dd></div>
-                <div><dt className="font-semibold text-brand-blue">Outcome</dt><dd className="text-muted-foreground">{s.outcome}</dd></div>
+                <div><dt className="font-semibold text-brand-blue">For</dt><dd className="text-muted-foreground">{s.audience || "—"}</dd></div>
+                <div><dt className="font-semibold text-brand-blue">Outcome</dt><dd className="text-muted-foreground">{s.outcome || "—"}</dd></div>
               </dl>
               <Link
                 to="/request"

@@ -196,16 +196,22 @@ export function useLiveServiceLines(): ServiceLine[] | null {
   return list;
 }
 
-export function useServiceLine(slug: string): ServiceLine | null {
-  const [row, setRow] = useState<ServiceLine | null>(null);
+export function useServiceLine(slug: string): { row: ServiceLine | null; loaded: boolean } {
+  const [state, setState] = useState<{ row: ServiceLine | null; loaded: boolean }>({ row: null, loaded: false });
   useEffect(() => {
     let alive = true;
-    setRow(null);
-    supabase.from("service_lines").select("*").eq("slug", slug).maybeSingle()
-      .then(({ data }) => { if (alive) setRow(((data ?? null) as unknown) as ServiceLine | null); });
-    return () => { alive = false; };
+    setState({ row: null, loaded: false });
+    const load = () =>
+      supabase.from("service_lines").select("*").eq("slug", slug).maybeSingle()
+        .then(({ data }) => { if (alive) setState({ row: ((data ?? null) as unknown) as ServiceLine | null, loaded: true }); });
+    load();
+    const ch = supabase
+      .channel(`service-line-${slug}-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "service_lines" }, () => load())
+      .subscribe();
+    return () => { alive = false; supabase.removeChannel(ch); };
   }, [slug]);
-  return row;
+  return state;
 }
 
 /**
