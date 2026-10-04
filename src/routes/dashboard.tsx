@@ -125,7 +125,7 @@ function CustomerDashboard() {
       if ((roles ?? []).some((r) => ["admin","super_admin","staff","viewer"].includes(r.role))) { navigate({ to: "/admin" }); return; }
 
       const [{ data: prof }, { data: reqs }] = await Promise.all([
-        supabase.from("profiles").select("username, full_name, email, delete_requested").eq("id", session.user.id).maybeSingle(),
+        supabase.from("profiles").select("username, full_name, email, phone, whatsapp, delete_requested").eq("id", session.user.id).maybeSingle(),
         supabase.from("my_requests").select("id, ref, status, division_name, service_name, admin_feedback, created_at").order("created_at", { ascending: false }),
       ]);
       if (!active) return;
