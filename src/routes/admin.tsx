@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { divisions } from "@/data/divisions";
 import { compressImage } from "@/lib/image-compress";
+import { iconFor, SERVICE_ICON_NAMES } from "@/lib/service-lines";
 import { hasMin, can, roleLabel, type Role, rank } from "@/lib/permissions";
 
 const STATUSES = ["New","Reviewed","Contacted","Quotation Sent","In Progress","Completed","Rejected / Not suitable"] as const;
@@ -516,7 +517,7 @@ function MediaPickerModal({ onClose, onPick }: { onClose: () => void; onPick: (u
 }
 
 /* ===================== SERVICE LINES ===================== */
-type SL = { slug: string; title: string; short_desc: string|null; full_desc: string|null; services: Array<{ name: string; explanation?: string }>; button_link: string|null; image_url: string|null; display_order: number };
+type SL = { slug: string; title: string; short_desc: string|null; full_desc: string|null; services: Array<{ name: string; explanation?: string }>; button_link: string|null; image_url: string|null; display_order: number; is_active?: boolean; icon?: string|null };
 function ServiceLinesPanel() {
   const [list, setList] = useState<SL[]>([]);
   const [msg, setMsg] = useState("");
@@ -532,7 +533,7 @@ function ServiceLinesPanel() {
       if (rErr) { setMsg(rErr.message); return; }
     }
     const { error } = await supabase.rpc("upsert_service_line", { _payload: sl as any });
-    setMsg(error ? error.message : "Saved.");
+    setMsg(error ? error.message : "Saved — live on the site now.");
     if (!error) { setAdding(false); reload(); }
   };
   const remove = async (slug: string) => {
@@ -555,7 +556,7 @@ function ServiceLinesPanel() {
         <SLEditor
           key="new"
           isNew
-          sl={{ slug: "", title: "", short_desc: "", full_desc: "", services: [], button_link: "", image_url: "", display_order: list.length }}
+          sl={{ slug: "", title: "", short_desc: "", full_desc: "", services: [], button_link: "", image_url: "", display_order: list.length, is_active: true, icon: "wifi" }}
           onSaveRow={(row) => save(row)}
           onCancel={() => setAdding(false)}
         />
@@ -574,13 +575,27 @@ function SLEditor({ sl: initial, onSaveRow, onDelete, onCancel, isNew }: { sl: S
   return (
     <section className="rounded-2xl border bg-card p-6 shadow-soft">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-lg font-bold">{sl.title || (isNew ? "New service line" : sl.slug)}</h3>
+        <h3 className="flex items-center gap-2 text-lg font-bold">{sl.title || (isNew ? "New service line" : sl.slug)}
+          <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${sl.is_active === false ? "bg-destructive/10 text-destructive" : "bg-secondary"}`}>{sl.is_active === false ? "Hidden" : "Live"}</span>
+        </h3>
         {onDelete && <button onClick={onDelete} className="rounded-md border border-destructive px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/5">Delete</button>}
       </div>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         <Field label="Title"><input value={sl.title} onChange={(e) => onChange({ ...sl, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="URL id (slug)"><input value={sl.slug} onChange={(e) => onChange({ ...sl, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") })} placeholder="e.g. energy-systems" className="w-full rounded-md border px-3 py-2 text-sm font-mono" /></Field>
         <Field label="Display order"><input type="number" value={sl.display_order} onChange={(e) => onChange({ ...sl, display_order: Number(e.target.value) || 0 })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Visible on site">
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={sl.is_active !== false} onChange={(e) => onChange({ ...sl, is_active: e.target.checked })} /> Show this service line publicly</label>
+        </Field>
+        <Field label="Icon (shown when there is no image)">
+          <div className="flex items-center gap-2">
+            {(() => { const I = iconFor(sl.slug, sl.icon); return <I className="size-5 text-brand-blue" />; })()}
+            <select value={sl.icon || ""} onChange={(e) => onChange({ ...sl, icon: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm">
+              <option value="">Default</option>
+              {SERVICE_ICON_NAMES.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+        </Field>
         <Field label="Button link"><input value={sl.button_link || ""} onChange={(e) => onChange({ ...sl, button_link: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Image" full><ImageField value={sl.image_url || ""} onChange={(v) => onChange({ ...sl, image_url: v })} /></Field>
         <Field label="Short description" full><textarea value={sl.short_desc || ""} onChange={(e) => onChange({ ...sl, short_desc: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
