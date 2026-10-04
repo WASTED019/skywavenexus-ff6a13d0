@@ -454,7 +454,9 @@ export type Database = {
           button_link: string | null
           display_order: number
           full_desc: string | null
+          icon: string | null
           image_url: string | null
+          is_active: boolean
           services: Json
           short_desc: string | null
           slug: string
@@ -466,7 +468,9 @@ export type Database = {
           button_link?: string | null
           display_order?: number
           full_desc?: string | null
+          icon?: string | null
           image_url?: string | null
+          is_active?: boolean
           services?: Json
           short_desc?: string | null
           slug: string
@@ -478,7 +482,9 @@ export type Database = {
           button_link?: string | null
           display_order?: number
           full_desc?: string | null
+          icon?: string | null
           image_url?: string | null
+          is_active?: boolean
           services?: Json
           short_desc?: string | null
           slug?: string
@@ -872,7 +878,9 @@ export type Database = {
           button_link: string | null
           display_order: number
           full_desc: string | null
+          icon: string | null
           image_url: string | null
+          is_active: boolean
           services: Json
           short_desc: string | null
           slug: string
@@ -1022,7 +1030,9 @@ export type Database = {
           button_link: string | null
           display_order: number
           full_desc: string | null
+          icon: string | null
           image_url: string | null
+          is_active: boolean
           services: Json
           short_desc: string | null
           slug: string
