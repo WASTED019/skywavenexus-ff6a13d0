@@ -1,0 +1,2 @@
+CREATE POLICY "Admin tier views all profiles" ON public.profiles FOR SELECT TO authenticated USING (public.has_min_role(auth.uid(), 'admin'::public.app_role));
+CREATE POLICY "Admin tier views all roles" ON public.user_roles FOR SELECT TO authenticated USING (public.has_min_role(auth.uid(), 'admin'::public.app_role));
