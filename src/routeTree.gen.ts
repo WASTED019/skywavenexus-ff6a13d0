@@ -26,6 +26,7 @@ import { Route as TrackRouteImport } from './routes/track'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as DavisIndexRouteImport } from './routes/davis.index'
 import { Route as DavisAdminRouteImport } from './routes/davis.admin'
+import { Route as DavisProfileRouteImport } from './routes/davis.profile'
 import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
 import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
 import { Route as ApiPublicDavisMediaSplatRouteImport } from './routes/api/public/davis-media.$'
@@ -115,6 +116,11 @@ const DavisAdminRoute = DavisAdminRouteImport.update({
   path: '/davis/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DavisProfileRoute = DavisProfileRouteImport.update({
+  id: '/davis/profile',
+  path: '/davis/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DivisionsIndexRoute = DivisionsIndexRouteImport.update({
   id: '/divisions/',
   path: '/divisions/',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
+  '/davis/profile': typeof DavisProfileRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/davis/': typeof DavisIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
+  '/davis/profile': typeof DavisProfileRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/davis': typeof DavisIndexRoute
   '/divisions': typeof DivisionsIndexRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
+  '/davis/profile': typeof DavisProfileRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/davis/': typeof DavisIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/api/chat'
     | '/davis/admin'
+    | '/davis/profile'
     | '/divisions/$divisionId'
     | '/davis/'
     | '/divisions/'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/api/chat'
     | '/davis/admin'
+    | '/davis/profile'
     | '/divisions/$divisionId'
     | '/davis'
     | '/divisions'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/api/chat'
     | '/davis/admin'
+    | '/davis/profile'
     | '/divisions/$divisionId'
     | '/davis/'
     | '/divisions/'
@@ -285,6 +297,7 @@ export interface RootRouteChildren {
   TrackRoute: typeof TrackRoute
   ApiChatRoute: typeof ApiChatRoute
   DavisAdminRoute: typeof DavisAdminRoute
+  DavisProfileRoute: typeof DavisProfileRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
   DavisIndexRoute: typeof DavisIndexRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
@@ -412,6 +425,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DavisAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/davis/profile': {
+      id: '/davis/profile'
+      path: '/davis/profile'
+      fullPath: '/davis/profile'
+      preLoaderRoute: typeof DavisProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/divisions/': {
       id: '/divisions/'
       path: '/divisions'
@@ -453,6 +473,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrackRoute: TrackRoute,
   ApiChatRoute: ApiChatRoute,
   DavisAdminRoute: DavisAdminRoute,
+  DavisProfileRoute: DavisProfileRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
   DavisIndexRoute: DavisIndexRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
