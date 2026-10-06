@@ -15,6 +15,13 @@
       "when": 1791157605458,
       "tag": "0001_service_lines_icon_active",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791327758602,
+      "tag": "0002_quote_acceptance",
+      "breakpoints": true
     }
   ]
 }
