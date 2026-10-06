@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { QuoteBox } from "@/components/QuoteBox";
 
 type Req = {
   id: string;
@@ -13,6 +14,9 @@ type Req = {
   service_name: string;
   admin_feedback: string | null;
   created_at: string;
+  quote_amount: number | null;
+  quote_currency: string | null;
+  quote_accepted_at: string | null;
 };
 
 type Profile = {
@@ -126,7 +130,7 @@ function CustomerDashboard() {
 
       const [{ data: prof }, { data: reqs }] = await Promise.all([
         supabase.from("profiles").select("username, full_name, email, phone, whatsapp, delete_requested").eq("id", session.user.id).maybeSingle(),
-        supabase.from("my_requests").select("id, ref, status, division_name, service_name, admin_feedback, created_at").order("created_at", { ascending: false }),
+        supabase.from("my_requests").select("id, ref, status, division_name, service_name, admin_feedback, created_at, quote_amount, quote_currency, quote_accepted_at").order("created_at", { ascending: false }),
       ]);
       if (!active) return;
       setProfile(prof as Profile | null);
@@ -172,6 +176,20 @@ function CustomerDashboard() {
           </div>
           <Link to="/request" className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white">New Request</Link>
         </div>
+
+        {requests.some((r) => r.quote_amount != null) && (
+          <div className="mt-10">
+            <h2 className="text-lg font-semibold">Quotations</h2>
+            <div className="mt-3 grid gap-4 md:grid-cols-2">
+              {requests.filter((r) => r.quote_amount != null).map((r) => (
+                <div key={r.id}>
+                  <p className="mb-1 text-xs text-muted-foreground"><span className="font-mono">{r.ref}</span> · {r.service_name}</p>
+                  <QuoteBox q={r} onAccepted={(at) => setRequests((list) => list.map((x) => x.id === r.id ? { ...x, quote_accepted_at: at, status: "Quote Accepted" } : x))} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <h2 className="mt-10 text-lg font-semibold">My Requests</h2>
         <div className="mt-3 overflow-x-auto rounded-2xl border bg-card shadow-soft">
