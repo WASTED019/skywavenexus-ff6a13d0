@@ -9,85 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TrackRouteImport } from './routes/track'
-import { Route as SkywaveNexusRouteImport } from './routes/skywave-nexus'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SignUpRouteImport } from './routes/sign-up'
-import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as RequestRouteImport } from './routes/request'
-import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as BlogRouteImport } from './routes/blog'
-import { Route as AdminLoginRouteImport } from './routes/admin-login'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
-import { Route as DavisIndexRouteImport } from './routes/davis.index'
-import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
-import { Route as DavisAdminRouteImport } from './routes/davis.admin'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminLoginRouteImport } from './routes/admin-login'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as RequestRouteImport } from './routes/request'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SkywaveNexusRouteImport } from './routes/skywave-nexus'
+import { Route as TrackRouteImport } from './routes/track'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as DavisIndexRouteImport } from './routes/davis.index'
+import { Route as DavisAdminRouteImport } from './routes/davis.admin'
+import { Route as DavisProfileRouteImport } from './routes/davis.profile'
+import { Route as DivisionsIndexRouteImport } from './routes/divisions.index'
+import { Route as DivisionsDivisionIdRouteImport } from './routes/divisions.$divisionId'
 import { Route as ApiPublicDavisMediaSplatRouteImport } from './routes/api/public/davis-media.$'
 
-const TrackRoute = TrackRouteImport.update({
-  id: '/track',
-  path: '/track',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SkywaveNexusRoute = SkywaveNexusRouteImport.update({
-  id: '/skywave-nexus',
-  path: '/skywave-nexus',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignUpRoute = SignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignInRoute = SignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RequestRoute = RequestRouteImport.update({
-  id: '/request',
-  path: '/request',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin-login',
-  path: '/admin-login',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -95,14 +41,69 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin-login',
+  path: '/admin-login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DivisionsIndexRoute = DivisionsIndexRouteImport.update({
-  id: '/divisions/',
-  path: '/divisions/',
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestRoute = RequestRouteImport.update({
+  id: '/request',
+  path: '/request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SkywaveNexusRoute = SkywaveNexusRouteImport.update({
+  id: '/skywave-nexus',
+  path: '/skywave-nexus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DavisIndexRoute = DavisIndexRouteImport.update({
@@ -110,19 +111,24 @@ const DavisIndexRoute = DavisIndexRouteImport.update({
   path: '/davis/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DivisionsDivisionIdRoute = DivisionsDivisionIdRouteImport.update({
-  id: '/divisions/$divisionId',
-  path: '/divisions/$divisionId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DavisAdminRoute = DavisAdminRouteImport.update({
   id: '/davis/admin',
   path: '/davis/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
+const DavisProfileRoute = DavisProfileRouteImport.update({
+  id: '/davis/profile',
+  path: '/davis/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DivisionsIndexRoute = DivisionsIndexRouteImport.update({
+  id: '/divisions/',
+  path: '/divisions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DivisionsDivisionIdRoute = DivisionsDivisionIdRouteImport.update({
+  id: '/divisions/$divisionId',
+  path: '/divisions/$divisionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicDavisMediaSplatRoute =
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
+  '/davis/profile': typeof DavisProfileRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/davis/': typeof DavisIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
+  '/davis/profile': typeof DavisProfileRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/davis': typeof DavisIndexRoute
   '/divisions': typeof DivisionsIndexRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/track': typeof TrackRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
+  '/davis/profile': typeof DavisProfileRoute
   '/divisions/$divisionId': typeof DivisionsDivisionIdRoute
   '/davis/': typeof DavisIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/api/chat'
     | '/davis/admin'
+    | '/davis/profile'
     | '/divisions/$divisionId'
     | '/davis/'
     | '/divisions/'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/api/chat'
     | '/davis/admin'
+    | '/davis/profile'
     | '/divisions/$divisionId'
     | '/davis'
     | '/divisions'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/api/chat'
     | '/davis/admin'
+    | '/davis/profile'
     | '/divisions/$divisionId'
     | '/davis/'
     | '/divisions/'
@@ -285,6 +297,7 @@ export interface RootRouteChildren {
   TrackRoute: typeof TrackRoute
   ApiChatRoute: typeof ApiChatRoute
   DavisAdminRoute: typeof DavisAdminRoute
+  DavisProfileRoute: typeof DavisProfileRoute
   DivisionsDivisionIdRoute: typeof DivisionsDivisionIdRoute
   DavisIndexRoute: typeof DavisIndexRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
@@ -293,88 +306,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/track': {
-      id: '/track'
-      path: '/track'
-      fullPath: '/track'
-      preLoaderRoute: typeof TrackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/skywave-nexus': {
-      id: '/skywave-nexus'
-      path: '/skywave-nexus'
-      fullPath: '/skywave-nexus'
-      preLoaderRoute: typeof SkywaveNexusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sign-up': {
-      id: '/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof SignUpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sign-in': {
-      id: '/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof SignInRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/request': {
-      id: '/request'
-      path: '/request'
-      fullPath: '/request'
-      preLoaderRoute: typeof RequestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin-login': {
-      id: '/admin-login'
-      path: '/admin-login'
-      fullPath: '/admin-login'
-      preLoaderRoute: typeof AdminLoginRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -384,18 +320,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin-login': {
+      id: '/admin-login'
+      path: '/admin-login'
+      fullPath: '/admin-login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/divisions/': {
-      id: '/divisions/'
-      path: '/divisions'
-      fullPath: '/divisions/'
-      preLoaderRoute: typeof DivisionsIndexRouteImport
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/request': {
+      id: '/request'
+      path: '/request'
+      fullPath: '/request'
+      preLoaderRoute: typeof RequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/skywave-nexus': {
+      id: '/skywave-nexus'
+      path: '/skywave-nexus'
+      fullPath: '/skywave-nexus'
+      preLoaderRoute: typeof SkywaveNexusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/davis/': {
@@ -405,13 +418,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DavisIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/divisions/$divisionId': {
-      id: '/divisions/$divisionId'
-      path: '/divisions/$divisionId'
-      fullPath: '/divisions/$divisionId'
-      preLoaderRoute: typeof DivisionsDivisionIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/davis/admin': {
       id: '/davis/admin'
       path: '/davis/admin'
@@ -419,11 +425,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DavisAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
+    '/davis/profile': {
+      id: '/davis/profile'
+      path: '/davis/profile'
+      fullPath: '/davis/profile'
+      preLoaderRoute: typeof DavisProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/divisions/': {
+      id: '/divisions/'
+      path: '/divisions'
+      fullPath: '/divisions/'
+      preLoaderRoute: typeof DivisionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/divisions/$divisionId': {
+      id: '/divisions/$divisionId'
+      path: '/divisions/$divisionId'
+      fullPath: '/divisions/$divisionId'
+      preLoaderRoute: typeof DivisionsDivisionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/davis-media/$': {
@@ -453,6 +473,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrackRoute: TrackRoute,
   ApiChatRoute: ApiChatRoute,
   DavisAdminRoute: DavisAdminRoute,
+  DavisProfileRoute: DavisProfileRoute,
   DivisionsDivisionIdRoute: DivisionsDivisionIdRoute,
   DavisIndexRoute: DavisIndexRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,

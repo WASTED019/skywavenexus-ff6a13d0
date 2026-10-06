@@ -514,6 +514,9 @@ export type Database = {
           internal_notes: string | null
           phone: string
           priority: string | null
+          quote_accepted_at: string | null
+          quote_amount: number | null
+          quote_currency: string
           quote_status: string | null
           ref: string
           service_id: string
@@ -544,6 +547,9 @@ export type Database = {
           internal_notes?: string | null
           phone: string
           priority?: string | null
+          quote_accepted_at?: string | null
+          quote_amount?: number | null
+          quote_currency?: string
           quote_status?: string | null
           ref: string
           service_id: string
@@ -574,6 +580,9 @@ export type Database = {
           internal_notes?: string | null
           phone?: string
           priority?: string | null
+          quote_accepted_at?: string | null
+          quote_amount?: number | null
+          quote_currency?: string
           quote_status?: string | null
           ref?: string
           service_id?: string
@@ -716,6 +725,10 @@ export type Database = {
           full_name: string | null
           id: string | null
           phone: string | null
+          quote_accepted_at: string | null
+          quote_amount: number | null
+          quote_currency: string | null
+          quote_status: string | null
           ref: string | null
           service_id: string | null
           service_name: string | null
@@ -741,6 +754,10 @@ export type Database = {
           full_name?: string | null
           id?: string | null
           phone?: string | null
+          quote_accepted_at?: string | null
+          quote_amount?: number | null
+          quote_currency?: string | null
+          quote_status?: string | null
           ref?: string | null
           service_id?: string | null
           service_name?: string | null
@@ -766,6 +783,10 @@ export type Database = {
           full_name?: string | null
           id?: string | null
           phone?: string | null
+          quote_accepted_at?: string | null
+          quote_amount?: number | null
+          quote_currency?: string | null
+          quote_status?: string | null
           ref?: string | null
           service_id?: string | null
           service_name?: string | null
@@ -780,6 +801,10 @@ export type Database = {
       }
     }
     Functions: {
+      accept_quote: {
+        Args: { _contact?: string; _ref: string }
+        Returns: string
+      }
       approve_password_reset: {
         Args: { _id: string }
         Returns: {
@@ -914,6 +939,10 @@ export type Database = {
           admin_feedback: string
           created_at: string
           division_name: string
+          quote_accepted_at: string
+          quote_amount: number
+          quote_currency: string
+          quote_status: string
           ref: string
           service_name: string
           status: string
@@ -960,6 +989,9 @@ export type Database = {
           internal_notes: string | null
           phone: string
           priority: string | null
+          quote_accepted_at: string | null
+          quote_amount: number | null
+          quote_currency: string
           quote_status: string | null
           ref: string
           service_id: string

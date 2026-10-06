@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { QuoteBox } from "@/components/QuoteBox";
 
 export const Route = createFileRoute("/track")({
   head: () => ({
@@ -27,12 +28,17 @@ type Result = {
   service_name: string;
   created_at: string;
   admin_feedback: string | null;
+  quote_amount: number | null;
+  quote_currency: string | null;
+  quote_status: string | null;
+  quote_accepted_at: string | null;
 };
 
 function TrackPage() {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [contactUsed, setContactUsed] = useState("");
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,6 +54,7 @@ function TrackPage() {
     const row = Array.isArray(data) ? data[0] : null;
     if (!row) { setError("No request matches that reference and contact."); return; }
     setResult(row as Result);
+    setContactUsed(contact);
   };
 
   return (
@@ -82,6 +89,11 @@ function TrackPage() {
               <div><dt className="text-xs uppercase text-muted-foreground">Service Line</dt><dd>{result.division_name}</dd></div>
               <div><dt className="text-xs uppercase text-muted-foreground">Service</dt><dd>{result.service_name}</dd></div>
             </dl>
+            {result.quote_amount != null && (
+              <div className="mt-4">
+                <QuoteBox q={result} contact={contactUsed} onAccepted={(at) => setResult({ ...result, quote_accepted_at: at, status: "Quote Accepted" })} />
+              </div>
+            )}
             <div className="mt-4">
               <div className="text-xs uppercase text-muted-foreground">Admin feedback</div>
               <p className="mt-1 whitespace-pre-wrap text-sm">{result.admin_feedback || "No feedback yet."}</p>

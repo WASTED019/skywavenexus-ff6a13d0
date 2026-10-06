@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowDownRight, ArrowUpRight, Mail, MessageCircle, Phone } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Download, Mail, MessageCircle, Phone } from "lucide-react";
 import { getDavisPage } from "@/lib/davis.functions";
 import "@/styles/davis.css";
 
@@ -43,7 +43,7 @@ function DavisPage() {
 
   return <div className="dvs">
     {isDraft && <div className="dvs-wrap dvs-draft"><p className="dvs-status">Draft preview — visible only to you.</p></div>}
-    <header className="dvs-topbar dvs-wrap"><a href="#top" className="dvs-mark">DW<span>.</span></a><span>INDEPENDENT PRACTICE / KENYA</span><a href="#consultation" className="dvs-top-link">LET'S TALK <ArrowUpRight size={15}/></a></header>
+    <header className="dvs-topbar dvs-wrap"><a href="#top" className="dvs-mark">DW<span>.</span></a><span>INDEPENDENT PRACTICE / KENYA</span><span style={{display:"inline-flex",gap:20}}><a href="/davis/profile" className="dvs-top-link">EXECUTIVE PROFILE <Download size={14}/></a><a href="#consultation" className="dvs-top-link">LET'S TALK <ArrowUpRight size={15}/></a></span></header>
     <section className="dvs-hero" id="top">
       <div className="dvs-wrap dvs-hero-layout">
         <div className="dvs-hero-copy dvs-rise">
@@ -51,7 +51,7 @@ function DavisPage() {
           <h1>{doc.hero_name}</h1>
           <p className="dvs-authority">{doc.authority}</p>
           <p className="dvs-hero-intro">{doc.hero_line}</p>
-          <div className="dvs-hero-actions"><a className="dvs-primary-action" href="#consultation">Work with me <ArrowUpRight size={18}/></a><a className="dvs-text-action" href="#work">Explore selected work <ArrowDownRight size={18}/></a></div>
+          <div className="dvs-hero-actions"><a className="dvs-primary-action" href="#consultation">Work with me <ArrowUpRight size={18}/></a><a className="dvs-download" href="/davis/profile">Download Executive Profile <Download size={16}/></a><a className="dvs-text-action" href="#work">Explore selected work <ArrowDownRight size={18}/></a></div>
         </div>
         {doc.hero_image && <div className="dvs-portrait dvs-rise dvs-rise-2"><img src={doc.hero_image} alt={`${doc.hero_name} portrait`} /><span className="dvs-photo-label">FIELD / SYSTEMS / IMPACT</span></div>}
       </div>
