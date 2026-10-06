@@ -8,7 +8,7 @@ import { compressImage } from "@/lib/image-compress";
 import { iconFor, SERVICE_ICON_NAMES } from "@/lib/service-lines";
 import { hasMin, can, roleLabel, type Role, rank } from "@/lib/permissions";
 
-const STATUSES = ["New","Reviewed","Contacted","Quotation Sent","In Progress","Completed","Rejected / Not suitable"] as const;
+const STATUSES = ["New","Reviewed","Contacted","Quotation Sent","Quote Accepted","In Progress","Completed","Rejected / Not suitable"] as const;
 const PRIORITIES = ["Low","Medium","High","Urgent"] as const;
 const QUOTE_STATUSES = ["Not sent","Drafted","Sent","Accepted","Declined"] as const;
 const FOLLOWUP_STATUSES = ["None","Scheduled","Done","Overdue"] as const;
@@ -29,6 +29,7 @@ type Req = Record<string, unknown> & {
   division_details: Record<string, string> | null; user_id: string | null;
   priority: string | null; assigned_staff: string | null;
   quote_status: string | null; follow_up_status: string | null;
+  quote_amount?: number | null; quote_currency?: string | null; quote_accepted_at?: string | null;
 };
 
 type UserRow = {
@@ -259,6 +260,17 @@ function RequestsPanel({ role }: { role: Role }) {
                   <option value="">—</option>
                   {PRIORITIES.map((s) => <option key={s}>{s}</option>)}
                 </select>
+              </Field>
+              <Field label="Quote amount (KES)">
+                <input key={active.id + String(active.quote_amount ?? "")} type="number" min={0} step="0.01" defaultValue={active.quote_amount ?? ""}
+                  onBlur={(e) => {
+                    const v = e.target.value.trim();
+                    if (v === String(active.quote_amount ?? "")) return;
+                    if (v && !(Number(v) >= 0)) return;
+                    update(active.id, v ? { quote_amount: v, quote_status: "Sent" } : { quote_amount: "" });
+                  }}
+                  className="w-full rounded-md border px-3 py-2 text-sm" placeholder="Client can accept once set" />
+                {active.quote_accepted_at && <span className="mt-1 block text-xs font-semibold text-brand-green">Accepted by client {new Date(active.quote_accepted_at).toLocaleString()}</span>}
               </Field>
               <Field label="Quote Status">
                 <select defaultValue={active.quote_status || ""} onBlur={(e) => update(active.id, { quote_status: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm">
