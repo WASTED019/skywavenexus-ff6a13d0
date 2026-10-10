@@ -1,6 +1,7 @@
 export type WorkEntry = { title: string; role: string; body: string; note: string; problem?: string; solution?: string; image?: string; verification_url?: string };
 export type BackgroundEntry = { label: string; body: string };
 import { z } from "zod";
+import { type SocialAccount } from "./social-accounts";
 
 export type GalleryEntry = { url: string; location: string; title: string; story: string; takeaway: string; caption?: string };
 export const dispatchSchema = z.object({
@@ -13,6 +14,7 @@ export const dispatchSchema = z.object({
 export type MetricEntry = { label: string; value: string };
 export type PillarEntry = { title: string; description: string; specialties: string };
 export type PortfolioDoc = {
+  preferred_name: string; social_accounts: SocialAccount[];
   hero_name: string; hero_line: string; hero_image: string; authority: string; about: string;
   metrics: MetricEntry[]; pillars: PillarEntry[]; work: WorkEntry[];
   background: BackgroundEntry[]; gallery: GalleryEntry[];
@@ -44,6 +46,8 @@ export function normalizePortfolio(input: PortfolioDoc): PortfolioDoc {
   const hasOperations = work.some((entry) => entry.title.toLowerCase().includes("operationsmanagement"));
   return {
     ...input,
+    preferred_name: input.preferred_name ?? "",
+    social_accounts: Array.isArray(input.social_accounts) ? input.social_accounts : [],
     authority: input.authority ?? "Cold Chain Systems / Field Infrastructure / Traceability ERPs",
     metrics: Array.isArray(input.metrics) ? input.metrics : defaultMetrics,
     pillars: Array.isArray(input.pillars) ? input.pillars : defaultPillars,

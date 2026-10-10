@@ -5,6 +5,9 @@ import { Menu, X } from "lucide-react";
 import { useAuth, signOut } from "@/lib/auth";
 import { hasMin } from "@/lib/permissions";
 import { useSiteSettings } from "@/lib/cms";
+import { readSocialSettings } from "@/lib/social-accounts";
+import { SocialAccounts } from "@/components/SocialAccounts";
+import { Button } from "@/components/ui/button";
 
 const publicNav = [
   { to: "/", label: "Home" },
@@ -32,9 +35,11 @@ export function Header() {
   const linkClass = "rounded-md px-3 py-2 text-sm font-medium text-foreground/80 transition hover:bg-accent hover:text-foreground";
   const activeClass = { className: "rounded-md px-3 py-2 text-sm font-semibold text-brand-blue bg-accent" };
   const logoSrc = settings.logo_url || logo;
+  const socialAccounts = readSocialSettings(settings.social_links);
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
+      {socialAccounts.some((a) => a.handle.trim()) && <div className="border-b bg-secondary text-secondary-foreground"><div className="mx-auto max-w-7xl px-4"><SocialAccounts accounts={socialAccounts} className="skywave-social-strip" /></div></div>}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
         <Link to="/" className="flex items-center gap-3">
           <img src={logoSrc} alt="SKYWAVE NEXUS Integrated Solutions logo" className="h-11 w-11 object-contain" />
@@ -53,7 +58,7 @@ export function Header() {
           {session ? (
             <>
               <Link to={dashboardTo} className="ml-1 rounded-md bg-brand-blue px-3 py-2 text-sm font-semibold text-white hover:opacity-95">Dashboard</Link>
-              <button onClick={handleLogout} className="rounded-md border px-3 py-2 text-sm font-medium">Logout</button>
+              <Button variant="outline" onClick={handleLogout}>Logout</Button>
             </>
           ) : (
             <>
@@ -63,9 +68,9 @@ export function Header() {
           )}
         </nav>
 
-        <button aria-label="Toggle menu" onClick={() => setOpen((v) => !v)} className="rounded-md p-2 lg:hidden">
+        <Button variant="ghost" size="icon" aria-label="Toggle menu" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="shrink-0 lg:hidden">
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        </Button>
       </div>
       {open && (
         <div className="border-t bg-background lg:hidden">
@@ -76,7 +81,7 @@ export function Header() {
             {session ? (
               <>
                 <Link to={dashboardTo} onClick={() => setOpen(false)} className="rounded-md px-3 py-3 text-sm font-semibold text-brand-blue">Dashboard</Link>
-                <button onClick={() => { setOpen(false); handleLogout(); }} className="rounded-md px-3 py-3 text-left text-sm font-medium">Logout</button>
+                 <Button variant="ghost" onClick={() => { setOpen(false); handleLogout(); }} className="justify-start">Logout</Button>
               </>
             ) : (
               <>

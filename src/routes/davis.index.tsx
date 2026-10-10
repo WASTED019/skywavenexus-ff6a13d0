@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowDownRight, ArrowUpRight, Download, Mail, MessageCircle, Phone } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Download, Mail, MessageCircle, Phone, Menu, X } from "lucide-react";
 import { getDavisPage } from "@/lib/davis.functions";
+import { SocialAccounts } from "@/components/SocialAccounts";
+import { Button } from "@/components/ui/button";
 import "@/styles/davis.css";
 
 export const Route = createFileRoute("/davis/")({
@@ -29,6 +31,7 @@ export const Route = createFileRoute("/davis/")({
 function DavisPage() {
   const { doc, isDraft } = Route.useLoaderData();
   const [requirement, setRequirement] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   if (!doc) return <div className="dvs"><div className="dvs-wrap dvs-section"><h1>Coming soon</h1></div></div>;
 
   const gallery = doc.gallery ?? [];
@@ -43,7 +46,19 @@ function DavisPage() {
 
   return <div className="dvs">
     {isDraft && <div className="dvs-wrap dvs-draft"><p className="dvs-status">Draft preview — visible only to you.</p></div>}
-    <header className="dvs-topbar dvs-wrap"><a href="#top" className="dvs-mark">DW<span>.</span></a><span>INDEPENDENT PRACTICE / KENYA</span><span style={{display:"inline-flex",gap:20}}><a href="/davis/profile" className="dvs-top-link">EXECUTIVE PROFILE <Download size={14}/></a><a href="#consultation" className="dvs-top-link">LET'S TALK <ArrowUpRight size={15}/></a></span></header>
+    <header className="dvs-sticky-header">
+      <div className="dvs-topbar dvs-wrap">
+        <a href="#top" className="dvs-display-name">{doc.preferred_name.trim() || doc.hero_name}</a>
+        <nav className="dvs-header-nav" aria-label="Portfolio navigation">
+          <a href="#capabilities">Expertise</a><a href="#work">Work</a><a href="#dispatches">Dispatches</a><a href="/davis/profile" className="dvs-top-link">Profile <Download size={14}/></a><a href="#consultation">Contact</a>
+        </nav>
+        <Button variant="ghost" size="icon" className="dvs-menu-toggle" aria-label="Toggle portfolio menu" aria-expanded={menuOpen} aria-controls="dvs-mobile-nav" onClick={() => setMenuOpen((v) => !v)}>{menuOpen ? <X size={18}/> : <Menu size={18}/>}</Button>
+        <SocialAccounts accounts={doc.social_accounts} className="dvs-header-social" />
+      </div>
+      {menuOpen && <nav id="dvs-mobile-nav" className="dvs-mobile-nav dvs-wrap" aria-label="Mobile portfolio navigation">
+        {[{ href: "#capabilities", label: "Expertise" }, { href: "#work", label: "Work" }, { href: "#dispatches", label: "Dispatches" }, { href: "/davis/profile", label: "Executive profile" }, { href: "#consultation", label: "Contact" }].map((link) => <a key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>{link.label}</a>)}
+      </nav>}
+    </header>
     <section className="dvs-hero" id="top">
       <div className="dvs-wrap dvs-hero-layout">
         <div className="dvs-hero-copy dvs-rise">

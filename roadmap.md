@@ -2,3 +2,5 @@
 - [x] Preserve the private editor's save, draft, publish, image, and contact workflows for all new content.
 - [x] Check desktop/mobile rendering and editor availability; draft save verified through editor sign-in.
 - [x] Replace Davis photo thumbnails with alternating Field Dispatches and editable story fields; verify page and editor.
+- [x] Add compact sticky Skywave/Davis social headers and isolated editable preferred name and social settings.
+- [x] Verify mobile navigation, social visibility/link behavior, and editor fields (render/validation checks; authenticated save not tested).

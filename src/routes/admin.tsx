@@ -7,6 +7,9 @@ import { divisions } from "@/data/divisions";
 import { compressImage } from "@/lib/image-compress";
 import { iconFor, SERVICE_ICON_NAMES } from "@/lib/service-lines";
 import { hasMin, can, roleLabel, type Role, rank } from "@/lib/permissions";
+import { SocialAccountsEditor } from "@/components/SocialAccountsEditor";
+import { readSocialSettings, writeSocialSettings, type SocialAccount } from "@/lib/social-accounts";
+import { Button } from "@/components/ui/button";
 
 const STATUSES = ["New","Reviewed","Contacted","Quotation Sent","Quote Accepted","In Progress","Completed","Rejected / Not suitable"] as const;
 const PRIORITIES = ["Low","Medium","High","Urgent"] as const;
@@ -15,7 +18,7 @@ const FOLLOWUP_STATUSES = ["None","Scheduled","Done","Overdue"] as const;
 const ASSIGNABLE_ROLES = ["super_admin","admin","staff","viewer","customer"] as const;
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin Dashboard — SKYWAVE NEXUS" }] }),
+  head: () => ({ meta: [{ title: "Admin Dashboard — SKYWAVE NEXUS" }, { name: "description", content: "Manage SKYWAVE NEXUS website content, member accounts and service requests." }, { property: "og:title", content: "Admin Dashboard — SKYWAVE NEXUS" }, { property: "og:description", content: "SKYWAVE NEXUS content and account management." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }] }),
   component: AdminPage,
 });
 
@@ -720,25 +723,29 @@ type Settings = { id: string; phone: string|null; whatsapp: string|null; email: 
 function SettingsPanel() {
   const [s, setS] = useState<Settings | null>(null);
   const [msg, setMsg] = useState("");
-  const [socialText, setSocialText] = useState("");
+  const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([]);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { (async () => {
     const { data } = await supabase.from("site_settings").select("*").eq("id","global").maybeSingle();
     const d = (data ?? null) as unknown as Settings | null;
     setS(d);
-    if (d?.social_links) setSocialText(Object.entries(d.social_links).map(([k,v]) => `${k}: ${v}`).join("\n"));
+    if (d) setSocialAccounts(readSocialSettings(d.social_links ?? {}));
   })(); }, []);
 
   if (!s) return <p className="text-sm text-muted-foreground">Loading…</p>;
 
   const save = async () => {
-    const social: Record<string,string> = {};
-    socialText.split("\n").forEach(line => {
-      const [k, ...rest] = line.split(":"); const v = rest.join(":").trim();
-      if (k && v) social[k.trim()] = v;
-    });
-    const { error } = await supabase.rpc("update_site_settings", { _payload: { ...s, social_links: social } as any });
-    setMsg(error ? error.message : "Saved.");
+    setSaving(true); setMsg("");
+    try {
+      const social = writeSocialSettings(s.social_links ?? {}, socialAccounts);
+      const { error } = await supabase.rpc("update_site_settings", { _payload: { ...s, social_links: social } as any });
+      if (error) throw error;
+      setS({ ...s, social_links: social });
+      window.dispatchEvent(new Event("site-settings-updated"));
+      setMsg("Saved.");
+    } catch (error) { setMsg(error instanceof Error ? error.message : "Could not save settings. Check social URLs."); }
+    finally { setSaving(false); }
   };
 
   return (
@@ -751,12 +758,11 @@ function SettingsPanel() {
         <Field label="Location"><input value={s.location || ""} onChange={(e) => setS({ ...s, location: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
         <Field label="Logo" full><ImageField value={s.logo_url || ""} onChange={(v) => setS({ ...s, logo_url: v })} /></Field>
         <Field label="Footer text" full><textarea value={s.footer_text || ""} onChange={(e) => setS({ ...s, footer_text: e.target.value })} rows={2} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
-        <Field label="Social links (one per line, e.g. facebook: https://…)" full>
-          <textarea value={socialText} onChange={(e) => setSocialText(e.target.value)} rows={4} className="w-full rounded-md border px-3 py-2 text-sm font-mono" />
-        </Field>
       </div>
+      <h3 className="mb-3 mt-6 text-sm font-semibold">Social accounts</h3>
+      <SocialAccountsEditor accounts={socialAccounts} onChange={setSocialAccounts} />
       <div className="mt-4 flex items-center gap-3">
-        <button onClick={save} className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white">Save</button>
+        <Button onClick={save} disabled={saving}>{saving ? "Saving…" : "Save"}</Button>
         {msg && <span className="text-xs">{msg}</span>}
       </div>
     </section>
