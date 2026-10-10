@@ -103,10 +103,12 @@
 @media(max-width:900px) {.dvs .dvs-hero-layout {grid-template-columns:1fr 250px;gap:32px}.dvs .dvs-portrait {min-height:360px}.dvs .dvs-pillar {padding:20px}}
 @media(max-width:700px) {
  .dvs .dvs-wrap {padding:0 20px}.dvs .dvs-topbar {min-height:62px}.dvs .dvs-topbar>span {display:none}
- .dvs .dvs-hero {padding:45px 0 35px}.dvs .dvs-hero-layout {grid-template-columns:1fr;gap:34px}.dvs .dvs-hero h1 {font-size:clamp(42px,12vw,72px)}.dvs .dvs-eyebrow {margin-bottom:22px}.dvs .dvs-portrait {min-height:0;height:330px;max-width:100%}
+ .dvs .dvs-hero {padding:45px 0 35px}.dvs .dvs-hero-layout {grid-template-columns:1fr;gap:34px}.dvs .dvs-hero h1 {font-size:clamp(42px,12vw,72px)}.dvs .dvs-eyebrow {margin-bottom:22px}.dvs .dvs-portrait {min-height:0;height:auto;max-height:none;width:100%;max-width:100%}
+ .dvs .dvs-portrait img {height:auto;object-fit:contain}.dvs .dvs-photo-label {position:static;display:block}
+ .dvs .dvs-case-image,.dvs .dvs-case-feature .dvs-case-image {aspect-ratio:auto}.dvs .dvs-case-image img {height:auto;object-fit:contain}
  .dvs .dvs-impact {grid-template-columns:repeat(2,minmax(0,1fr))}.dvs .dvs-metric {padding:22px 12px;border-bottom:1px solid var(--dvs-border)}.dvs .dvs-metric:first-child {padding-left:12px}.dvs .dvs-metric:nth-child(2n) {border-right:0}
  .dvs .dvs-section,.dvs .dvs-work,.dvs .dvs-consultation {padding:64px 0}.dvs .dvs-section-heading {display:block}.dvs .dvs-section-heading>p {margin-top:16px}.dvs .dvs-pillar-grid,.dvs .dvs-case-grid,.dvs .dvs-about-grid,.dvs .dvs-consult-grid {grid-template-columns:1fr}.dvs .dvs-pillar {min-height:260px}.dvs .dvs-pillar h3 {margin-top:28px}.dvs .dvs-case-feature {grid-row:auto}.dvs .dvs-consult-grid {gap:34px}
- .dvs .dvs-bg-grid {grid-template-columns:1fr}.dvs .dvs-dispatch {grid-template-columns:1fr}.dvs .dvs-dispatch:nth-child(even) .dvs-dispatch-photo {order:0}.dvs .dvs-dispatch-photo {min-height:0;aspect-ratio:4/3}.dvs .dvs-dispatch-copy {padding:26px}.dvs .dvs-dispatch h3 {margin:25px 0 16px}
+ .dvs .dvs-bg-grid {grid-template-columns:1fr}.dvs .dvs-dispatch {grid-template-columns:minmax(0,1fr)}.dvs .dvs-dispatch:nth-child(even) .dvs-dispatch-photo {order:0}.dvs .dvs-dispatch-photo {min-height:0;aspect-ratio:auto}.dvs .dvs-dispatch-photo img {height:auto;object-fit:contain}.dvs .dvs-dispatch-copy {padding:22px;overflow-wrap:anywhere}.dvs .dvs-dispatch h3 {margin:25px 0 16px}
 }
 /* Password editor uses the same isolated palette. */
 .dvs .dvs-editor {max-width:950px;padding-top:42px;padding-bottom:90px}
