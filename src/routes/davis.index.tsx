@@ -68,13 +68,13 @@ function DavisPage() {
 
     {cases.length > 0 && <section className="dvs-work" id="work"><div className="dvs-wrap">
       <div className="dvs-section-heading"><div><p className="dvs-kicker">02 / SELECTED WORK</p><h2>Problems met on the ground.</h2></div><p>Selected engagements across food systems, digital operations and connectivity.</p></div>
-      <div className="dvs-case-grid">{cases.map((w, i) => <article className={`dvs-case ${i === 0 ? "dvs-case-feature" : ""}`} key={i}>
-        {w.image && <div className="dvs-case-image"><img src={w.image} alt={`${w.title} project`} /></div>}
-        <div className="dvs-case-content"><div className="dvs-case-top"><span>{String(i + 1).padStart(2, "0")} / {w.role || "CASE STUDY"}</span><ArrowUpRight size={20}/></div><h3>{w.title}</h3><p className="dvs-case-body">{w.body}</p>
+      <div className="dvs-case-grid">{cases.map((w, i) => { const link = w.verification_url && /^https:\/\//i.test(w.verification_url) ? w.verification_url : ""; return <article className={`dvs-case ${i === 0 ? "dvs-case-feature" : ""}`} key={i}>
+        {w.image && (link ? <a href={link} target="_blank" rel="noopener noreferrer" className="dvs-case-image" aria-label={`Open ${w.title}`}><img src={w.image} alt={`${w.title} project`} /></a> : <div className="dvs-case-image"><img src={w.image} alt={`${w.title} project`} /></div>)}
+        <div className="dvs-case-content"><div className="dvs-case-top"><span>{String(i + 1).padStart(2, "0")} / {w.role || "CASE STUDY"}</span>{link ? <a href={link} target="_blank" rel="noopener noreferrer" aria-label={`Open ${w.title}`} style={{color:"inherit"}}><ArrowUpRight size={20}/></a> : <a href="#consultation" aria-label={`Ask about ${w.title}`} style={{color:"inherit"}}><ArrowUpRight size={20}/></a>}</div><h3>{link ? <a href={link} target="_blank" rel="noopener noreferrer" style={{color:"inherit",textDecoration:"none"}}>{w.title}</a> : w.title}</h3><p className="dvs-case-body">{w.body}</p>
           {(w.problem || w.solution) && <div className="dvs-problem-solution">{w.problem && <div><span>THE CHALLENGE</span><p>{w.problem}</p></div>}{w.solution && <div><span>THE APPROACH</span><p>{w.solution}</p></div>}</div>}
-          {w.verification_url && /^https:\/\//i.test(w.verification_url) && <a href={w.verification_url} target="_blank" rel="noopener noreferrer" className="dvs-verify">Live verification <ArrowUpRight size={16}/></a>}
+          {link ? <a href={link} target="_blank" rel="noopener noreferrer" className="dvs-verify">Open live project <ArrowUpRight size={16}/></a> : <a href="#consultation" className="dvs-verify">Discuss similar work <ArrowUpRight size={16}/></a>}
           {w.note && <p className="dvs-case-note">{w.note}</p>}</div>
-      </article>)}</div>
+      </article>; })}</div>
     </div></section>}
 
     {doc.about && <section className="dvs-section dvs-about"><div className="dvs-wrap dvs-about-grid"><div><p className="dvs-kicker">03 / PERSPECTIVE</p><h2>Built for the realities of the field.</h2></div><div className="dvs-about-copy">{doc.about.split("\n").filter(Boolean).map((p, i) => <p key={i}>{p}</p>)}</div></div></section>}
