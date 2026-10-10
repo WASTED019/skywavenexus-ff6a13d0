@@ -91,7 +91,7 @@ export function useSiteSettings(): SiteSettings {
   const [s, setS] = useState<SiteSettings>(DEFAULT_SETTINGS);
   useEffect(() => {
     let alive = true;
-    supabase.from("site_settings").select("*").eq("id", "global").maybeSingle()
+    const load = () => supabase.from("site_settings").select("*").eq("id", "global").maybeSingle()
       .then(({ data }) => {
         if (!alive || !data) return;
         const d = data as unknown as Partial<SiteSettings>;
@@ -102,7 +102,11 @@ export function useSiteSettings(): SiteSettings {
           footer_links: (d.footer_links as SiteSettings["footer_links"]) ?? [],
         });
       });
-    return () => { alive = false; };
+    load();
+    window.addEventListener("site-settings-updated", load);
+    const channel = supabase.channel(`site-settings-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, load).subscribe();
+    return () => { alive = false; window.removeEventListener("site-settings-updated", load); supabase.removeChannel(channel); };
   }, []);
   return s;
 }

@@ -6,6 +6,7 @@ import { X, Send, Phone, Linkedin, Twitter, Facebook, Instagram, Youtube, Globe,
 import { ASSISTANT_GREETING } from "@/lib/assistant-knowledge";
 import { whatsappLink } from "@/lib/whatsapp";
 import { useSiteSettings } from "@/lib/cms";
+import { readSocialSettings, safeSocialUrl } from "@/lib/social-accounts";
 
 const SOCIAL_META: Record<string, { label: string; icon: typeof Linkedin }> = {
   linkedin: { label: "LinkedIn", icon: Linkedin },
@@ -55,8 +56,9 @@ export function ChatAssistant() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const settings = useSiteSettings();
-  const socialEntries = Object.entries(settings.social_links ?? {})
-    .filter(([, url]) => typeof url === "string" && url.trim().length > 0)
+  const socialEntries = readSocialSettings(settings.social_links ?? {})
+    .filter((account) => account.platform !== "whatsapp" && account.handle.trim() && safeSocialUrl(account.url))
+    .map((account) => [account.platform, safeSocialUrl(account.url)])
     .slice(0, 5);
 
   const { messages, sendMessage, status, error } = useChat({

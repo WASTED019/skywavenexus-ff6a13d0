@@ -3,6 +3,7 @@ import { useSession, getRequest } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { dispatchSchema, normalizePortfolio, type PortfolioDoc } from "./davis-content";
+import { socialAccountSchema } from "./social-accounts";
 export type { PortfolioDoc } from "./davis-content";
 
 /**
@@ -137,6 +138,8 @@ function sanitize(doc: PortfolioDoc): PortfolioDoc {
   const s = (v: unknown, max = 4000) => String(v ?? "").slice(0, max);
   const normalized = normalizePortfolio(doc);
   return {
+    preferred_name: s(normalized.preferred_name, 120).trim(),
+    social_accounts: socialAccountSchema.array().max(6).parse(normalized.social_accounts),
     hero_name: s(normalized.hero_name, 120),
     hero_line: s(normalized.hero_line, 600),
     hero_image: s(normalized.hero_image, 500),

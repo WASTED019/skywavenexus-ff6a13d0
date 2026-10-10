@@ -1,2 +1,4 @@
 - Keep Davis portfolio content in its isolated document; the editor unlocks only via its own password session or one hard-coded owner account email (never SKYWAVE roles), so SKYWAVE permissions can't change personal content.
 - Treat unverified impact figures as unset values rather than fabricated claims; the editor must supply evidence before numbers appear.
+- Store Skywave social handles as platform_handle keys alongside legacy platform URL keys in site_settings.social_links; this preserves existing URL consumers without a schema change.
+- Store Davis preferred_name and social_accounts only in the isolated portfolio document and reuse shared social rendering/validation; this prevents Skywave settings or roles from modifying personal header content.

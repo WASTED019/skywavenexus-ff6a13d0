@@ -14,6 +14,8 @@ import "@/styles/davis.css";
 import { defaultMetrics, defaultPillars, defaultOptions, dispatchSchema, type GalleryEntry } from "@/lib/davis-content";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { SocialAccountsEditor } from "@/components/SocialAccountsEditor";
+import { socialAccountSchema } from "@/lib/social-accounts";
 
 export const Route = createFileRoute("/davis/admin")({
   ssr: false,
@@ -38,6 +40,8 @@ export const Route = createFileRoute("/davis/admin")({
 });
 
 const EMPTY: PortfolioDoc = {
+  preferred_name: "",
+  social_accounts: [],
   hero_name: "",
   hero_line: "",
   hero_image: "",
@@ -130,6 +134,8 @@ function DavisAdmin() {
   }
 
   async function onSave() {
+    const socialValidation = socialAccountSchema.array().max(6).safeParse(doc.social_accounts);
+    if (!socialValidation.success) { setStatus(socialValidation.error.issues[0]?.message ?? "Check social accounts"); return; }
     const validation = dispatchSchema.array().safeParse(doc.gallery);
     if (!validation.success) { setStatus(`Check Field Dispatches: ${validation.error.issues[0]?.message ?? "Invalid entry"}`); return; }
     setBusy(true);
@@ -145,6 +151,8 @@ function DavisAdmin() {
   }
 
   async function onPublish() {
+    const socialValidation = socialAccountSchema.array().max(6).safeParse(doc.social_accounts);
+    if (!socialValidation.success) { setStatus(socialValidation.error.issues[0]?.message ?? "Check social accounts"); return; }
     const validation = dispatchSchema.array().safeParse(doc.gallery);
     if (!validation.success) { setStatus(`Check Field Dispatches: ${validation.error.issues[0]?.message ?? "Invalid entry"}`); return; }
     setBusy(true);
@@ -262,12 +270,18 @@ function DavisAdmin() {
 
         <div className="dvs-card">
           <h2>Header</h2>
+          <Field label="Preferred display name" value={doc.preferred_name} onChange={(v) => set("preferred_name", v)} />
           <Field label="Name" value={doc.hero_name} onChange={(v) => set("hero_name", v)} />
           <Field label="Authority line" value={doc.authority} onChange={(v) => set("authority", v)} />
           <Field label="Intro line" value={doc.hero_line} onChange={(v) => set("hero_line", v)} area />
           <Field label="Header photo URL" value={doc.hero_image} onChange={(v) => set("hero_image", v)} />
           <ImagePicker onDone={(url) => set("hero_image", url)} />
         </div>
+
+        <section className="dvs-social-settings">
+          <h2>Social accounts</h2>
+          <SocialAccountsEditor accounts={doc.social_accounts} onChange={(accounts) => set("social_accounts", accounts)} />
+        </section>
 
         <div className="dvs-card">
           <h2>Impact metrics</h2>
