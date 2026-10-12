@@ -250,7 +250,7 @@ function DavisAdmin() {
         <div className="dvs-row" style={{ justifyContent: "space-between" }}>
           <h1 style={{ fontSize: "1.9rem" }}>Edit my page</h1>
           <div className="dvs-row">
-            <a className="dvs-btn" data-variant="ghost" href="/davis" target="_blank" rel="noreferrer">
+            <a className="dvs-btn" data-variant="ghost" href="/davis?preview=1" target="_blank" rel="noreferrer">
               Preview
             </a>
             <Button

@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import "@/styles/davis.css";
 
 export const Route = createFileRoute("/davis/")({
-  loader: () => getDavisPage({ data: { draft: true } }),
+  validateSearch: (search: Record<string, unknown>) => ({ preview: search.preview === "1" ? "1" : undefined }),
+  loaderDeps: ({ search }) => ({ preview: search.preview === "1" }),
+  loader: ({ deps }) => getDavisPage({ data: { draft: deps.preview } }),
   head: () => ({
     meta: [
       { title: "Davis Waithaka — Cold Chain, Infrastructure & Traceability" },
