@@ -4,3 +4,8 @@
 - [x] Replace Davis photo thumbnails with alternating Field Dispatches and editable story fields; verify page and editor.
 - [x] Add compact sticky Skywave/Davis social headers and isolated editable preferred name and social settings.
 - [x] Verify mobile navigation, social visibility/link behavior, and editor fields (render/validation checks; authenticated save not tested).
+- [x] Remove automatic assistant popup and verify launcher-only opening after waiting seven seconds.
+- [x] Compress eight published Davis photos with responsive variants and lazy loading without changing the portfolio document; all eight loaded in browser checks.
+- [x] Verify generic sign-in failure, authenticated customer dashboard, profile validation, owner Davis editor, service selection, blocked empty submission, existing-owner request tracking and 320px public layouts/menus; no additional defects reproduced.
+- [ ] Verify successful password sign-in and SKYWAVE admin editing: blocked by unavailable password and the available owner account having only the customer role; do not change roles.
+- [ ] Verify completed submission, saved edits and quote acceptance end-to-end: blocked by the prohibition on changing live requests/user data and no pending quote on the available owner's request; requires an isolated test environment.

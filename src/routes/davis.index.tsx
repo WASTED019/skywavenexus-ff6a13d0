@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Download, Mail, MessageCircle, Phone, Menu, X } from "lucide-react";
 import { getDavisPage } from "@/lib/davis.functions";
+import { davisImageProps } from "@/lib/davis-images";
 import { SocialAccounts } from "@/components/SocialAccounts";
 import { Button } from "@/components/ui/button";
 import "@/styles/davis.css";
@@ -70,7 +71,7 @@ function DavisPage() {
           <p className="dvs-hero-intro">{doc.hero_line}</p>
           <div className="dvs-hero-actions"><a className="dvs-primary-action" href="#consultation">Work with me <ArrowUpRight size={18}/></a><a className="dvs-download" href="/davis/profile">Download Executive Profile <Download size={16}/></a><a className="dvs-text-action" href="#work">Explore selected work <ArrowDownRight size={18}/></a></div>
         </div>
-        {doc.hero_image && <div className="dvs-portrait dvs-rise dvs-rise-2"><img src={doc.hero_image} alt={`${doc.hero_name} portrait`} /><span className="dvs-photo-label">FIELD / SYSTEMS / IMPACT</span></div>}
+        {doc.hero_image && <div className="dvs-portrait dvs-rise dvs-rise-2"><img {...davisImageProps(doc.hero_image, "(max-width: 760px) calc(100vw - 40px), 480px")} alt={`${doc.hero_name} portrait`} fetchPriority="high" decoding="async" /><span className="dvs-photo-label">FIELD / SYSTEMS / IMPACT</span></div>}
       </div>
     </section>
 
@@ -86,7 +87,7 @@ function DavisPage() {
     {cases.length > 0 && <section className="dvs-work" id="work"><div className="dvs-wrap">
       <div className="dvs-section-heading"><div><p className="dvs-kicker">02 / SELECTED WORK</p><h2>Problems met on the ground.</h2></div><p>Selected engagements across food systems, digital operations and connectivity.</p></div>
       <div className="dvs-case-grid">{cases.map((w, i) => { const link = w.verification_url && /^https:\/\//i.test(w.verification_url) ? w.verification_url : ""; return <article className={`dvs-case ${i === 0 ? "dvs-case-feature" : ""}`} key={i}>
-        {w.image && (link ? <a href={link} target="_blank" rel="noopener noreferrer" className="dvs-case-image" aria-label={`Open ${w.title}`}><img src={w.image} alt={`${w.title} project`} /></a> : <div className="dvs-case-image"><img src={w.image} alt={`${w.title} project`} /></div>)}
+        {w.image && (link ? <a href={link} target="_blank" rel="noopener noreferrer" className="dvs-case-image" aria-label={`Open ${w.title}`}><img {...davisImageProps(w.image, "(max-width: 760px) calc(100vw - 40px), 640px")} alt={`${w.title} project`} loading="lazy" decoding="async" /></a> : <div className="dvs-case-image"><img {...davisImageProps(w.image, "(max-width: 760px) calc(100vw - 40px), 640px")} alt={`${w.title} project`} loading="lazy" decoding="async" /></div>)}
         <div className="dvs-case-content"><div className="dvs-case-top"><span>{String(i + 1).padStart(2, "0")} / {w.role || "CASE STUDY"}</span>{link ? <a href={link} target="_blank" rel="noopener noreferrer" aria-label={`Open ${w.title}`} style={{color:"inherit"}}><ArrowUpRight size={20}/></a> : <a href="#consultation" aria-label={`Ask about ${w.title}`} style={{color:"inherit"}}><ArrowUpRight size={20}/></a>}</div><h3>{link ? <a href={link} target="_blank" rel="noopener noreferrer" style={{color:"inherit",textDecoration:"none"}}>{w.title}</a> : w.title}</h3><p className="dvs-case-body">{w.body}</p>
           {(w.problem || w.solution) && <div className="dvs-problem-solution">{w.problem && <div><span>THE CHALLENGE</span><p>{w.problem}</p></div>}{w.solution && <div><span>THE APPROACH</span><p>{w.solution}</p></div>}</div>}
           {link ? <a href={link} target="_blank" rel="noopener noreferrer" className="dvs-verify">Open live project <ArrowUpRight size={16}/></a> : <a href="#consultation" className="dvs-verify">Discuss similar work <ArrowUpRight size={16}/></a>}
@@ -101,7 +102,7 @@ function DavisPage() {
     {gallery.some((g) => g.url) && <section className="dvs-section dvs-gallery" id="dispatches"><div className="dvs-wrap">
       <div className="dvs-section-heading"><div><p className="dvs-kicker">FIELD DISPATCHES / ON THE GROUND</p><h2>From the field.</h2></div><p>Observations from the systems, sites and people behind the work.</p></div>
       <div className="dvs-dispatch-list">{gallery.filter((g) => g.url).map((g, i) => <article className="dvs-dispatch" key={i}>
-        <div className="dvs-dispatch-photo"><img src={g.url} alt={g.title || g.location || `Field dispatch ${i + 1}`} loading="lazy" /></div>
+        <div className="dvs-dispatch-photo"><img {...davisImageProps(g.url, "(max-width: 760px) calc(100vw - 40px), (max-width: 1200px) 50vw, 640px")} alt={g.title || g.location || `Field dispatch ${i + 1}`} loading="lazy" decoding="async" /></div>
         <div className="dvs-dispatch-copy"><div className="dvs-dispatch-meta"><span>FIELD DISPATCH / {String(i + 1).padStart(2, "0")}</span>{g.location && <span>{g.location}</span>}</div>
           <h3>{g.title || `Field dispatch ${String(i + 1).padStart(2, "0")}`}</h3>
           {g.story && <p className="dvs-dispatch-story">{g.story}</p>}
