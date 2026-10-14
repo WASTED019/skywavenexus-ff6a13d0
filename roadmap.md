@@ -4,3 +4,6 @@
 - [x] Replace Davis photo thumbnails with alternating Field Dispatches and editable story fields; verify page and editor.
 - [x] Add compact sticky Skywave/Davis social headers and isolated editable preferred name and social settings.
 - [x] Verify mobile navigation, social visibility/link behavior, and editor fields (render/validation checks; authenticated save not tested).
+- [ ] Remove automatic assistant popup and verify launcher-only opening.
+- [ ] Compress eight published Davis photos with responsive variants and lazy loading without changing the portfolio document.
+- [ ] Verify sign-in, dashboard, admin editing, requests, tracking, quotes and narrow menus without modifying live records; fix only reproduced defects.
