@@ -3,3 +3,4 @@
 - Store Skywave social handles as platform_handle keys alongside legacy platform URL keys in site_settings.social_links; this preserves existing URL consumers without a schema change.
 - Store Davis preferred_name and social_accounts only in the isolated portfolio document and reuse shared social rendering/validation; this prevents Skywave settings or roles from modifying personal header content.
 - Load published Davis content by default; request authenticated draft content only with explicit preview=1 and include preview in loader dependencies so editor previews never replace the live page.
+- Resolve optimized Davis photos by exact original URL in a browser-safe asset manifest; responsive variants must not change the isolated saved document, and unknown/new URLs keep their original source.
