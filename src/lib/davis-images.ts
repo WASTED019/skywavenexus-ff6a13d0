@@ -1,3 +1,6 @@
+import hero0 from "@/assets/davis-optimized/hero-csq26m-480.webp";
+import hero1 from "@/assets/davis-optimized/hero-csq26m-960.webp";
+import hero2 from "@/assets/davis-optimized/hero-csq26m-1280.webp";
 import photo0_0 from "@/assets/davis-optimized/photo-1-480.webp.asset.json";
 import photo0_1 from "@/assets/davis-optimized/photo-1-960.webp.asset.json";
 import photo0_2 from "@/assets/davis-optimized/photo-1-1280.webp.asset.json";
