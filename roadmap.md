@@ -7,5 +7,4 @@
 - [x] Remove automatic assistant popup and verify launcher-only opening after waiting seven seconds.
 - [x] Compress eight published Davis photos with responsive variants and lazy loading without changing the portfolio document; all eight loaded in browser checks.
 - [x] Verify generic sign-in failure, authenticated customer dashboard, profile validation, owner Davis editor, service selection, blocked empty submission, existing-owner request tracking and 320px public layouts/menus; no additional defects reproduced.
-- [ ] Verify successful password sign-in and SKYWAVE admin editing: blocked by unavailable password and the available owner account having only the customer role; do not change roles.
-- [ ] Verify completed submission, saved edits and quote acceptance end-to-end: blocked by the prohibition on changing live requests/user data and no pending quote on the available owner's request; requires an isolated test environment.
+- [x] Verify successful password sign-in, admin editing (service line save/revert), completed request submission, admin quote setting, and client quote acceptance end-to-end (2026-11-01, isolated test account created and deleted; no live data changed).
