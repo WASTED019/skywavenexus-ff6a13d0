@@ -1,3 +1,6 @@
+import hero0 from "@/assets/davis-optimized/hero-csq26m-480.webp";
+import hero1 from "@/assets/davis-optimized/hero-csq26m-960.webp";
+import hero2 from "@/assets/davis-optimized/hero-csq26m-1280.webp";
 import photo0_0 from "@/assets/davis-optimized/photo-1-480.webp.asset.json";
 import photo0_1 from "@/assets/davis-optimized/photo-1-960.webp.asset.json";
 import photo0_2 from "@/assets/davis-optimized/photo-1-1280.webp.asset.json";
@@ -25,6 +28,7 @@ import photo7_2 from "@/assets/davis-optimized/photo-8-1400.webp.asset.json";
 
 type OptimizedImage = { width: number; height: number; variants: { url: string; width: number }[] };
 const images: Record<string, OptimizedImage> = {
+  "/api/public/davis-media/1792182155856-csq26m.jpg": { width: 2296, height: 2466, variants: [{ url: hero0, width: 480 }, { url: hero1, width: 960 }, { url: hero2, width: 1280 }] },
   "/api/public/davis-media/1791631097524-h5tnp9.jpg": { width: 1280, height: 960, variants: [{ url: photo0_0.url, width: 480 }, { url: photo0_1.url, width: 960 }, { url: photo0_2.url, width: 1280 }] },
   "/api/public/davis-media/1791548456180-1wmxm6.jpg": { width: 3096, height: 4128, variants: [{ url: photo1_0.url, width: 480 }, { url: photo1_1.url, width: 960 }, { url: photo1_2.url, width: 1600 }] },
   "/api/public/davis-media/1788743245393-6jw21x.jpg": { width: 3120, height: 4160, variants: [{ url: photo2_0.url, width: 480 }, { url: photo2_1.url, width: 960 }, { url: photo2_2.url, width: 1600 }] },
