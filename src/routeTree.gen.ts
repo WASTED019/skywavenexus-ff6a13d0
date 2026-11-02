@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -23,6 +24,7 @@ import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SkywaveNexusRouteImport } from './routes/skywave-nexus'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as AboutProfileRouteImport } from './routes/about_.profile'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as DavisIndexRouteImport } from './routes/davis.index'
 import { Route as DavisAdminRouteImport } from './routes/davis.admin'
@@ -34,6 +36,11 @@ import { Route as ApiPublicDavisMediaSplatRouteImport } from './routes/api/publi
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -101,6 +108,11 @@ const TrackRoute = TrackRouteImport.update({
   path: '/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutProfileRoute = AboutProfileRouteImport.update({
+  id: '/about_/profile',
+  path: '/about/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -140,6 +152,7 @@ const ApiPublicDavisMediaSplatRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
@@ -153,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
+  '/about/profile': typeof AboutProfileRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
   '/davis/profile': typeof DavisProfileRoute
@@ -163,6 +177,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
@@ -176,6 +191,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
+  '/about/profile': typeof AboutProfileRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
   '/davis/profile': typeof DavisProfileRoute
@@ -187,6 +203,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
@@ -200,6 +217,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skywave-nexus': typeof SkywaveNexusRoute
   '/track': typeof TrackRoute
+  '/about_/profile': typeof AboutProfileRoute
   '/api/chat': typeof ApiChatRoute
   '/davis/admin': typeof DavisAdminRoute
   '/davis/profile': typeof DavisProfileRoute
@@ -212,6 +230,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/admin'
     | '/admin-login'
     | '/blog'
@@ -225,6 +244,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
+    | '/about/profile'
     | '/api/chat'
     | '/davis/admin'
     | '/davis/profile'
@@ -235,6 +255,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/admin'
     | '/admin-login'
     | '/blog'
@@ -248,6 +269,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
+    | '/about/profile'
     | '/api/chat'
     | '/davis/admin'
     | '/davis/profile'
@@ -258,6 +280,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/admin'
     | '/admin-login'
     | '/blog'
@@ -271,6 +294,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/skywave-nexus'
     | '/track'
+    | '/about_/profile'
     | '/api/chat'
     | '/davis/admin'
     | '/davis/profile'
@@ -282,6 +306,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   AdminLoginRoute: typeof AdminLoginRoute
   BlogRoute: typeof BlogRoute
@@ -295,6 +320,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SkywaveNexusRoute: typeof SkywaveNexusRoute
   TrackRoute: typeof TrackRoute
+  AboutProfileRoute: typeof AboutProfileRoute
   ApiChatRoute: typeof ApiChatRoute
   DavisAdminRoute: typeof DavisAdminRoute
   DavisProfileRoute: typeof DavisProfileRoute
@@ -311,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -404,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about_/profile': {
+      id: '/about_/profile'
+      path: '/about/profile'
+      fullPath: '/about/profile'
+      preLoaderRoute: typeof AboutProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -458,6 +498,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   AdminLoginRoute: AdminLoginRoute,
   BlogRoute: BlogRoute,
@@ -471,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SkywaveNexusRoute: SkywaveNexusRoute,
   TrackRoute: TrackRoute,
+  AboutProfileRoute: AboutProfileRoute,
   ApiChatRoute: ApiChatRoute,
   DavisAdminRoute: DavisAdminRoute,
   DavisProfileRoute: DavisProfileRoute,
