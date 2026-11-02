@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 
 const publicNav = [
   { to: "/", label: "Home" },
+  { to: "/about", label: "About" },
   { to: "/divisions", label: "Service Lines" },
   { to: "/request", label: "Request Service" },
   { to: "/skywave-nexus", label: "SKYWAVE NEXUS" },
