@@ -40,7 +40,7 @@ type UserRow = {
   email: string | null; is_active: boolean; delete_requested: boolean; roles: string[];
 };
 
-type Tab = "dashboard"|"requests"|"leads"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"settings"|"members"|"users"|"resets"|"activity";
+type Tab = "dashboard"|"requests"|"leads"|"homepage"|"service_lines"|"showcase"|"blog"|"media"|"careers_privacy"|"settings"|"members"|"users"|"resets"|"activity";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -75,6 +75,7 @@ function AdminPage() {
     { id: "showcase", label: "Selected Work", show: can(role, "edit_content") },
     { id: "blog", label: "Blog", show: can(role, "edit_content") },
     { id: "media", label: "Media", show: can(role, "edit_content") },
+    { id: "careers_privacy", label: "Careers & Privacy", show: can(role, "edit_content") },
     { id: "settings", label: "Settings", show: can(role, "edit_content") },
     { id: "members", label: "Members", show: hasMin(role, "admin") },
     { id: "users", label: "Users & Roles", show: can(role, "manage_users") },
@@ -118,6 +119,7 @@ function AdminPage() {
           {tab === "showcase" && <ShowcasePanel role={role} />}
           {tab === "blog" && <BlogPanel role={role} />}
           {tab === "media" && <MediaPanel role={role} />}
+          {tab === "careers_privacy" && <CareersPrivacyPanel role={role} />}
           {tab === "settings" && <SettingsPanel />}
           {tab === "users" && <UsersPanel />}
           {tab === "members" && <MembersPanel />}
