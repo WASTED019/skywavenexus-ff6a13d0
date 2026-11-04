@@ -95,6 +95,48 @@ export type Database = {
         }
         Relationships: []
       }
+      careers_posts: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          job_type: string | null
+          location: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          job_type?: string | null
+          location?: string | null
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          job_type?: string | null
+          location?: string | null
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       chatbot_leads: {
         Row: {
           created_at: string
@@ -644,6 +686,36 @@ export type Database = {
         }
         Relationships: []
       }
+      site_pages: {
+        Row: {
+          body: string | null
+          image_url: string | null
+          is_active: boolean
+          slug: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          body?: string | null
+          image_url?: string | null
+          is_active?: boolean
+          slug: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          body?: string | null
+          image_url?: string | null
+          is_active?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           email: string | null
@@ -829,9 +901,11 @@ export type Database = {
       clear_reset_flag: { Args: never; Returns: undefined }
       customer_can_reset: { Args: { _identifier: string }; Returns: boolean }
       delete_blog_post: { Args: { _id: string }; Returns: undefined }
+      delete_career_post: { Args: { _id: string }; Returns: undefined }
       delete_media: { Args: { _id: string }; Returns: undefined }
       delete_service_line: { Args: { _slug: string }; Returns: undefined }
       delete_showcase_item: { Args: { _id: string }; Returns: undefined }
+      delete_site_page: { Args: { _slug: string }; Returns: undefined }
       delete_slide: { Args: { _id: string }; Returns: undefined }
       has_min_role: {
         Args: { _min: Database["public"]["Enums"]["app_role"]; _uid: string }
@@ -1056,6 +1130,28 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      upsert_career_post: {
+        Args: { _payload: Json }
+        Returns: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          job_type: string | null
+          location: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "careers_posts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       upsert_service_line: {
         Args: { _payload: Json }
         Returns: {
@@ -1099,6 +1195,24 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "showcase_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      upsert_site_page: {
+        Args: { _payload: Json }
+        Returns: {
+          body: string | null
+          image_url: string | null
+          is_active: boolean
+          slug: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "site_pages"
           isOneToOne: true
           isSetofReturn: false
         }

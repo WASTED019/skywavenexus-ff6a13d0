@@ -14,9 +14,12 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as RequestRouteImport } from './routes/request'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SignInRouteImport } from './routes/sign-in'
@@ -58,6 +61,11 @@ const BlogRoute = BlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -71,6 +79,16 @@ const DashboardRoute = DashboardRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RequestRoute = RequestRouteImport.update({
@@ -156,9 +174,12 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
+  '/projects': typeof ProjectsRoute
   '/request': typeof RequestRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
@@ -181,9 +202,12 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
+  '/projects': typeof ProjectsRoute
   '/request': typeof RequestRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
@@ -207,9 +231,12 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/admin-login': typeof AdminLoginRoute
   '/blog': typeof BlogRoute
+  '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
+  '/projects': typeof ProjectsRoute
   '/request': typeof RequestRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
@@ -234,9 +261,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-login'
     | '/blog'
+    | '/careers'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
+    | '/privacy'
+    | '/projects'
     | '/request'
     | '/reset-password'
     | '/sign-in'
@@ -259,9 +289,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-login'
     | '/blog'
+    | '/careers'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
+    | '/privacy'
+    | '/projects'
     | '/request'
     | '/reset-password'
     | '/sign-in'
@@ -284,9 +317,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-login'
     | '/blog'
+    | '/careers'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
+    | '/privacy'
+    | '/projects'
     | '/request'
     | '/reset-password'
     | '/sign-in'
@@ -310,9 +346,12 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AdminLoginRoute: typeof AdminLoginRoute
   BlogRoute: typeof BlogRoute
+  CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProjectsRoute: typeof ProjectsRoute
   RequestRoute: typeof RequestRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
@@ -367,6 +406,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -386,6 +432,20 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/request': {
@@ -502,9 +562,12 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AdminLoginRoute: AdminLoginRoute,
   BlogRoute: BlogRoute,
+  CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProjectsRoute: ProjectsRoute,
   RequestRoute: RequestRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,

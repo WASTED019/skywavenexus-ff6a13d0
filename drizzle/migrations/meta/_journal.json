@@ -22,6 +22,20 @@
       "when": 1791327758602,
       "tag": "0002_quote_acceptance",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793800870095,
+      "tag": "0003_site_pages_and_careers",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793800927093,
+      "tag": "0004_site_page_image_clearing",
+      "breakpoints": true
     }
   ]
 }
