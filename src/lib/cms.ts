@@ -246,6 +246,69 @@ export function useShowcaseItems(preview = false): ShowcaseItem[] {
   return list;
 }
 
+export type SitePage = {
+  slug: string;
+  title: string;
+  body: string | null;
+  image_url: string | null;
+  is_active: boolean;
+};
+
+export type CareerPost = {
+  id: string;
+  title: string;
+  location: string | null;
+  job_type: string | null;
+  description: string | null;
+  image_url: string | null;
+  display_order: number;
+  is_active: boolean;
+};
+
+export type MediaPhoto = { id: string; public_url: string; title: string | null; alt_text: string | null };
+
+/** Public page content (privacy, careers intro). Staff previews also see inactive pages. */
+export function useSitePage(slug: string): SitePage | null {
+  const [page, setPage] = useState<SitePage | null>(null);
+  const preview = usePreviewMode();
+  useEffect(() => {
+    let alive = true;
+    supabase.from("site_pages").select("*").eq("slug", slug).maybeSingle()
+      .then(({ data }) => { if (alive) setPage((data as unknown as SitePage) ?? null); });
+    return () => { alive = false; };
+  }, [slug, preview]);
+  return page;
+}
+
+export function useCareersPosts(preview = false): CareerPost[] {
+  const [list, setList] = useState<CareerPost[]>([]);
+  useEffect(() => {
+    let alive = true;
+    let q = supabase.from("careers_posts").select("*");
+    if (!preview) q = q.eq("is_active", true);
+    q.order("display_order")
+      .then(({ data }) => { if (alive) setList(((data ?? []) as unknown) as CareerPost[]); });
+    return () => { alive = false; };
+  }, [preview]);
+  return list;
+}
+
+/** Recent library photos, used for visual strips on public pages. */
+export function useRecentMediaPhotos(limit = 6): MediaPhoto[] {
+  const [list, setList] = useState<MediaPhoto[]>([]);
+  useEffect(() => {
+    let alive = true;
+    supabase.from("media_assets").select("id, public_url, title, alt_text")
+      .order("created_at", { ascending: false }).limit(limit)
+      .then(({ data }) => {
+        if (!alive) return;
+        setList(((data ?? []) as unknown as MediaPhoto[]).filter((m) => m.public_url));
+      });
+    return () => { alive = false; };
+  }, [limit]);
+  return list;
+}
+
 export function useBlogPosts(preview = false): BlogPost[] {
   const [list, setList] = useState<BlogPost[]>([]);
   useEffect(() => {
