@@ -1187,3 +1187,127 @@ function ChatLeadsPanel({ role }: { role: Role }) {
     </div>
   );
 }
+
+/* ===================== CAREERS & PRIVACY ===================== */
+type SitePageRow = { slug: string; title: string; body: string | null; image_url: string | null; is_active: boolean };
+type CareerRow = { id: string; title: string; location: string | null; job_type: string | null; description: string | null; image_url: string | null; display_order: number; is_active: boolean };
+
+const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship", "Attachment"] as const;
+
+function SitePageEditor({ page, label, pageLink, onSave }: { page: SitePageRow; label: string; pageLink: string; onSave: (p: SitePageRow) => Promise<void> }) {
+  const [p, setP] = useState<SitePageRow>(page);
+  const [saving, setSaving] = useState(false);
+  return (
+    <section className="rounded-2xl border bg-card p-6 shadow-soft">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-lg font-bold">{label}</h3>
+        <a href={pageLink} target="_blank" rel="noopener noreferrer" className="rounded-md border px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/5">View page ↗</a>
+      </div>
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <Field label="Page title"><input value={p.title} onChange={(e) => setP({ ...p, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Header image"><ImageField value={p.image_url || ""} onChange={(v) => setP({ ...p, image_url: v })} /></Field>
+        <Field label="Body (blank line starts a new paragraph or section heading)" full>
+          <textarea value={p.body || ""} onChange={(e) => setP({ ...p, body: e.target.value })} rows={12} className="w-full rounded-md border px-3 py-2 text-sm" />
+        </Field>
+      </div>
+      <div className="mt-3 flex items-center gap-3">
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={p.is_active} onChange={(e) => setP({ ...p, is_active: e.target.checked })} /> Visible on site</label>
+        <button
+          onClick={async () => { setSaving(true); await onSave(p); setSaving(false); }}
+          className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white"
+        >{saving ? "Saving…" : "Save"}</button>
+      </div>
+    </section>
+  );
+}
+
+function CareerEditor({ post, onSave, onDelete, canDelete, isNew }: { post: CareerRow; onSave: (p: Partial<CareerRow>) => Promise<void>; onDelete?: () => void; canDelete: boolean; isNew?: boolean }) {
+  const [p, setP] = useState<CareerRow>(post);
+  return (
+    <section className="rounded-2xl border bg-card p-6 shadow-soft">
+      <h3 className="text-lg font-bold">{isNew ? "Add new position" : p.title}</h3>
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <Field label="Position title"><input value={p.title} onChange={(e) => setP({ ...p, title: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Location">
+          <input value={p.location || ""} onChange={(e) => setP({ ...p, location: e.target.value })} placeholder="e.g. Nyange, Nyeri" className="w-full rounded-md border px-3 py-2 text-sm" />
+        </Field>
+        <Field label="Employment type">
+          <select value={p.job_type || ""} onChange={(e) => setP({ ...p, job_type: e.target.value })} className="w-full rounded-md border px-3 py-2 text-sm">
+            <option value="">— Select —</option>
+            {JOB_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </Field>
+        <Field label="Order"><input type="number" value={p.display_order} onChange={(e) => setP({ ...p, display_order: parseInt(e.target.value) || 0 })} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+        <Field label="Photo (optional)" full><ImageField value={p.image_url || ""} onChange={(v) => setP({ ...p, image_url: v })} /></Field>
+        <Field label="Description" full><textarea value={p.description || ""} onChange={(e) => setP({ ...p, description: e.target.value })} rows={5} className="w-full rounded-md border px-3 py-2 text-sm" /></Field>
+      </div>
+      <div className="mt-3 flex items-center gap-3">
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={p.is_active} onChange={(e) => setP({ ...p, is_active: e.target.checked })} /> Listed on site</label>
+        <button onClick={() => onSave(p)} className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white">{isNew ? "Add position" : "Save"}</button>
+        {canDelete && onDelete && <button onClick={onDelete} className="rounded-md border border-destructive px-3 py-1 text-xs text-destructive">Delete</button>}
+      </div>
+    </section>
+  );
+}
+
+function CareersPrivacyPanel({ role }: { role: Role }) {
+  const [careers, setCareers] = useState<SitePageRow | null>(null);
+  const [privacy, setPrivacy] = useState<SitePageRow | null>(null);
+  const [posts, setPosts] = useState<CareerRow[]>([]);
+  const [newKey, setNewKey] = useState(0);
+  const [msg, setMsg] = useState("");
+
+  const reload = useCallback(async () => {
+    const [{ data: pages }, { data: rows }] = await Promise.all([
+      supabase.from("site_pages").select("*"),
+      supabase.from("careers_posts").select("*").order("display_order"),
+    ]);
+    const list = ((pages ?? []) as unknown as SitePageRow[]);
+    setCareers(list.find((x) => x.slug === "careers") ?? { slug: "careers", title: "", body: "", image_url: null, is_active: true });
+    setPrivacy(list.find((x) => x.slug === "privacy") ?? { slug: "privacy", title: "", body: "", image_url: null, is_active: true });
+    setPosts(((rows ?? []) as unknown) as CareerRow[]);
+  }, []);
+  useEffect(() => { reload(); }, [reload]);
+
+  const savePage = async (p: SitePageRow) => {
+    const { error } = await supabase.rpc("upsert_site_page", { _payload: p as any });
+    setMsg(error ? error.message : "Saved."); if (!error) reload();
+  };
+  const savePost = async (p: Partial<CareerRow>) => {
+    const { error } = await supabase.rpc("upsert_career_post", { _payload: p as any });
+    setMsg(error ? error.message : "Saved."); if (!error) reload();
+  };
+  const delPost = async (id: string) => {
+    if (!confirm("Delete this position?")) return;
+    const { error } = await supabase.rpc("delete_career_post", { _id: id });
+    setMsg(error ? error.message : "Deleted."); if (!error) reload();
+  };
+
+  if (!careers || !privacy) return <p className="text-sm text-muted-foreground">Loading…</p>;
+
+  return (
+    <div className="space-y-6">
+      {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-bold">Careers &amp; Privacy content</h2>
+        <a href="/careers" target="_blank" rel="noopener noreferrer" className="rounded-md border px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/5">Preview careers page ↗</a>
+      </div>
+      <SitePageEditor page={careers} label="Careers page (intro, positions intro, general application note)" pageLink="/careers" onSave={savePage} />
+      <SitePageEditor page={privacy} label="Privacy Policy text" pageLink="/privacy" onSave={savePage} />
+
+      <h2 className="pt-2 text-base font-bold">Open positions</h2>
+      {posts.length === 0 && <p className="text-sm text-muted-foreground">No positions yet — the careers page shows a general-application note instead.</p>}
+      {posts.map((p) => (
+        <CareerEditor key={p.id} post={p} onSave={savePost} onDelete={() => delPost(p.id)} canDelete={can(role, "delete_content")} />
+      ))}
+      <CareerEditor
+        key={`new-${newKey}`}
+        post={{ id: "", title: "", location: "", job_type: "", description: "", image_url: null, display_order: posts.length, is_active: true }}
+        onSave={async (p) => { await savePost({ ...p, id: undefined }); setNewKey((k) => k + 1); }}
+        canDelete={false}
+        isNew
+      />
+      <p className="text-xs text-muted-foreground">Photos shown in “Our work on the ground” on the careers page come from the Media library (most recent first).</p>
+    </div>
+  );
+}
