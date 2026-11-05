@@ -2,7 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { completePasswordResetFn } from "@/lib/account.functions";
 import { z } from "zod";
 
 export const Route = createFileRoute("/reset-password")({
@@ -17,6 +19,7 @@ const schema = z.object({
 
 function ResetPassword() {
   const navigate = useNavigate();
+  const completePasswordReset = useServerFn(completePasswordResetFn);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
@@ -46,12 +49,12 @@ function ResetPassword() {
 
     setBusy(true);
     try {
-      const { error: updErr } = await supabase.auth.updateUser({ password: parsed.data.password });
-      if (updErr) { setError(updErr.message); return; }
-      // Clear the admin reset approval flag so it can't be reused
-      await supabase.rpc("clear_reset_flag");
+      const result = await completePasswordReset({ data: { password: parsed.data.password } });
+      if (!result.ok) { setError(result.message); return; }
       setInfo("Password updated. Redirecting…");
       setTimeout(() => navigate({ to: "/dashboard" }), 1000);
+    } catch {
+      setError("This reset could not be completed. Request a new reset link or contact the office.");
     } finally {
       setBusy(false);
     }

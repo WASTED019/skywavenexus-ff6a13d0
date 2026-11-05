@@ -899,6 +899,7 @@ export type Database = {
         }
       }
       clear_reset_flag: { Args: never; Returns: undefined }
+      consume_password_reset_approval: { Args: never; Returns: boolean }
       customer_can_reset: { Args: { _identifier: string }; Returns: boolean }
       delete_blog_post: { Args: { _id: string }; Returns: undefined }
       delete_career_post: { Args: { _id: string }; Returns: undefined }
