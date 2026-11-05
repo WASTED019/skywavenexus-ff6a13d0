@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /**
  * Server-side sign-in and password-reset helpers.
@@ -98,4 +99,36 @@ export const requestPasswordResetFn = createServerFn({ method: "POST" })
     // Queue a request for Super Admin approval. Throttled inside the RPC.
     await admin.rpc("request_password_reset", { _identifier: data.identifier });
     return { sent: false as const };
+  });
+
+const completePasswordResetSchema = z.object({
+  password: z.string().min(8).max(128),
+});
+
+export const completePasswordResetFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => completePasswordResetSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: approved, error: approvalError } = await context.supabase.rpc(
+      "consume_password_reset_approval",
+    );
+    if (approvalError || !approved) {
+      return {
+        ok: false as const,
+        message: "This reset is no longer approved. Request a new reset link or contact the office.",
+      };
+    }
+
+    try {
+      const admin = await adminClient();
+      const { error } = await admin.auth.admin.updateUserById(context.userId, {
+        password: data.password,
+      });
+      if (error) {
+        return { ok: false as const, message: "Password update failed. Please request approval again." };
+      }
+      return { ok: true as const };
+    } catch {
+      return { ok: false as const, message: "Password update failed. Please request approval again." };
+    }
   });
