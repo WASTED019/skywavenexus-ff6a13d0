@@ -261,7 +261,7 @@ function RequestPage() {
         </fieldset>
 
         {(divisionId === "food-safety" || divisionId === "value-addition") && (
-          <DynamicSection title="Food Safety details">
+          <DynamicSection title="Food Industry details">
             <Field label="Type of food business"><input name="dd_foodBusinessType" className="input" /></Field>
             <Field label="Product handled"><input name="dd_product" className="input" /></Field>
             <Field label="Existing permits or certification?"><input name="dd_permits" className="input" placeholder="Yes / No / Which" /></Field>
@@ -272,20 +272,6 @@ function RequestPage() {
               </select>
             </Field>
             <Field label="Existing SOPs or records?"><input name="dd_existingSops" className="input" placeholder="Yes / No / Partially" /></Field>
-          </DynamicSection>
-        )}
-        {divisionId === "food-safety" && (
-          <DynamicSection title="Value Addition details">
-            <Field label="Product you want to develop"><input name="dd_product" className="input" /></Field>
-            <Field label="Current stage">
-              <select name="dd_stage" className="input">
-                <option value="">Select</option><option>Idea</option><option>Trial</option><option>Already producing</option><option>Ready for market</option>
-              </select>
-            </Field>
-            <Field label="Main raw materials"><input name="dd_rawMaterials" className="input" /></Field>
-            <Field label="Packaging type needed"><input name="dd_packaging" className="input" /></Field>
-            <Field label="Expected production scale"><input name="dd_scale" className="input" /></Field>
-            <Field label="Main challenge"><input name="dd_challenge" className="input" /></Field>
           </DynamicSection>
         )}
         {divisionId === "isp-connectivity" && (
