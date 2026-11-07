@@ -5,6 +5,7 @@ import { iconFor, publicServiceLineViews } from "@/lib/service-lines";
 import { whatsappLink } from "@/lib/whatsapp";
 import { useHomepageContent, useHomepageSlides, useMediaSlides, useLiveServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
 import logo from "@/assets/logo.png";
+import { getCorporateServiceCategory } from "@/lib/company-profile";
 import { ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -147,7 +148,7 @@ function HomePage() {
               {s.image_url && <img src={s.image_url} alt={s.title} className="h-40 w-full object-cover" />}
               <div className="p-6">
                 <div className="mb-3 inline-block rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
-                  {s.division_name}
+                  {getCorporateServiceCategory(s.division_id, s.division_name)}
                 </div>
                 <h3 className="text-lg font-bold">{s.title}</h3>
                 {s.location && <p className="mt-1 text-xs text-muted-foreground">{s.location}</p>}

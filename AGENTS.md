@@ -5,3 +5,4 @@
 - Load published Davis content by default; request authenticated draft content only with explicit preview=1 and include preview in loader dependencies so editor previews never replace the live page.
 - Resolve optimized Davis photos by exact original URL in a browser-safe asset manifest; responsive variants must not change the isolated saved document, and unknown/new URLs keep their original source.
 - Complete password resets only through an authenticated server function that consumes a current approved request before updating the account password; direct browser password changes bypass revocation checks.
+- Preserve legacy service-line records and request IDs while grouping their public presentation into the three approved corporate categories; this avoids breaking existing requests and CMS content.
