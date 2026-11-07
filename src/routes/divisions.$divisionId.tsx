@@ -3,7 +3,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { findDivision, type Service as _S } from "@/data/divisions";
 import { useServiceLine } from "@/lib/cms";
-import { toLineView } from "@/lib/service-lines";
+import { publicServiceLineViews, toLineView } from "@/lib/service-lines";
+import { useLiveServiceLines } from "@/lib/cms";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/divisions/$divisionId")({
@@ -58,8 +59,13 @@ export const Route = createFileRoute("/divisions/$divisionId")({
 function DivisionPage() {
   const { id } = Route.useLoaderData();
   const { row: cms, loaded } = useServiceLine(id);
-  const hidden = loaded && cms?.is_active === false;
-  const view = hidden ? null : toLineView(cms, id);
+  const liveLines = useLiveServiceLines();
+  const hidden = loaded && cms?.is_active === false && id !== "food-safety";
+  const view = hidden
+    ? null
+    : id === "food-safety"
+      ? publicServiceLineViews(liveLines).find((line) => line.id === "food-safety") ?? null
+      : toLineView(cms, id);
 
   if (!view) {
     if (!loaded) return <div className="flex min-h-screen flex-col"><Header /><div className="flex-1" /><Footer /></div>;
