@@ -6,10 +6,10 @@ import { useBlogPosts, usePreviewMode } from "@/lib/cms";
 export const Route = createFileRoute("/blog")({
   head: () => ({
     meta: [
-      { title: "Blog & Updates — SKYWAVE NEXUS" },
-      { name: "description", content: "Tips and updates on food safety, value addition, networking and business compliance from SKYWAVE NEXUS." },
-      { property: "og:title", content: "Blog & Updates — SKYWAVE NEXUS" },
-      { property: "og:description", content: "Tips and updates on food safety, value addition, networking and business compliance from SKYWAVE NEXUS." },
+      { title: "Knowledge & Insights — SKYWAVE NEXUS" },
+      { name: "description", content: "Practical knowledge and published insights across food industry, ICT and digital systems from SKYWAVE NEXUS." },
+      { property: "og:title", content: "Knowledge & Insights — SKYWAVE NEXUS" },
+      { property: "og:description", content: "Practical knowledge and published insights across food industry, ICT and digital systems from SKYWAVE NEXUS." },
       { property: "og:url", content: "https://skywavenexus.lovable.app/blog" },
     ],
     links: [
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/blog")({
       children: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Blog",
-        name: "SKYWAVE NEXUS — Blog & Updates",
+        name: "SKYWAVE NEXUS — Knowledge & Insights",
         url: "https://skywavenexus.lovable.app/blog",
       }),
     }],
@@ -41,8 +41,8 @@ function BlogPage() {
       )}
       <section className="bg-hero-gradient text-white">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <h1 className="text-3xl font-bold sm:text-4xl">Blog / Updates</h1>
-          <p className="mt-3 max-w-2xl text-white/85">Practical tips and company updates.</p>
+          <h1 className="text-3xl font-bold sm:text-4xl">Knowledge &amp; Insights</h1>
+          <p className="mt-3 max-w-2xl text-white/85">Published insights across food industry, ICT and digital systems.</p>
         </div>
       </section>
       <section className="mx-auto max-w-7xl px-4 py-12">

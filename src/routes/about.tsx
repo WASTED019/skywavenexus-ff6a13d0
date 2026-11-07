@@ -7,7 +7,7 @@ import { company } from "@/lib/company-profile";
 import { whatsappLink } from "@/lib/whatsapp";
 import { Download, MessageCircle, Phone, Mail, ArrowRight } from "lucide-react";
 
-const desc = "About SKYWAVE NEXUS Integrated Solutions: mission, service lines, delivery model and how to engage us in Nyeri, Kenya.";
+const desc = "Learn about SKYWAVE NEXUS Integrated Solutions, our three service lines, and our operating coverage across Nyeri County, Laikipia County and remote engagements.";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -32,13 +32,21 @@ function AboutPage() {
       <main className="flex-1">
         <section className="bg-hero-gradient text-white">
           <div className="mx-auto max-w-7xl px-4 py-14">
-            <h1 className="text-3xl font-bold sm:text-4xl">About {company.name}</h1>
-            <p className="mt-3 max-w-2xl text-white/85">{company.mission}</p>
+            <p className="text-sm font-semibold uppercase text-white/80">{company.positioning}</p>
+            <h1 className="mt-2 text-3xl font-bold sm:text-4xl">About {company.name}</h1>
+            <p className="mt-3 max-w-3xl text-white/85">{company.overview}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild variant="secondary"><Link to="/about/profile"><Download className="size-4" /> Download Company Profile</Link></Button>
               <Button asChild variant="outline" className="bg-transparent text-white"><Link to="/request">Request a service</Link></Button>
+              <Button asChild variant="outline" className="bg-transparent text-white"><Link to="/projects">Projects</Link></Button>
             </div>
           </div>
+        </section>
+
+        <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-3">
+          <div><h2 className="text-sm font-semibold uppercase text-primary">Our vision</h2><p className="mt-2 text-sm text-muted-foreground">{company.vision}</p></div>
+          <div><h2 className="text-sm font-semibold uppercase text-primary">Our mission</h2><p className="mt-2 text-sm text-muted-foreground">{company.mission}</p></div>
+          <div><h2 className="text-sm font-semibold uppercase text-primary">Our purpose</h2><p className="mt-2 text-sm text-muted-foreground">{company.purpose}</p></div>
         </section>
 
         <section className="mx-auto max-w-7xl px-4 py-12">
@@ -70,7 +78,7 @@ function AboutPage() {
 
         <section className="mx-auto max-w-7xl px-4 py-12">
           <h2 className="text-2xl font-bold">Delivery model</h2>
-          <p className="mt-2 text-muted-foreground">Based in {company.location}, serving clients across Kenya.</p>
+          <p className="mt-2 text-muted-foreground">{company.location}.</p>
           <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {company.delivery.map((s, i) => (
               <li key={s.step} className="rounded-lg border bg-card p-4">
@@ -80,6 +88,18 @@ function AboutPage() {
               </li>
             ))}
           </ol>
+        </section>
+
+        <section className="bg-muted/40">
+          <div className="mx-auto max-w-7xl px-4 py-10">
+            <h2 className="text-2xl font-bold">Explore SKYWAVE NEXUS</h2>
+            <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-primary">
+              <Link to="/projects" className="inline-flex items-center gap-1">Projects &amp; Technical Portfolio <ArrowRight className="size-4" /></Link>
+              <Link to="/careers" className="inline-flex items-center gap-1">Careers <ArrowRight className="size-4" /></Link>
+              <Link to="/privacy" className="inline-flex items-center gap-1">Privacy Policy <ArrowRight className="size-4" /></Link>
+              <Link to="/blog" className="inline-flex items-center gap-1">Knowledge &amp; Insights <ArrowRight className="size-4" /></Link>
+            </div>
+          </div>
         </section>
 
         <section className="bg-muted/40">

@@ -160,7 +160,7 @@ function HomePage() {
       <section className="bg-secondary py-16">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex items-end justify-between gap-4">
-            <h2 className="text-3xl font-bold">Latest Updates</h2>
+            <h2 className="text-3xl font-bold">Knowledge &amp; Insights</h2>
             <Link to="/blog" className="text-sm font-semibold text-brand-blue hover:underline">All posts →</Link>
           </div>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
