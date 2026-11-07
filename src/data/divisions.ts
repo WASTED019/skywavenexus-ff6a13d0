@@ -36,6 +36,21 @@ export const divisions: Division[] = [
     ],
   },
   {
+    id: "value-addition",
+    title: "Value Addition Solutions",
+    short: "Product development, processing and value addition support.",
+    icon: "sprout",
+    description:
+      "Support for farmers, processors, entrepreneurs and SMEs in product development, processing and value addition.",
+    services: [
+      { id: "product-dev", name: "Product development support", explanation: "Plan product trials and development around the available ingredients and intended use.", audience: "Entrepreneurs, farmers and processors", outcome: "A structured product-development process." },
+      { id: "formulation", name: "Food formulation guidance", explanation: "Review product formulations and trial approaches.", audience: "Processors", outcome: "Clearer formulation records and next steps." },
+      { id: "fruit-veg", name: "Fruit and vegetable processing support", explanation: "Review suitable processing and preservation approaches.", audience: "Farmer groups and processors", outcome: "Practical processing recommendations." },
+      { id: "packaging", name: "Packaging advice", explanation: "Review packaging options for the product and intended market.", audience: "Small processors", outcome: "A more informed packaging selection." },
+      { id: "workflow", name: "Small-scale processing workflow design", explanation: "Review production flow and practical workspace arrangements.", audience: "Youth and SMEs", outcome: "A workflow aligned to the available space and process." },
+    ],
+  },
+  {
     id: "isp-connectivity",
     title: "ICT & Connectivity Solutions",
     short: "Network planning, installation, configuration and support.",
