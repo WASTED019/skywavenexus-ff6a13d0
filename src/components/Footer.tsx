@@ -23,9 +23,7 @@ export function Footer() {
               <div className="text-xs uppercase tracking-wider opacity-80">Integrated Solutions</div>
             </div>
           </div>
-          <p className="mt-4 max-w-xs text-sm opacity-80">
-            {settings.footer_text}
-          </p>
+          <p className="mt-4 max-w-xs text-sm opacity-80">Connecting Industry, Technology and Innovation.</p>
         </div>
 
         <div>
