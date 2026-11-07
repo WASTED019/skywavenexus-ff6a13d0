@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { divisions } from "@/data/divisions";
+import { useLiveServiceLines } from "@/lib/cms";
+import { publicServiceLineViews } from "@/lib/service-lines";
 import { company } from "@/lib/company-profile";
 import { whatsappLink } from "@/lib/whatsapp";
 import { Download, MessageCircle, Phone, Mail, ArrowRight } from "lucide-react";
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const divisions = publicServiceLineViews(useLiveServiceLines());
   return (
     <div className="flex min-h-screen flex-col">
       <Header />

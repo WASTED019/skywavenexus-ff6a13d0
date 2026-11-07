@@ -15,7 +15,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Food industry, ICT and digital systems services for businesses, institutions and communities in Nyeri County, Laikipia County and through remote operations." },
       { property: "og:title", content: "SKYWAVE NEXUS — Integrated Food, ICT & Digital Solutions" },
       { property: "og:description", content: "Food industry, ICT and digital systems services for businesses, institutions and communities in Nyeri County, Laikipia County and through remote operations." },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://skywavenexus.lovable.app/" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "canonical", href: "https://skywavenexus.lovable.app/" },

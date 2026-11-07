@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { divisions } from "@/data/divisions";
+import { useLiveServiceLines } from "@/lib/cms";
+import { publicServiceLineViews } from "@/lib/service-lines";
 import { company } from "@/lib/company-profile";
 import { Printer, ArrowLeft } from "lucide-react";
 
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/about_/profile")({
 });
 
 function ProfilePage() {
+  const divisions = publicServiceLineViews(useLiveServiceLines());
   return (
     <main className="mx-auto max-w-3xl bg-background px-6 py-8 text-foreground print:p-0">
       <div className="mb-6 flex flex-wrap gap-3 print:hidden">
@@ -31,11 +33,16 @@ function ProfilePage() {
       </div>
       <header className="border-b-2 border-primary pb-4">
         <h1 className="text-2xl font-bold">{company.name}</h1>
-        <p className="text-sm text-muted-foreground">Company Profile · {company.location}</p>
+          <p className="text-sm text-muted-foreground">Company Profile · {company.location}</p>
       </header>
       <section className="mt-5">
         <h2 className="text-lg font-semibold">Mission</h2>
         <p className="mt-1 text-sm">{company.mission}</p>
+      </section>
+      <section className="mt-5">
+        <h2 className="text-lg font-semibold">Vision and Purpose</h2>
+        <p className="mt-1 text-sm"><strong>Vision:</strong> {company.vision}</p>
+        <p className="mt-1 text-sm"><strong>Purpose:</strong> {company.purpose}</p>
       </section>
       <section className="mt-5">
         <h2 className="text-lg font-semibold">Service Lines</h2>
