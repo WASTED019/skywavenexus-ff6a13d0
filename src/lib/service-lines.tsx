@@ -51,3 +51,27 @@ export function lineViews(live: ServiceLine[] | null): LineView[] {
   if (live) return live.map((l) => toLineView(l, l.slug)!).filter(Boolean);
   return divisions.map((d) => toLineView(null, d.id)!);
 }
+
+/** Group the legacy food subsections under the current three public service lines. */
+export function publicServiceLineViews(live: ServiceLine[] | null): LineView[] {
+  const lines = lineViews(live);
+  const food = lines.filter((line) => line.id === "food-safety" || line.id === "value-addition");
+  const others = lines.filter((line) => line.id !== "food-safety" && line.id !== "value-addition");
+  const foodLine = food.length
+    ? [{
+        ...food[0],
+        title: "Food Industry & Value Addition Solutions",
+        short: "Food safety, quality systems, processing and value addition support.",
+        description: food.map((line) => line.description).filter(Boolean).join(" "),
+        image: food.find((line) => line.image)?.image ?? null,
+        services: food.flatMap((line) => line.services),
+        link: "/divisions/food-safety",
+      }]
+    : [];
+  return [
+    ...foodLine,
+    ...others.map((line) => line.id === "isp-connectivity"
+      ? { ...line, title: "ICT & Connectivity Solutions" }
+      : line),
+  ];
+}
