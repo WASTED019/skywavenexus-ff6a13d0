@@ -13,9 +13,10 @@ const publicNav = [
   { to: "/", label: "Home" },
   { to: "/about", label: "About" },
   { to: "/divisions", label: "Service Lines" },
+  { to: "/projects", label: "Projects" },
   { to: "/request", label: "Request Service" },
   { to: "/skywave-nexus", label: "SKYWAVE NEXUS" },
-  { to: "/blog", label: "Blog / Updates" },
+  { to: "/blog", label: "Knowledge & Insights" },
   { to: "/contact", label: "Contact" },
   { to: "/track", label: "Track Request" },
 ] as const;

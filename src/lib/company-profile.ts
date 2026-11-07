@@ -1,21 +1,39 @@
 export const company = {
   name: "SKYWAVE NEXUS Integrated Solutions",
-  location: "Nyange, Nyeri, Kenya",
+  positioning: "Connecting Industry, Technology and Innovation.",
+  summary:
+    "Practical food industry, ICT and digital solutions for businesses, institutions and communities.",
+  location: "Nyeri County, Kenya; Laikipia County, Kenya; remote operations",
   phone: "0753366995",
   email: "skywavenexus@gmail.com",
   mission:
-    "To deliver practical, well-documented technical services that help Kenyan businesses, institutions and communities operate safely, stay connected and grow.",
+    "To empower businesses, institutions and communities through practical food industry, technology and digital solutions that strengthen operations, systems and service delivery.",
+  overview:
+    "SKYWAVE NEXUS INTEGRATED SOLUTIONS is a multidisciplinary solutions enterprise focused on practical services across the food industry, information and communication technology, and digital systems development. We bring together technical knowledge, problem-solving and digital innovation to help organisations address operational needs through appropriately scoped solutions, professional implementation, clear documentation and continued support.",
+  vision:
+    "To be a trusted and forward-thinking African solutions enterprise, advancing food industry excellence, technological innovation and sustainable development through integrated expertise and practical solutions.",
+  purpose:
+    "To bridge technical expertise and practical operational needs by turning challenges into effective, measurable and sustainable solutions.",
   values: [
-    { title: "First-principles problem solving", text: "We start from the real site conditions and requirements, not assumptions." },
-    { title: "Field resilience", text: "Solutions are built to keep working in rural and demanding environments." },
-    { title: "Clear documentation", text: "Every engagement ends with records, SOPs or configuration notes you keep." },
-    { title: "Accountable delivery", text: "Requests are tracked from survey to handoff so you always know the status." },
+    { title: "Integrity", text: "Honesty, transparency and accountability." },
+    { title: "Professionalism", text: "Competence and responsible service delivery." },
+    { title: "Innovation", text: "Appropriate technology and continuous improvement." },
+    { title: "Quality", text: "Consistency, reliability and attention to detail." },
+    { title: "Collaboration", text: "Building productive client partnerships." },
+    { title: "Sustainability", text: "Creating lasting economic and operational value." },
   ],
   delivery: [
-    { step: "Site survey", text: "We assess your premises, needs and constraints." },
-    { step: "Structured quote", text: "You receive a clear quote to review and accept online." },
-    { step: "Phased execution", text: "Work is carried out in agreed stages." },
-    { step: "Testing", text: "Systems and processes are checked before sign-off." },
-    { step: "Handoff & support", text: "Documentation, training and follow-up support." },
+    { step: "Understand", text: "We clarify the requirements, operating context and constraints." },
+    { step: "Scope", text: "We agree the proposed work, deliverables and quotation." },
+    { step: "Implement", text: "Work proceeds in agreed stages with communication along the way." },
+    { step: "Review", text: "We check the agreed work and address outstanding items." },
+    { step: "Handover", text: "Documentation and follow-up arrangements are shared as agreed." },
   ],
 };
+
+export function getCorporateServiceCategory(id: string, fallback: string) {
+  if (id === "food-safety" || id === "value-addition") return "Food Industry & Value Addition Solutions";
+  if (id === "isp-connectivity") return "ICT & Connectivity Solutions";
+  if (id === "digital-systems") return "Digital Systems & Innovation";
+  return fallback;
+}

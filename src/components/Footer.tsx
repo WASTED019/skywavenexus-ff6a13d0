@@ -23,9 +23,7 @@ export function Footer() {
               <div className="text-xs uppercase tracking-wider opacity-80">Integrated Solutions</div>
             </div>
           </div>
-          <p className="mt-4 max-w-xs text-sm opacity-80">
-            {settings.footer_text}
-          </p>
+          <p className="mt-4 max-w-xs text-sm opacity-80">Connecting Industry, Technology and Innovation.</p>
         </div>
 
         <div>
@@ -44,9 +42,12 @@ export function Footer() {
             <li><Link to="/" className="hover:underline">Home</Link></li>
             <li><Link to="/about" className="hover:underline">About</Link></li>
             <li><Link to="/divisions" className="hover:underline">Service Lines</Link></li>
+            <li><Link to="/projects" className="hover:underline">Projects &amp; Portfolio</Link></li>
+            <li><Link to="/careers" className="hover:underline">Careers</Link></li>
+            <li><Link to="/privacy" className="hover:underline">Privacy Policy</Link></li>
             <li><Link to="/request" className="hover:underline">Request Service</Link></li>
             <li><Link to="/skywave-nexus" className="hover:underline">SKYWAVE NEXUS</Link></li>
-            <li><Link to="/blog" className="hover:underline">Blog / Updates</Link></li>
+            <li><Link to="/blog" className="hover:underline">Knowledge &amp; Insights</Link></li>
             <li><Link to="/contact" className="hover:underline">Contact</Link></li>
             <li><Link to="/track" className="hover:underline">Track Request</Link></li>
             {session ? (

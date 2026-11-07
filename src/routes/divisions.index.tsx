@@ -2,16 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useLiveServiceLines } from "@/lib/cms";
-import { iconFor, lineViews } from "@/lib/service-lines";
+import { iconFor, publicServiceLineViews } from "@/lib/service-lines";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/divisions/")({
   head: () => ({
     meta: [
       { title: "Our Service Lines — SKYWAVE NEXUS" },
-      { name: "description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity service lines of SKYWAVE NEXUS Integrated Solutions." },
+      { name: "description", content: "Food Industry & Value Addition, ICT & Connectivity, and Digital Systems & Innovation services from SKYWAVE NEXUS Integrated Solutions." },
       { property: "og:title", content: "Our Service Lines — SKYWAVE NEXUS" },
-      { property: "og:description", content: "Food Safety & Compliance, Value Addition, and ISP & Connectivity service lines of SKYWAVE NEXUS." },
+      { property: "og:description", content: "Food Industry & Value Addition, ICT & Connectivity, and Digital Systems & Innovation services from SKYWAVE NEXUS." },
       { property: "og:url", content: "https://skywavenexus.lovable.app/divisions" },
     ],
     links: [
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/divisions/")({
 
 
 function DivisionsIndex() {
-  const cards = lineViews(useLiveServiceLines());
+  const cards = publicServiceLineViews(useLiveServiceLines());
   return (
     <div className="flex min-h-screen flex-col">
       <Header />

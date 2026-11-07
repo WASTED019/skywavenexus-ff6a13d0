@@ -6,7 +6,7 @@ import { company } from "@/lib/company-profile";
 import { whatsappLink } from "@/lib/whatsapp";
 import { Mail, MessageCircle, MapPin, Briefcase } from "lucide-react";
 
-const desc = "Open positions and general applications at SKYWAVE NEXUS Integrated Solutions — food safety, value addition and connectivity work across Kenya.";
+const desc = "Open positions and general applications at SKYWAVE NEXUS Integrated Solutions, serving Nyeri County, Laikipia County and remote operations.";
 
 export const Route = createFileRoute("/careers")({
   head: () => ({

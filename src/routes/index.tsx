@@ -1,21 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { iconFor, lineViews } from "@/lib/service-lines";
+import { iconFor, publicServiceLineViews } from "@/lib/service-lines";
 import { whatsappLink } from "@/lib/whatsapp";
 import { useHomepageContent, useHomepageSlides, useMediaSlides, useLiveServiceLines, useSiteSettings, useShowcaseItems, useBlogPosts } from "@/lib/cms";
 import logo from "@/assets/logo.png";
+import { getCorporateServiceCategory } from "@/lib/company-profile";
 import { ArrowRight, MessageCircle, CheckCircle2, Phone, Mail, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SKYWAVE NEXUS — Food Safety & Digital Connectivity" },
-      { name: "description", content: "Food safety, value addition and digital connectivity solutions for SMEs, farmers and rural enterprises in Kenya." },
-      { property: "og:title", content: "SKYWAVE NEXUS — Food Safety & Digital Connectivity" },
-      { property: "og:description", content: "Food safety, value addition and digital connectivity solutions for SMEs, farmers and rural enterprises in Kenya." },
+      { title: "SKYWAVE NEXUS — Integrated Food, ICT & Digital Solutions" },
+      { name: "description", content: "Food industry, ICT and digital systems services for businesses, institutions and communities in Nyeri County, Laikipia County and through remote operations." },
+      { property: "og:title", content: "SKYWAVE NEXUS — Integrated Food, ICT & Digital Solutions" },
+      { property: "og:description", content: "Food industry, ICT and digital systems services for businesses, institutions and communities in Nyeri County, Laikipia County and through remote operations." },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://skywavenexus.lovable.app/" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "canonical", href: "https://skywavenexus.lovable.app/" },
@@ -36,13 +39,13 @@ function HomePage() {
   const showcase = useShowcaseItems();
   const blogPosts = useBlogPosts();
 
-  const heroTitle = hc?.hero_title || "SKYWAVE NEXUS — Integrated Solutions for Food Safety & Digital Connectivity";
-  const heroSubtitle = hc?.hero_subtitle || "Integrated Solutions for Food Safety, Value Addition and Digital Connectivity.";
-  const heroBody = hc?.hero_body || "Practical support in food safety, value addition, and digital connectivity for small businesses, farmers, processors, institutions, cyber cafés, and rural enterprises.";
+  const heroTitle = hc?.hero_title || "Connecting Industry, Technology and Innovation.";
+  const heroSubtitle = hc?.hero_subtitle || "Practical food industry, ICT and digital solutions for businesses, institutions and communities.";
+  const heroBody = hc?.hero_body || "Operating across Nyeri County and Laikipia County, with remote engagements available.";
   const primaryBtn = hc?.button_text || "Request a Service";
   const primaryBtnLink = hc?.button_link || "/request";
 
-  const serviceCards = lineViews(sls);
+  const serviceCards = publicServiceLineViews(sls);
 
   const intervalMs = Number((hc?.sections as any)?.slide_interval_ms) || 6000;
 
@@ -119,7 +122,7 @@ function HomePage() {
               "Rural and SME-friendly solutions",
               "Clear service request and follow-up process",
               "Support for farmers, processors, schools, cyber cafés, and small businesses",
-              "Trusted by Kenyan SMEs and institutions",
+              "Clear service requests and follow-up",
             ].map((p) => (
               <div key={p} className="flex items-start gap-3 rounded-xl border bg-card p-5 shadow-soft">
                 <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-brand-green" />
@@ -135,9 +138,9 @@ function HomePage() {
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-brand-blue">SKYWAVE NEXUS</p>
-            <h2 className="mt-2 text-3xl font-bold">Selected work</h2>
+            <h2 className="mt-2 text-3xl font-bold">Projects & Technical Portfolio</h2>
           </div>
-          <Link to="/skywave-nexus" className="text-sm font-semibold text-brand-blue hover:underline">View all →</Link>
+          <Link to="/projects" className="text-sm font-semibold text-brand-blue hover:underline">View projects →</Link>
         </div>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {showcase.slice(0, 6).map((s) => (
@@ -145,7 +148,7 @@ function HomePage() {
               {s.image_url && <img src={s.image_url} alt={s.title} className="h-40 w-full object-cover" />}
               <div className="p-6">
                 <div className="mb-3 inline-block rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
-                  {s.division_name}
+                  {getCorporateServiceCategory(s.division_id, s.division_name)}
                 </div>
                 <h3 className="text-lg font-bold">{s.title}</h3>
                 {s.location && <p className="mt-1 text-xs text-muted-foreground">{s.location}</p>}
@@ -160,7 +163,7 @@ function HomePage() {
       <section className="bg-secondary py-16">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex items-end justify-between gap-4">
-            <h2 className="text-3xl font-bold">Latest Updates</h2>
+            <h2 className="text-3xl font-bold">Knowledge &amp; Insights</h2>
             <Link to="/blog" className="text-sm font-semibold text-brand-blue hover:underline">All posts →</Link>
           </div>
           <div className="mt-8 grid gap-6 md:grid-cols-3">

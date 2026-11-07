@@ -2,15 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useShowcaseItems, usePreviewMode } from "@/lib/cms";
+import { getCorporateServiceCategory } from "@/lib/company-profile";
 
-const desc = "Selected projects by SKYWAVE NEXUS: food safety systems, value addition support and rural ISP and connectivity work across Kenya.";
+const desc = "Projects and technical portfolio from SKYWAVE NEXUS across food industry, ICT and connectivity, and digital systems.";
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
-      { title: "Projects — SKYWAVE NEXUS" },
+      { title: "Projects & Technical Portfolio — SKYWAVE NEXUS" },
       { name: "description", content: desc },
-      { property: "og:title", content: "Projects — SKYWAVE NEXUS" },
+      { property: "og:title", content: "Projects & Technical Portfolio — SKYWAVE NEXUS" },
       { property: "og:description", content: desc },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://skywavenexus.lovable.app/projects" },
@@ -34,9 +35,9 @@ function ProjectsPage() {
       )}
       <section className="bg-hero-gradient text-white">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <h1 className="text-3xl font-bold sm:text-4xl">Projects</h1>
+          <h1 className="text-3xl font-bold sm:text-4xl">Projects &amp; Technical Portfolio</h1>
           <p className="mt-3 max-w-2xl text-white/85">
-            Selected work from our field engagements across food safety, value addition and connectivity.
+            Published work and technical examples across our three service lines. Details and outcomes are shown only where they have been provided for publication.
           </p>
         </div>
       </section>
@@ -67,7 +68,7 @@ function ProjectsPage() {
                 </figure>
                 <div className="p-6 md:p-8">
                   <div className="flex flex-wrap items-center gap-2 text-xs">
-                    <span className="rounded-full bg-brand-blue/10 px-3 py-1 font-semibold text-brand-blue">{item.division_name}</span>
+                    <span className="rounded-full bg-brand-blue/10 px-3 py-1 font-semibold text-brand-blue">{getCorporateServiceCategory(item.division_id, item.division_name)}</span>
                     {item.location && <span className="text-muted-foreground">{item.location}</span>}
                   </div>
                   <h2 className="mt-3 text-xl font-bold">{item.title}</h2>

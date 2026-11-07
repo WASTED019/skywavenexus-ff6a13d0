@@ -8,9 +8,9 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact — SKYWAVE NEXUS" },
-      { name: "description", content: "Phone, WhatsApp and email for SKYWAVE NEXUS Integrated Solutions in Nyange, Nyeri, Kenya." },
+      { name: "description", content: "Contact SKYWAVE NEXUS Integrated Solutions by phone, WhatsApp or email. Serving Nyeri County, Laikipia County and remote operations." },
       { property: "og:title", content: "Contact — SKYWAVE NEXUS" },
-      { property: "og:description", content: "Phone, WhatsApp and email for SKYWAVE NEXUS Integrated Solutions in Nyange, Nyeri, Kenya." },
+      { property: "og:description", content: "Contact SKYWAVE NEXUS Integrated Solutions by phone, WhatsApp or email. Serving Nyeri County, Laikipia County and remote operations." },
       { property: "og:url", content: "https://skywavenexus.lovable.app/contact" },
     ],
     links: [
