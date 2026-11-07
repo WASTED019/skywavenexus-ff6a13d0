@@ -60,6 +60,7 @@ export function publicServiceLineViews(live: ServiceLine[] | null): LineView[] {
   const foodLine = food.length
     ? [{
         ...food[0],
+        id: "food-safety",
         title: "Food Industry & Value Addition Solutions",
         short: "Food safety, quality systems, processing and value addition support.",
         description: food.map((line) => line.description).filter(Boolean).join(" "),
