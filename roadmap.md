@@ -8,3 +8,6 @@
 - [x] Compress eight published Davis photos with responsive variants and lazy loading without changing the portfolio document; all eight loaded in browser checks.
 - [x] Verify generic sign-in failure, authenticated customer dashboard, profile validation, owner Davis editor, service selection, blocked empty submission, existing-owner request tracking and 320px public layouts/menus; no additional defects reproduced.
 - [x] Verify successful password sign-in, admin editing (service line save/revert), completed request submission, admin quote setting, and client quote acceptance end-to-end (2026-11-01, isolated test account created and deleted; no live data changed).
+- [ ] Align the public homepage and About/profile with the supplied corporate identity, three service-line structure, and approved service areas.
+- [ ] Add Digital Systems through the existing editable service-line CMS while preserving existing request categories and routes.
+- [ ] Connect Projects, Careers, and Privacy from About/footer; verify the public pages and mobile navigation.
