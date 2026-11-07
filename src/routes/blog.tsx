@@ -10,7 +10,9 @@ export const Route = createFileRoute("/blog")({
       { name: "description", content: "Practical knowledge and published insights across food industry, ICT and digital systems from SKYWAVE NEXUS." },
       { property: "og:title", content: "Knowledge & Insights — SKYWAVE NEXUS" },
       { property: "og:description", content: "Practical knowledge and published insights across food industry, ICT and digital systems from SKYWAVE NEXUS." },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://skywavenexus.lovable.app/blog" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "canonical", href: "https://skywavenexus.lovable.app/blog" },

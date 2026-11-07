@@ -30,3 +30,10 @@ export const company = {
     { step: "Handover", text: "Documentation and follow-up arrangements are shared as agreed." },
   ],
 };
+
+export function getCorporateServiceCategory(id: string, fallback: string) {
+  if (id === "food-safety" || id === "value-addition") return "Food Industry & Value Addition Solutions";
+  if (id === "isp-connectivity") return "ICT & Connectivity Solutions";
+  if (id === "digital-systems") return "Digital Systems & Innovation";
+  return fallback;
+}
