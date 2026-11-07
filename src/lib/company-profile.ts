@@ -3,7 +3,7 @@ export const company = {
   positioning: "Connecting Industry, Technology and Innovation.",
   summary:
     "Practical food industry, ICT and digital solutions for businesses, institutions and communities.",
-  location: "Nyeri County, Kenya · Laikipia County, Kenya · Remote operations",
+  location: "Nyeri County, Kenya; Laikipia County, Kenya; remote operations",
   phone: "0753366995",
   email: "skywavenexus@gmail.com",
   mission:
