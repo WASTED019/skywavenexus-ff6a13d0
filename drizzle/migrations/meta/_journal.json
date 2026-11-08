@@ -43,6 +43,13 @@
       "when": 1793879423966,
       "tag": "0005_consume_approved_password_reset",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794180796895,
+      "tag": "0006_harden_admin_rpcs_and_indexes",
+      "breakpoints": true
     }
   ]
 }
