@@ -11,3 +11,4 @@
 - [ ] Align the public homepage and About/profile with the supplied corporate identity, three service-line structure, and approved service areas.
 - [ ] Add Digital Systems through the existing editable service-line CMS while preserving existing request categories and routes.
 - [ ] Connect Projects, Careers, and Privacy from About/footer; verify the public pages and mobile navigation.
+- [ ] Audit and fix verified remaining issues across the main SkyWave site and the isolated /davis portfolio, prioritizing safe, low-credit changes and preserving data/access boundaries.
