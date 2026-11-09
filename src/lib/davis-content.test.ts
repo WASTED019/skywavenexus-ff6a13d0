@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { describe, expect, it } from "vitest";
 import { isPublishedMediaPath } from "./davis-content";
 
 const published = {
@@ -7,8 +7,15 @@ const published = {
   gallery: [{ url: "/api/public/davis-media/dispatch.png" }],
 };
 
-assert.equal(isPublishedMediaPath(published, "hero.jpg"), true);
-assert.equal(isPublishedMediaPath(published, "project.webp"), true);
-assert.equal(isPublishedMediaPath(published, "dispatch.png"), true);
-assert.equal(isPublishedMediaPath(published, "unpublished.jpg"), false);
-assert.equal(isPublishedMediaPath(published, "../hero.jpg"), false);
+describe("isPublishedMediaPath", () => {
+  it("allows images referenced by published portfolio sections", () => {
+    expect(isPublishedMediaPath(published, "hero.jpg")).toBe(true);
+    expect(isPublishedMediaPath(published, "project.webp")).toBe(true);
+    expect(isPublishedMediaPath(published, "dispatch.png")).toBe(true);
+  });
+
+  it("rejects unreferenced or unsafe image paths", () => {
+    expect(isPublishedMediaPath(published, "unpublished.jpg")).toBe(false);
+    expect(isPublishedMediaPath(published, "../hero.jpg")).toBe(false);
+  });
+});
