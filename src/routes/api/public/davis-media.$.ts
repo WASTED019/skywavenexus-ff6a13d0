@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { canServeDavisMedia } from "@/lib/davis.functions";
 
 /**
  * Serves images for the /davis personal portfolio from a private bucket.
@@ -13,6 +12,7 @@ export const Route = createFileRoute("/api/public/davis-media/$")({
         if (!/^[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp)$/.test(raw)) {
           return new Response("Not found", { status: 404 });
         }
+        const { canServeDavisMedia } = await import("@/lib/davis.functions");
         if (!(await canServeDavisMedia(raw))) {
           return new Response("Not found", { status: 404 });
         }
