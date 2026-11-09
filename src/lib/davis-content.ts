@@ -22,6 +22,19 @@ export type PortfolioDoc = {
   contact_phone: string; contact_email: string; contact_note: string;
 };
 
+export function isPublishedMediaPath(
+  doc: Pick<PortfolioDoc, "hero_image" | "work" | "gallery">,
+  path: string,
+): boolean {
+  if (!/^[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp)$/i.test(path)) return false;
+  const mediaUrl = `/api/public/davis-media/${path}`;
+  return [
+    doc.hero_image,
+    ...doc.work.map((entry) => entry.image ?? ""),
+    ...doc.gallery.map((entry) => entry.url),
+  ].includes(mediaUrl);
+}
+
 export const defaultMetrics: MetricEntry[] = [
   { label: "Corridor scope", value: "Nanyuki / Laikipia / Narumoru" },
   { label: "Audit pass rate", value: "" },

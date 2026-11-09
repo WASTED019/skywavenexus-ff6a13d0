@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { useSession, getRequest } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { dispatchSchema, normalizePortfolio, type PortfolioDoc } from "./davis-content";
+import { dispatchSchema, isPublishedMediaPath, normalizePortfolio, type PortfolioDoc } from "./davis-content";
 import { socialAccountSchema } from "./social-accounts";
 export type { PortfolioDoc } from "./davis-content";
 
@@ -102,16 +102,11 @@ export const getDavisPage = createServerFn({ method: "GET" })
 
 /** Public visitors may fetch only images referenced by published content. */
 export async function canServeDavisMedia(path: string): Promise<boolean> {
-  if (await isUnlocked()) return true;
   const row = await readRow();
   if (!row) return false;
-  const mediaUrl = `/api/public/davis-media/${path}`;
   const published = normalizePortfolio(row.published);
-  return [
-    published.hero_image,
-    ...published.work.map((entry) => entry.image ?? ""),
-    ...published.gallery.map((entry) => entry.url),
-  ].includes(mediaUrl);
+  if (isPublishedMediaPath(published, path)) return true;
+  return isUnlocked();
 }
 
 export const davisStatus = createServerFn({ method: "GET" }).handler(async () => ({
