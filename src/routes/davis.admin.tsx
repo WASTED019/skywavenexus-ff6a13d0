@@ -169,6 +169,7 @@ function DavisAdmin() {
   }
 
   async function pickImage(file: File): Promise<string> {
+    if (file.size > 10 * 1024 * 1024) throw new Error("Image must be under 10MB");
     const base64 = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");

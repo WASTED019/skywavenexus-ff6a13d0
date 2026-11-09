@@ -57,6 +57,10 @@ export function publicServiceLineViews(live: ServiceLine[] | null): LineView[] {
   const lines = lineViews(live);
   const food = lines.filter((line) => line.id === "food-safety" || line.id === "value-addition");
   const others = lines.filter((line) => line.id !== "food-safety" && line.id !== "value-addition");
+  const foodServices = new Map<string, Service>();
+  for (const service of food.flatMap((line) => line.services)) {
+    if (!foodServices.has(service.id)) foodServices.set(service.id, service);
+  }
   const foodLine = food.length
     ? [{
         ...food[0],
@@ -65,7 +69,7 @@ export function publicServiceLineViews(live: ServiceLine[] | null): LineView[] {
         short: "Food safety, quality systems, processing and value addition support.",
         description: food.map((line) => line.description).filter(Boolean).join(" "),
         image: food.find((line) => line.image)?.image ?? null,
-        services: food.flatMap((line) => line.services),
+        services: [...foodServices.values()],
         link: "/divisions/food-safety",
       }]
     : [];

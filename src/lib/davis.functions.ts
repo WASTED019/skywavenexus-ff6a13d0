@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { useSession, getRequest } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { dispatchSchema, normalizePortfolio, type PortfolioDoc } from "./davis-content";
+import { dispatchSchema, isPublishedMediaPath, isValidDavisImageBase64, normalizePortfolio, type PortfolioDoc } from "./davis-content";
 import { socialAccountSchema } from "./social-accounts";
 export type { PortfolioDoc } from "./davis-content";
 
@@ -99,6 +99,15 @@ export const getDavisPage = createServerFn({ method: "GET" })
     if (data.draft && (await isUnlocked())) return { doc: normalizePortfolio(row.draft), isDraft: true };
     return { doc: normalizePortfolio(row.published), isDraft: false };
   });
+
+/** Public visitors may fetch only images referenced by published content. */
+export async function canServeDavisMedia(path: string): Promise<boolean> {
+  const row = await readRow();
+  if (!row) return false;
+  const published = normalizePortfolio(row.published);
+  if (isPublishedMediaPath(published, path)) return true;
+  return isUnlocked();
+}
 
 export const davisStatus = createServerFn({ method: "GET" }).handler(async () => ({
   unlocked: await isUnlocked(),
@@ -204,14 +213,22 @@ export const publishDavisDraft = createServerFn({ method: "POST" }).handler(asyn
 });
 
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"]);
+const MAX_DAVIS_IMAGE_BYTES = 10 * 1024 * 1024;
 
 export const uploadDavisImage = createServerFn({ method: "POST" })
-  .inputValidator((data: { name: string; mime: string; base64: string }) => data)
+  .inputValidator((data: { name: string; mime: string; base64: string }) => {
+    if (!isValidDavisImageBase64(data?.base64)) {
+      throw new Error("Image must be under 10MB");
+    }
+    return data;
+  })
   .handler(async ({ data }) => {
     if (!(await isUnlocked())) throw new Error("Not signed in");
     if (!ALLOWED.has(data.mime)) throw new Error("Only JPG, PNG or WebP images are allowed");
     const bytes = Buffer.from(data.base64, "base64");
-    if (bytes.length > 10 * 1024 * 1024) throw new Error("Image must be under 10MB");
+    if (bytes.length === 0 || bytes.length > MAX_DAVIS_IMAGE_BYTES || bytes.toString("base64") !== data.base64) {
+      throw new Error("Invalid image data or image exceeds 10MB");
+    }
     const ext = data.mime === "image/png" ? "png" : data.mime === "image/webp" ? "webp" : "jpg";
     const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const supabase = await db();

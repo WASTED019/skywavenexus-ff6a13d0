@@ -6,3 +6,5 @@
 - Resolve optimized Davis photos by exact original URL in a browser-safe asset manifest; responsive variants must not change the isolated saved document, and unknown/new URLs keep their original source.
 - Complete password resets only through an authenticated server function that consumes a current approved request before updating the account password; direct browser password changes bypass revocation checks.
 - Preserve legacy service-line records and request IDs while grouping their public presentation into the three approved corporate categories; this avoids breaking existing requests and CMS content.
+- Public Davis media responses must be limited to image paths referenced by the published portfolio; this keeps the private media bucket from becoming a general file-read endpoint.
+- Role-check helpers callable from authenticated requests must only answer for the caller's own identity, except trusted service-role operations; this prevents enumerating other users' privileges.

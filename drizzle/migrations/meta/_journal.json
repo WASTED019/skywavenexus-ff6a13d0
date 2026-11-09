@@ -50,6 +50,20 @@
       "when": 1794180796895,
       "tag": "0006_harden_admin_rpcs_and_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794182923571,
+      "tag": "0007_tighten_public_function_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794183050483,
+      "tag": "0008_scope_role_checks_to_current_user",
+      "breakpoints": true
     }
   ]
 }

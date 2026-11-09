@@ -22,6 +22,33 @@ export type PortfolioDoc = {
   contact_phone: string; contact_email: string; contact_note: string;
 };
 
+export function isPublishedMediaPath(
+  doc: {
+    hero_image: string;
+    work: Array<{ image?: string }>;
+    gallery: Array<{ url: string }>;
+  },
+  path: string,
+): boolean {
+  if (!/^[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp)$/i.test(path)) return false;
+  const mediaUrl = `/api/public/davis-media/${path}`;
+  return [
+    doc.hero_image,
+    ...doc.work.map((entry) => entry.image ?? ""),
+    ...doc.gallery.map((entry) => entry.url),
+  ].includes(mediaUrl);
+}
+
+const MAX_DAVIS_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_DAVIS_IMAGE_BASE64_LENGTH = Math.ceil(MAX_DAVIS_IMAGE_BYTES / 3) * 4;
+
+export function isValidDavisImageBase64(value: unknown): value is string {
+  return typeof value === "string"
+    && value.length > 0
+    && value.length <= MAX_DAVIS_IMAGE_BASE64_LENGTH
+    && /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value);
+}
+
 export const defaultMetrics: MetricEntry[] = [
   { label: "Corridor scope", value: "Nanyuki / Laikipia / Narumoru" },
   { label: "Audit pass rate", value: "" },

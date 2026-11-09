@@ -12,13 +12,17 @@ export const Route = createFileRoute("/api/public/davis-media/$")({
         if (!/^[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp)$/.test(raw)) {
           return new Response("Not found", { status: 404 });
         }
+        const { canServeDavisMedia } = await import("@/lib/davis.functions");
+        if (!(await canServeDavisMedia(raw))) {
+          return new Response("Not found", { status: 404 });
+        }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data, error } = await supabaseAdmin.storage.from("davis-media").download(raw);
         if (error || !data) return new Response("Not found", { status: 404 });
         return new Response(await data.arrayBuffer(), {
           headers: {
             "Content-Type": data.type || "image/jpeg",
-            "Cache-Control": "public, max-age=86400",
+            "Cache-Control": "no-store",
           },
         });
       },
