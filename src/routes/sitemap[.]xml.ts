@@ -33,7 +33,6 @@ export const Route = createFileRoute("/sitemap.xml")({
             changefreq: "monthly" as const,
             priority: "0.7",
           })),
-          { path: "/divisions/digital-systems", changefreq: "monthly", priority: "0.7" },
         ];
 
         const urls = entries.map((e) =>

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { canServeDavisMedia } from "@/lib/davis.functions";
 
 /**
  * Serves images for the /davis personal portfolio from a private bucket.
@@ -10,6 +11,9 @@ export const Route = createFileRoute("/api/public/davis-media/$")({
       GET: async ({ params }) => {
         const raw = (params as Record<string, string>)["_splat"] ?? "";
         if (!/^[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp)$/.test(raw)) {
+          return new Response("Not found", { status: 404 });
+        }
+        if (!(await canServeDavisMedia(raw))) {
           return new Response("Not found", { status: 404 });
         }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
