@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { useSession, getRequest } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { dispatchSchema, isPublishedMediaPath, normalizePortfolio, type PortfolioDoc } from "./davis-content";
+import { dispatchSchema, isPublishedMediaPath, isValidDavisImageBase64, normalizePortfolio, type PortfolioDoc } from "./davis-content";
 import { socialAccountSchema } from "./social-accounts";
 export type { PortfolioDoc } from "./davis-content";
 
@@ -214,15 +214,11 @@ export const publishDavisDraft = createServerFn({ method: "POST" }).handler(asyn
 
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_DAVIS_IMAGE_BYTES = 10 * 1024 * 1024;
-const MAX_DAVIS_IMAGE_BASE64_LENGTH = Math.ceil(MAX_DAVIS_IMAGE_BYTES / 3) * 4;
 
 export const uploadDavisImage = createServerFn({ method: "POST" })
   .inputValidator((data: { name: string; mime: string; base64: string }) => {
-    if (typeof data?.base64 !== "string" || data.base64.length === 0 || data.base64.length > MAX_DAVIS_IMAGE_BASE64_LENGTH) {
+    if (!isValidDavisImageBase64(data?.base64)) {
       throw new Error("Image must be under 10MB");
-    }
-    if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(data.base64)) {
-      throw new Error("Invalid image data");
     }
     return data;
   })

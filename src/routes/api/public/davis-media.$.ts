@@ -22,7 +22,7 @@ export const Route = createFileRoute("/api/public/davis-media/$")({
         return new Response(await data.arrayBuffer(), {
           headers: {
             "Content-Type": data.type || "image/jpeg",
-            "Cache-Control": "public, max-age=86400",
+            "Cache-Control": "no-store",
           },
         });
       },

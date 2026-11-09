@@ -39,6 +39,16 @@ export function isPublishedMediaPath(
   ].includes(mediaUrl);
 }
 
+const MAX_DAVIS_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_DAVIS_IMAGE_BASE64_LENGTH = Math.ceil(MAX_DAVIS_IMAGE_BYTES / 3) * 4;
+
+export function isValidDavisImageBase64(value: unknown): value is string {
+  return typeof value === "string"
+    && value.length > 0
+    && value.length <= MAX_DAVIS_IMAGE_BASE64_LENGTH
+    && /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value);
+}
+
 export const defaultMetrics: MetricEntry[] = [
   { label: "Corridor scope", value: "Nanyuki / Laikipia / Narumoru" },
   { label: "Audit pass rate", value: "" },
