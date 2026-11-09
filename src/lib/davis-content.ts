@@ -23,7 +23,11 @@ export type PortfolioDoc = {
 };
 
 export function isPublishedMediaPath(
-  doc: Pick<PortfolioDoc, "hero_image" | "work" | "gallery">,
+  doc: {
+    hero_image: string;
+    work: Array<{ image?: string }>;
+    gallery: Array<{ url: string }>;
+  },
   path: string,
 ): boolean {
   if (!/^[A-Za-z0-9._-]+\.(jpg|jpeg|png|webp)$/i.test(path)) return false;
